@@ -1,6 +1,5 @@
 package com.example.mhcampaign.examples
 
-import android.graphics.drawable.Drawable
 import com.example.mhcampaign.R
 
 class HunterData(var hunterName: String, var hunterWeapon: HunterWeapon) {
@@ -80,11 +79,62 @@ class HunterData(var hunterName: String, var hunterWeapon: HunterWeapon) {
             HunterWeapon.SWORDSHIELD -> {
                 weaponName = "Sword and Shield"
                 weaponIcon = R.drawable.sword_shield_icon
+                CardType.GOLD
             }
         }
     }
 }
 
-enum class HunterWeapon {
-    BOW, CHARGEBLADE, DUALBLADES, GREATSWORD, GUNLANCE, HAMMER, HEAVYBOWGUN, HUNTINGHORN, INSECTGLAIVE, LANCE, LIGHTBOWGUN, LONGSWORD, SWITCHAXE, SWORDSHIELD
+enum class HunterWeapon(val weaponName: String, icon: Int) {
+    BOW(
+        "Bow",
+        R.drawable.bow_icon
+    ),
+    CHARGEBLADE(
+        "",
+
+    ),
+    DUALBLADES(
+        "",
+
+        ),
+    GREATSWORD(
+        "",
+
+        ), GUNLANCE(
+        "",
+
+        ), HAMMER(
+        "",
+
+        ), HEAVYBOWGUN(
+        "",
+
+        ), HUNTINGHORN(
+        "",
+
+        ), INSECTGLAIVE(
+        "",
+
+        ), LANCE(
+        "",
+
+        ), LIGHTBOWGUN(
+        "",
+
+        ), LONGSWORD(
+        "",
+
+        ), SWITCHAXE(
+        "",
+
+        ), SWORDSHIELD(
+        "",
+
+        )
+}
+
+enum class CardType(val color: String, val icon: Int) {
+    SILVER("gray", 1),
+    GOLD("gray", 1)
 }

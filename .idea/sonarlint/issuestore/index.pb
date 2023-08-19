@@ -17,5 +17,3 @@ r
 Bapp/src/main/java/com/example/mhcampaign/examples/ComplexLayout.kt,a/9/a9558bddf4edcbfa627e88bac04cc6a6d5fb1fe3
 v
 Fapp/src/main/java/com/example/mhcampaign/examples/ConstraintExample.kt,a/2/a266ac5906fbf1db9b9d74266d3fbabac2dd0692
-q
-Aapp/src/main/java/com/example/mhcampaign/examples/ImageExample.kt,6/c/6c7c4eb95fca64861adc408a8228fe76da0887e7

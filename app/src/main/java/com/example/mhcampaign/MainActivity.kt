@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.examples.ComplexLayout
 import com.example.mhcampaign.examples.DropDownPreview
 import com.example.mhcampaign.examples.HunterViewHolderPreview
+import com.example.mhcampaign.examples.MyAlertPreview
 import com.example.mhcampaign.examples.MyDropDown
 import com.example.mhcampaign.examples.MyTextField
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MHCampaignTheme {
+//            MHCampaignTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -55,9 +56,10 @@ class MainActivity : ComponentActivity() {
 //                    MyTextField(text) { text = it }
 //                    exampleSelector()
 //                    HunterViewHolderPreview()
-                    DropDownPreview()
+//                    DropDownPreview()
+                    MyAlertPreview()
                 }
-            }
+//            }
         }
     }
 
