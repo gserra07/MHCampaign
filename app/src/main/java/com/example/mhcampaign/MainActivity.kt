@@ -29,12 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mhcampaign.examples.ComplexLayout
-import com.example.mhcampaign.examples.DropDownPreview
-import com.example.mhcampaign.examples.HunterViewHolderPreview
-import com.example.mhcampaign.examples.MyAlertPreview
-import com.example.mhcampaign.examples.MyDropDown
-import com.example.mhcampaign.examples.MyTextField
+import com.example.mhcampaign.examples.MyDrawerPreview
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 
 
@@ -44,7 +39,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-//            MHCampaignTheme(darkTheme = false) {
+            MHCampaignTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
@@ -57,9 +52,11 @@ class MainActivity : ComponentActivity() {
 //                    exampleSelector()
 //                    HunterViewHolderPreview()
 //                    DropDownPreview()
-                    MyAlertPreview()
+//                    MyAlertPreview()
+//                    MyRecyclePreview()
+                MyDrawerPreview()
                 }
-//            }
+            }
         }
     }
 
@@ -109,10 +106,10 @@ fun SuperText() {
         text = "Penesaurio",
         textAlign = TextAlign.Center,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(65.dp)
-            .padding(top = 15.dp)
-            .background(color = Color.Cyan)
+                .fillMaxWidth()
+                .height(65.dp)
+                .padding(top = 15.dp)
+                .background(color = Color.Cyan)
     )
 }
 
@@ -122,8 +119,8 @@ fun MyBox() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Box(
             modifier = Modifier
-                .background(color = Color.Cyan)
-                .verticalScroll(rememberScrollState())
+                    .background(color = Color.Cyan)
+                    .verticalScroll(rememberScrollState())
         ) {
             Column {
                 SuperText()
