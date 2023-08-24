@@ -62,30 +62,29 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun exampleSelector() {
-        var potions = remember { mutableStateOf(0) }
-        var days = remember { mutableStateOf(0) }
+        var potions by remember { mutableStateOf(0) }
+        var days by remember { mutableStateOf(0) }
         Row(horizontalArrangement = Arrangement.SpaceAround) {
             Box {
                 MySelector(
                     potions,
-                    R.drawable.potion,
-                    onValueChange = {
-                        Toast.makeText(
+                    R.drawable.potion
+                ) {
+                    Toast.makeText(
                             this@MainActivity,
-                            "Pociones ${potions.value}",
+                            "Pociones $potions",
                             Toast.LENGTH_LONG
-                        ).show()
-                    }
-                )
+                    ).show()
+                }
             }
             Box() {
-                MySelector(days, R.drawable.calendar_white, onValueChange = {
+                MySelector(days, R.drawable.calendar_white) {
                     Toast.makeText(
-                        this@MainActivity,
-                        "Dias ${days.value}",
-                        Toast.LENGTH_LONG
+                            this@MainActivity,
+                            "Dias $days",
+                            Toast.LENGTH_LONG
                     ).show()
-                })
+                }
             }
         }
     }

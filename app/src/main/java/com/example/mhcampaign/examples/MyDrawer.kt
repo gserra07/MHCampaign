@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.CampaignView
 import com.example.mhcampaign.HunterViewHolderPreview
+import com.example.mhcampaign.MyHunterSelectorPreview
 import com.example.mhcampaign.model.MenuItem
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import kotlinx.coroutines.CoroutineScope
@@ -100,7 +101,7 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
-                            content = { MyAlertPreview() })
+                            content = { MyHunterSelectorPreview() })
                 }
             }
         })

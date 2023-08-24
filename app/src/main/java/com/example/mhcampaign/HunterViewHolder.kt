@@ -37,7 +37,7 @@ fun HunterViewHolder(data: HunterData, onEditListener: (HunterData) -> Unit) {
         ConstraintLayout(
                 modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 10.dp)
+                        .padding(vertical = 10.dp).clickable { onEditListener(data) }
         ) {
             val (weaponIcon, spacer, name, weaponName, editIcon) = createRefs()
             Image(
