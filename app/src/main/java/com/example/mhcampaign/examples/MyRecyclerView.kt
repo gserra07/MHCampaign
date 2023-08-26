@@ -35,7 +35,7 @@ fun SimpleRecycleView(data: List<HunterData>) {
             itemsIndexed(data) { index, hunterData ->
                 HunterViewHolder(
                         data = hunterData,
-                        onEditListener = { data -> Log.d(data.hunterName, "") })
+                        onEditListener = { data -> Log.d(data?.hunterName, "") })
                 if (index < data.size - 1)
                     Divider(modifier = Modifier
                             .fillMaxWidth())

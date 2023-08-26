@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +33,7 @@ import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 
 @Composable
-fun HunterViewHolder(data: HunterData, onEditListener: (HunterData) -> Unit) {
+fun HunterViewHolder(data: HunterData? = null , onEditListener: (HunterData?) -> Unit) {
     MHCampaignTheme(darkTheme = false) {
 
         ConstraintLayout(
@@ -39,35 +41,36 @@ fun HunterViewHolder(data: HunterData, onEditListener: (HunterData) -> Unit) {
                         .fillMaxWidth()
                         .padding(vertical = 10.dp).clickable { onEditListener(data) }
         ) {
-            val (weaponIcon, spacer, name, weaponName, editIcon) = createRefs()
-            Image(
-                    painter = painterResource(id = data.hunterWeapon.icon),
-                    contentDescription = "",
-                    modifier = Modifier
-                            .size(50.dp)
-                            .constrainAs(weaponIcon) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                            }
-            )
-            Spacer(modifier = Modifier
-                    .width(15.dp)
-                    .constrainAs(spacer) {
-                        start.linkTo(weaponIcon.end)
-                    })
-            Text(text = data.hunterName, fontSize = 20.sp, modifier = Modifier.constrainAs(name) {
-                top.linkTo(weaponIcon.top)
-                start.linkTo(spacer.end)
-                bottom.linkTo(weaponName.top)
-            })
-            Text(
-                    text = data.hunterWeapon.weaponName,
-                    fontSize = 14.sp,
-                    modifier = Modifier.constrainAs(weaponName) {
-                        top.linkTo(name.bottom)
-                        start.linkTo(spacer.end)
-                        bottom.linkTo(weaponIcon.bottom)
-                    })
+            if (data != null) {
+                val (weaponIcon, spacer, name, weaponName, editIcon) = createRefs()
+                Image(
+                        painter = painterResource(id = data.hunterWeapon.icon),
+                        contentDescription = "",
+                        modifier = Modifier
+                                .size(50.dp)
+                                .constrainAs(weaponIcon) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                }
+                )
+                Spacer(modifier = Modifier
+                        .width(15.dp)
+                        .constrainAs(spacer) {
+                            start.linkTo(weaponIcon.end)
+                        })
+                Text(text = data.hunterName, fontSize = 20.sp, modifier = Modifier.constrainAs(name) {
+                    top.linkTo(weaponIcon.top)
+                    start.linkTo(spacer.end)
+                    bottom.linkTo(weaponName.top)
+                })
+                Text(
+                        text = data.hunterWeapon.weaponName,
+                        fontSize = 14.sp,
+                        modifier = Modifier.constrainAs(weaponName) {
+                            top.linkTo(name.bottom)
+                            start.linkTo(spacer.end)
+                            bottom.linkTo(weaponIcon.bottom)
+                        })
 //            Icon(
 //                    imageVector = Icons.Rounded.Edit,
 //                    contentDescription = "",
@@ -79,8 +82,30 @@ fun HunterViewHolder(data: HunterData, onEditListener: (HunterData) -> Unit) {
 //                                bottom.linkTo(weaponIcon.bottom)
 //                            }
 //                            .clickable { onEditListener(data) })
+            }else{
+                val (addIcon, spacer, addHunter) = createRefs()
+                Image(
+                        imageVector =Icons.Filled.Add,
+                        contentDescription = "",
+                        modifier = Modifier
+                                .size(50.dp)
+                                .constrainAs(addIcon) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                }
+                )
+                Spacer(modifier = Modifier
+                        .width(15.dp)
+                        .constrainAs(spacer) {
+                            start.linkTo(addIcon.end)
+                        })
+                Text(text = "Add Hunter", fontSize = 16.sp, modifier = Modifier.constrainAs(addHunter) {
+                    top.linkTo(addIcon.top)
+                    start.linkTo(spacer.end)
+                    bottom.linkTo(addIcon.bottom)
+                })
+            }
         }
-
     }
 }
 
@@ -99,12 +124,13 @@ fun HunterViewHolderPreview() {
             HunterData("hunter 2", HunterWeapon.DUALBLADES),
             HunterData("hunter 3", HunterWeapon.CHARGEBLADE))
     Column {
-
+        HunterViewHolder(
+                onEditListener = { data -> Log.d(data?.hunterName, "") })
         LazyColumn(state = rvState, verticalArrangement = Arrangement.spacedBy(0.dp), modifier = Modifier.weight(1f)) {
             itemsIndexed(HunterWeapon.values()) { index, value ->
                 HunterViewHolder(
                         data = HunterData(hunterName = "Hunter $index", value),
-                        onEditListener = { data -> Log.d(data.hunterName, "") })
+                        onEditListener = { data -> Log.d(data?.hunterName, "") })
                 if (index != HunterWeapon.values().size - 1)
                     Divider(modifier = Modifier
                             .fillMaxWidth()

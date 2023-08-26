@@ -58,7 +58,7 @@ fun MySelector(
             Text(
                     text = "$amount",
                     modifier = Modifier
-                            .padding(horizontal = 10.dp)
+                            .padding(horizontal = 7.dp)
                             .width(25.dp),
                     textAlign = TextAlign.Center
             )

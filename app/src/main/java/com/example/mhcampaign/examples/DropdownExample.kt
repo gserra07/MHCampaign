@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,43 +54,43 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyDropDown(label: String, itemList: List<String>, selectedIndex: Int = 0, onSelectoptionListener: (String, Int) -> Unit) {
-    MHCampaignTheme(darkTheme = false) {
+fun MyDropDown(label: String, itemList: List<String>, selectedIndex: Int = 0, paddingValues: PaddingValues = PaddingValues(32.dp), onSelectoptionListener: (String, Int) -> Unit) {
 
-        var expanded by remember { mutableStateOf(false) }
-        var selectedText by remember { mutableStateOf(itemList[selectedIndex]) }
-        var dropDownWidth by remember { mutableStateOf(0) }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf("") }
+    var dropDownWidth by remember { mutableStateOf(0) }
+    if (selectedIndex >= 0)
+        selectedText = itemList[selectedIndex]
 
-        Box(modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp)) {
-            ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {
-                expanded = !expanded
-            }, modifier = Modifier.fillMaxWidth()
+    Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(paddingValues)) {
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = {
+            expanded = !expanded
+        }, modifier = Modifier.fillMaxWidth()
 
+        ) {
+
+            TextField(
+                    value = selectedText, onValueChange = {}, readOnly = true, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .onSizeChanged {
+                                dropDownWidth = it.width
+                            },
+                    label = { Text(text = label) },
+            )
+
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier
+                    .width(with(LocalDensity.current) { dropDownWidth.toDp() })
             ) {
-
-                TextField(
-                        value = selectedText, onValueChange = {}, readOnly = true, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        modifier = Modifier
-                                .menuAnchor()
-                                .fillMaxWidth()
-                                .onSizeChanged {
-                                    dropDownWidth = it.width
-                                },
-                        label = { Text(text = label) },
-                )
-
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier
-                        .width(with(LocalDensity.current) { dropDownWidth.toDp() })
-                ) {
-                    itemList.forEachIndexed { index, item ->
-                        DropdownMenuItem(text = { Text(text = item) }, onClick = {
-                            selectedText = item
-                            expanded = false
-                            onSelectoptionListener(selectedText, index)
-                        })
-                    }
+                itemList.forEachIndexed { index, item ->
+                    DropdownMenuItem(text = { Text(text = item) }, onClick = {
+                        selectedText = item
+                        expanded = false
+                        onSelectoptionListener(selectedText, index)
+                    })
                 }
             }
         }
