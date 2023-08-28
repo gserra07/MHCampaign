@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.mhcampaign.MHDropDown
+import com.example.mhcampaign.MHDropdownItemModel
 import com.example.mhcampaign.PartView
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
@@ -169,16 +171,34 @@ fun NewItemDialog(
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
-
-                MyDropDown(
-                    "New Item",
-                    availableItems.map { it.partName },
-                    selectedIndex,
-                    paddingValues = PaddingValues(20.dp)
-                ) { name, index ->
-                    Log.d("Dropdown", "$name  $index")
-                    selectedIndex = index
+                var dropdownItemModelList = mutableListOf<MHDropdownItemModel>()
+                availableItems.forEachIndexed { index, it ->
+                    dropdownItemModelList.add(
+                        MHDropdownItemModel(
+                            itemName = it.partName,
+                            itemIcon = it.type.icon,
+                            index = index,
+                            category = it.type.name
+                        )
+                    )
                 }
+                MHDropDown(
+                    label = "New Item",
+                    itemModelList = dropdownItemModelList,
+                    selectedIndex = selectedIndex,
+                    onItemSelected = { index, item -> selectedIndex = index },
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    grouped = true
+                )
+//                MyDropDown(
+//                    "New Item",
+//                    availableItems.map { it.partName },
+//                    selectedIndex,
+//                    paddingValues = PaddingValues(20.dp)
+//                ) { name, index ->
+//                    Log.d("Dropdown", "$name  $index")
+//                    selectedIndex = index
+//                }
                 OutlinedTextField(
                     label = { Text(text = "Quantity") },
                     value = quantity,
@@ -241,7 +261,7 @@ fun MyInventoryPreview() {
         HunterWeapon.LANCE,
         mutableListOf(
             PartModel(PartItem.SMALL_BONE, 0), PartModel(PartItem.HARDBONE, 3),
-            PartModel(PartItem.DRAGONITE, 1),          PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+            PartModel(PartItem.DRAGONITE, 1), PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
             PartModel(PartItem.GREAT_JAGRAS_CLAW),
         )
     )

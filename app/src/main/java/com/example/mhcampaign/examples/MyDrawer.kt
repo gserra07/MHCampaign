@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.CampaignView
 import com.example.mhcampaign.HunterView
+import com.example.mhcampaign.MHDropDownPreview
 import com.example.mhcampaign.MyHunterSelectorPreview
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
@@ -143,7 +144,7 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
-                            content = { MyHunterSelectorPreview() })
+                            content = { MHDropDownPreview() })
                     }
 
                     else -> {
