@@ -6,7 +6,13 @@ class HunterData(
     var hunterName: String,
     var hunterWeapon: HunterWeapon,
     var inventory: MutableList<PartModel> = mutableListOf()
-)
+) {
+    var campaignId: Int? = null
+    fun campaignId(i: Int): HunterData {
+        campaignId = i
+        return this
+    }
+}
 
 enum class HunterWeapon(val weaponName: String, val icon: Int) {
     BOW("Bow", R.drawable.bow_icon),

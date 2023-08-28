@@ -31,7 +31,7 @@ fun HunterView(dataList: List<HunterData>) {
     }
     Column {
         HunterViewHolder(
-            onEditListener = { data ->
+            onEditListener = { data,index ->
                 Log.d(data?.hunterName, "")
                 selectedHunter = null
                 visible = true
@@ -43,7 +43,7 @@ fun HunterView(dataList: List<HunterData>) {
             itemsIndexed(dataList) { index, item ->
                 HunterViewHolder(
                     data = item,
-                    onEditListener = { data ->
+                    onEditListener = { data, index ->
                         Log.d(data?.hunterName, "")
                         selectedHunter = data
                         visible = true

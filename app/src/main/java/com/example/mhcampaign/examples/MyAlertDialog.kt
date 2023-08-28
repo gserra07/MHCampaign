@@ -85,7 +85,7 @@ fun MyCustomDialog(
 
             Dialog(
                     onDismissRequest = { },
-                    properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+                    properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
             ) {
                 Column(
                         modifier = Modifier

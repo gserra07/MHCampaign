@@ -25,53 +25,63 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MySelector(
-        amountIn: Int,
-        imageDrawable: Int? = null,
-        iconSize: Dp = 60.dp,
-        onValueChange: (Int) -> Unit
+    amountIn: Int,
+    imageDrawable: Int? = null,
+    maxLimit: Int? = null,
+    minLimit: Int? = null,
+    iconSize: Dp = 60.dp,
+    onValueChange: (Int) -> Unit
 ) {
     var amount by remember { mutableStateOf(amountIn) }
     Box(contentAlignment = Alignment.Center) {
         Row(
-                verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically
         ) {
             imageDrawable?.let { it1 -> painterResource(id = it1) }?.let { it2 ->
                 Image(
-                        painter = it2,
-                        contentDescription = "",
-                        modifier = Modifier
-                                .size(iconSize)
-                                .padding(end = 10.dp),
+                    painter = it2,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(iconSize)
+                        .padding(end = 10.dp),
                 )
             }
             Image(
-                    painter = painterResource(id = R.drawable.minus_white),
-                    contentDescription = "",
-                    modifier = Modifier
-                            .width(25.dp)
-                            .height(25.dp)
-                            .clickable {
+                painter = painterResource(id = R.drawable.minus_white),
+                contentDescription = "",
+                modifier = Modifier
+                    .width(25.dp)
+                    .height(25.dp)
+                    .clickable {
+                        if (minLimit != null) {
+                            if (amount > minLimit)
                                 amount--
-                                onValueChange(amount)
-                            },
+                        } else
+                            amount--
+                        onValueChange(amount)
+                    },
             )
             Text(
-                    text = "$amount",
-                    modifier = Modifier
-                            .padding(horizontal = 7.dp)
-                            .width(25.dp),
-                    textAlign = TextAlign.Center
+                text = "$amount",
+                modifier = Modifier
+                    .padding(horizontal = 7.dp)
+                    .width(25.dp),
+                textAlign = TextAlign.Center
             )
             Image(
-                    painter = painterResource(id = R.drawable.add_black),
-                    contentDescription = "",
-                    modifier = Modifier
-                            .width(25.dp)
-                            .height(25.dp)
-                            .clickable {
+                painter = painterResource(id = R.drawable.add_black),
+                contentDescription = "",
+                modifier = Modifier
+                    .width(25.dp)
+                    .height(25.dp)
+                    .clickable {
+                        if (maxLimit != null) {
+                            if (amount < maxLimit)
                                 amount++
-                                onValueChange(amount)
-                            },
+                        } else
+                            amount++
+                        onValueChange(amount)
+                    },
             )
         }
     }
@@ -86,8 +96,8 @@ fun MyViewPreview() {
         Box {
 
             MySelector(
-                    potions,
-                    R.drawable.potion
+                potions,
+                R.drawable.potion
             ) { }
         }
         Box() {

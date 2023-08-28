@@ -53,8 +53,8 @@ fun HunterDialog(
         }
 
         Dialog(
-            onDismissRequest = { },
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            onDismissRequest = {onDismissListener() },
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Column(
                 modifier = Modifier

@@ -62,10 +62,10 @@ fun HunterSelector(
                 )
             }
             Dialog(
-                onDismissRequest = { },
+                onDismissRequest = { onDismissListener()},
                 properties = DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
                 )
             ) {
                 Column(
@@ -122,8 +122,6 @@ fun HunterSelector(
                                 if (selectedIndex >= 0) dataList[selectedIndex] else null,
                                 selectedIndex
                             )
-                            selectedHunter?.hunterName = hunterName
-                            selectedHunter?.hunterWeapon = HunterWeapon.values()[selectedIndex]
                         }, modifier = Modifier.width(100.dp)) {
                             Text(text = context.getString(R.string.save_string))
                         }
@@ -146,7 +144,7 @@ fun MyHunterSelectorPreview() {
         HunterData("hunter 4", HunterWeapon.INSECTGLAIVE),
     )
     var visible by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     TextButton(onClick = { visible = !visible }) {
         Text(text = "boton para ver")

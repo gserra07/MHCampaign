@@ -30,9 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.CampaignView
 import com.example.mhcampaign.HunterView
 import com.example.mhcampaign.MyHunterSelectorPreview
+import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
+import com.example.mhcampaign.model.PartItem
+import com.example.mhcampaign.model.PartModel
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -86,12 +89,26 @@ fun MyDrawerPreview() {
         val selectedItem = remember { mutableStateOf(menuItems[0]) }
         val drawerState = rememberDrawerState(DrawerValue.Closed)
 
-        val dataList = listOf(
-            HunterData("Ganexy", HunterWeapon.DUALBLADES),
-            HunterData("Adriatus", HunterWeapon.HEAVYBOWGUN),
-            HunterData("Garatoth", HunterWeapon.SWITCHAXE),
+        val campaignList = listOf(
+            CampaignModel("Campaña 1", 2, 4).id(0),
+            CampaignModel("Campaña 2").id(1),
+            CampaignModel("Campaña 3").id(2)
+        )
+        val hunterDataList = listOf(
+            HunterData(
+                "Ganexy",
+                HunterWeapon.DUALBLADES,
+                mutableListOf(
+                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+                    PartModel(PartItem.CARBALITE),
+                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+                    PartModel(PartItem.GREAT_JAGRAS_CLAW),
+                )
+            ).campaignId(0),
+            HunterData("Adriatus", HunterWeapon.HEAVYBOWGUN).campaignId(0),
+            HunterData("Garatoth", HunterWeapon.SWITCHAXE).campaignId(0),
             HunterData("Ingravitto", HunterWeapon.CHARGEBLADE),
-            HunterData("Guille", HunterWeapon.LONGSWORD),
+            HunterData("Guille", HunterWeapon.LONGSWORD).campaignId(0),
             HunterData("SpiderWolf", HunterWeapon.BOW)
         )
 
@@ -108,7 +125,7 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
-                            content = { CampaignView(dataList) })
+                            content = { CampaignView(campaignList, hunterDataList) })
                     }
 
                     1 -> {
@@ -117,7 +134,7 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
-                            content = { HunterView(dataList = dataList) })
+                            content = { HunterView(dataList = hunterDataList) })
                     }
 
                     2 -> {

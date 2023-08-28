@@ -61,7 +61,7 @@ fun Inventory(
     if (visibility) {
         Dialog(
             onDismissRequest = { onCloseListener(hunterData) },
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Column(
                 modifier = Modifier
@@ -74,7 +74,7 @@ fun Inventory(
             ) {
 
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(1),
+                    columns = GridCells.Fixed(2),
                     modifier = Modifier
 ////                        .padding(10.dp)
                         .weight(1f),
@@ -82,7 +82,7 @@ fun Inventory(
                         itemsIndexed(hunterData.inventory) { index, item ->
                             Box(
                                 modifier = Modifier
-                                    .padding(horizontal = 20.dp)
+//                                    .padding(horizontal = 20.dp)
                                     .fillMaxWidth()
                             ) {
 
@@ -114,7 +114,7 @@ fun Inventory(
                 ) {
                     Text(text = "Cerrar", textAlign = TextAlign.Center)
                 }
-                NewItem(
+                NewItemDialog(
                     visibility = childVisibility,
                     hunterData = hunterData,
                     onSaveListener = { item, quantity ->
@@ -136,7 +136,7 @@ fun Inventory(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewItem(
+fun NewItemDialog(
     visibility: Boolean,
     hunterData: HunterData,
     onSaveListener: (partItem: PartItem, quantity: Int) -> Unit,
@@ -152,13 +152,13 @@ fun NewItem(
     }
     if (visibility) {
         var quantity by remember {
-            mutableStateOf("")
+            mutableStateOf("1")
         }
         Dialog(
             onDismissRequest = {
                 onCloseListener()
             },
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Column(
                 modifier = Modifier
@@ -173,7 +173,8 @@ fun NewItem(
                 MyDropDown(
                     "New Item",
                     availableItems.map { it.partName },
-                    selectedIndex
+                    selectedIndex,
+                    paddingValues = PaddingValues(20.dp)
                 ) { name, index ->
                     Log.d("Dropdown", "$name  $index")
                     selectedIndex = index
@@ -184,7 +185,7 @@ fun NewItem(
                     onValueChange = { quantity = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
-                    modifier = Modifier.padding(horizontal = 32.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -240,7 +241,8 @@ fun MyInventoryPreview() {
         HunterWeapon.LANCE,
         mutableListOf(
             PartModel(PartItem.SMALL_BONE, 0), PartModel(PartItem.HARDBONE, 3),
-            PartModel(PartItem.DRAGONITE, 1)
+            PartModel(PartItem.DRAGONITE, 1),          PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+            PartModel(PartItem.GREAT_JAGRAS_CLAW),
         )
     )
     Inventory(

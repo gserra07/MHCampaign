@@ -2,7 +2,7 @@ package com.example.mhcampaign.model
 
 import com.example.mhcampaign.R
 
-data class PartModel(var name: PartItem, var count: Int = 0) {
+data class PartModel(var name: PartItem, var count: Int = 1) {
     fun count(count: Int): PartModel {
         this.count = count
         return this

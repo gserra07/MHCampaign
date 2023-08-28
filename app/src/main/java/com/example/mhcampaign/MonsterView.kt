@@ -33,23 +33,27 @@ fun MonsterView(data: MonsterData) {
     ConstraintLayout {
         val (monsterIcon, counters) = createRefs()
 
-        Image(painter = painterResource(id = data.monster.icon), contentDescription = "Monster Icon", modifier = Modifier
+        Image(painter = painterResource(id = data.monster.icon),
+            contentDescription = "Monster Icon",
+            modifier = Modifier
                 .size(120.dp)
                 .constrainAs(monsterIcon) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                 })
         Box(modifier = Modifier
-                .constrainAs(counters) {
-                    top.linkTo(monsterIcon.top)
-                    start.linkTo(monsterIcon.end, 50.dp)
-                    bottom.linkTo(monsterIcon.bottom)
-                }) {
+            .constrainAs(counters) {
+                top.linkTo(monsterIcon.top)
+                start.linkTo(monsterIcon.end, 50.dp)
+                bottom.linkTo(monsterIcon.bottom)
+            }) {
             Column {
-                MySelector(amountIn = easyCount, R.drawable.blue_star_24, 40.dp) {}
-                MySelector(amountIn = mediumCount, R.drawable.two_stars, 40.dp) {}
-                MySelector(amountIn = hardCount, if (data.monster.isFourStars) R.drawable.four_stars
-                else R.drawable.three_stars, 40.dp) {}
+                MySelector(amountIn = easyCount, R.drawable.blue_star_24, iconSize = 40.dp) {}
+                MySelector(amountIn = mediumCount, R.drawable.two_stars, iconSize = 40.dp) {}
+                MySelector(
+                    amountIn = hardCount, if (data.monster.isFourStars) R.drawable.four_stars
+                    else R.drawable.three_stars, iconSize = 40.dp
+                ) {}
             }
 
         }
