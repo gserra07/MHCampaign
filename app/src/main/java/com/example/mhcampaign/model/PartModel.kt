@@ -9,14 +9,25 @@ data class PartModel(var name: PartItem, var count: Int = 1) {
     }
 }
 
-enum class PartType(val icon: Int) {
-    ORE(R.drawable.ore_icon),
-    BONE(R.drawable.bone_icon),
-    MONSTERPART(R.drawable.monster_skin_icon),
-    SAC(R.drawable.sac_icon),
-    SCALE(R.drawable.scale_icon),
+enum class PartType(
+    val typeName: String,
+    val icon: Int
+) {
+    ORE("Ore", R.drawable.ore_blue_icon),
+    BONE("Bone", R.drawable.bone_orange_icon),
+    MONSTERPART("Monster Part", R.drawable.part_skin_green_icon),
+    JagrasPART("JAgras Part", R.drawable.part_skin_green_icon),
+    SAC("Sac", R.drawable.sac_purple_icon),
+    SCALE("Scale", R.drawable.scale_white_icon),
 }
 
+enum class Group(var groupName:String){
+    COMMONS("Common"),
+    OTHER("Other Resources"),
+    MONSTERPART("Monster Parts")
+}
+
+//enum class PartItem(var partName: String,var partGroup: Group, var partType: PartType,var partIcon: Int) {
 enum class PartItem(var partName: String, var type: PartType) {
 
     //ORES

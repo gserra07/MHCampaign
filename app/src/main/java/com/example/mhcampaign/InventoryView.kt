@@ -1,4 +1,4 @@
-package com.example.mhcampaign.examples
+package com.example.mhcampaign
 
 import android.content.Context
 import android.util.Log
@@ -40,9 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.mhcampaign.MHDropDown
-import com.example.mhcampaign.MHDropdownItemModel
-import com.example.mhcampaign.PartView
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.PartItem
@@ -68,32 +65,24 @@ fun Inventory(
             Column(
                 modifier = Modifier
                     .background(
-                        color = md_theme_light_primaryContainer,
-                        shape = RoundedCornerShape(20.dp)
+                        color = md_theme_light_primaryContainer, shape = RoundedCornerShape(20.dp)
                     )
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-////                        .padding(10.dp)
-                        .weight(1f),
+                LazyVerticalGrid(columns = GridCells.Fixed(2),
+                    modifier = Modifier.weight(1f),
                     content = {
-                        itemsIndexed(hunterData.inventory) { index, item ->
+                        itemsIndexed(hunterData.inventory) { _, item ->
                             Box(
-                                modifier = Modifier
-//                                    .padding(horizontal = 20.dp)
-                                    .fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth()
                             ) {
-
-                                PartView(item, PaddingValues(horizontal = 5.dp, vertical = 10.dp)) {
+                                PartView(item, PaddingValues(horizontal = 5.dp, vertical = 5.dp)) {
                                     Log.d("PartView", "${it.name}  ${it.count}")
                                 }
                             }
                         }
-
                     })
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -103,21 +92,18 @@ fun Inventory(
                     Button(
                         onClick = {
                             childVisibility = true
-                        },
-                        modifier = Modifier.fillMaxWidth()
+                        }, modifier = Modifier.fillMaxWidth()
                     ) {
                         Image(imageVector = Icons.Filled.Add, contentDescription = "")
                         Text(text = "New item", fontSize = 14.sp)
                     }
                 }
                 Button(
-                    onClick = { onCloseListener(hunterData) },
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = { onCloseListener(hunterData) }, modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "Cerrar", textAlign = TextAlign.Center)
                 }
-                NewItemDialog(
-                    visibility = childVisibility,
+                NewItemDialog(visibility = childVisibility,
                     hunterData = hunterData,
                     onSaveListener = { item, quantity ->
                         hunterData.inventory.add(
@@ -141,12 +127,12 @@ fun Inventory(
 fun NewItemDialog(
     visibility: Boolean,
     hunterData: HunterData,
+    context: Context = LocalContext.current,
     onSaveListener: (partItem: PartItem, quantity: Int) -> Unit,
     onCloseListener: () -> Unit
 ) {
-    var availableItems =
-        PartItem.values().filter { !hunterData.inventory.map { it.name }.contains(it) }
-//    var availableItems = PartItem.values().map { it.partName }
+    val availableItems =
+        PartItem.values().filter { it -> !hunterData.inventory.map { it.name }.contains(it) }
     var selectedIndex by remember {
         mutableStateOf(
             -1
@@ -165,20 +151,19 @@ fun NewItemDialog(
             Column(
                 modifier = Modifier
                     .background(
-                        color = md_theme_light_primaryContainer,
-                        shape = RoundedCornerShape(20.dp)
+                        color = md_theme_light_primaryContainer, shape = RoundedCornerShape(20.dp)
                     )
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
-                var dropdownItemModelList = mutableListOf<MHDropdownItemModel>()
+                val dropdownItemModelList = mutableListOf<MHDropdownItemModel>()
                 availableItems.forEachIndexed { index, it ->
                     dropdownItemModelList.add(
                         MHDropdownItemModel(
                             itemName = it.partName,
                             itemIcon = it.type.icon,
                             index = index,
-                            category = it.type.name
+                            category = it.type.typeName
                         )
                     )
                 }
@@ -186,19 +171,10 @@ fun NewItemDialog(
                     label = "New Item",
                     itemModelList = dropdownItemModelList,
                     selectedIndex = selectedIndex,
-                    onItemSelected = { index, item -> selectedIndex = index },
+                    onItemSelected = { index, _ -> selectedIndex = index },
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    grouped = true
+                    groupEnable = true
                 )
-//                MyDropDown(
-//                    "New Item",
-//                    availableItems.map { it.partName },
-//                    selectedIndex,
-//                    paddingValues = PaddingValues(20.dp)
-//                ) { name, index ->
-//                    Log.d("Dropdown", "$name  $index")
-//                    selectedIndex = index
-//                }
                 OutlinedTextField(
                     label = { Text(text = "Quantity") },
                     value = quantity,
@@ -219,20 +195,17 @@ fun NewItemDialog(
                         onCloseListener()
                         selectedIndex = -1
                     }, modifier = Modifier.weight(1f)) {
-//                        Text(text = context.getString(R.string.cancel_string))
+                        Text(text = context.getString(R.string.cancel_string))
                         Text(text = "Cancel")
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = {
-                        if (selectedIndex != -1)
-                            onSaveListener(
-                                availableItems[selectedIndex],
-                                quantity.toIntOrNull() ?: 0
-                            )
+                        if (selectedIndex != -1) onSaveListener(
+                            availableItems[selectedIndex], quantity.toIntOrNull() ?: 0
+                        )
                         selectedIndex = -1
                     }, modifier = Modifier.weight(1f)) {
-//                        Text(text =context.getString(R.string.add_item_string)
-                        Text(text = "Add Item")
+                        Text(text = context.getString(R.string.add_item_string))
                     }
                 }
             }
@@ -244,7 +217,7 @@ fun NewItemDialog(
 @Preview(showSystemUi = true)
 @Composable
 fun MyInventoryPreview() {
-    var context = LocalContext.current
+    val context = LocalContext.current
     var visible by remember {
         mutableStateOf(false)
     }
@@ -256,17 +229,14 @@ fun MyInventoryPreview() {
         }
 
     }
-    var data = HunterData(
-        "Hunter 1",
-        HunterWeapon.LANCE,
-        mutableListOf(
+    val data = HunterData(
+        "Hunter 1", HunterWeapon.LANCE, mutableListOf(
             PartModel(PartItem.SMALL_BONE, 0), PartModel(PartItem.HARDBONE, 3),
             PartModel(PartItem.DRAGONITE, 1), PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
             PartModel(PartItem.GREAT_JAGRAS_CLAW),
         )
     )
-    Inventory(
-        hunterData = data,
+    Inventory(hunterData = data,
         visibility = visible,
         context = context,
         onCloseListener = { visible = false })

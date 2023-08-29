@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.examples.MyDropDown
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
@@ -59,7 +60,8 @@ fun MHDropDown(
     notSetLabel: String? = null,
     itemModelList: List<MHDropdownItemModel>,
     selectedIndex: Int = -1,
-    grouped: Boolean,
+    searchEnable: Boolean = true,
+    groupEnable: Boolean = true,
     onItemSelected: (index: Int, item: MHDropdownItemModel) -> Unit,
     selectedItemToString: (MHDropdownItemModel) -> String = { it.itemName },
     drawItem: @Composable (MHDropdownItemModel, Boolean, Boolean, () -> Unit) -> Unit = { item, selected, itemEnabled, onClick ->
@@ -72,7 +74,7 @@ fun MHDropDown(
     },
 
     ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(true) }
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
         OutlinedTextField(
@@ -102,6 +104,7 @@ fun MHDropDown(
         }
         Dialog(
             onDismissRequest = { expanded = false },
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
@@ -118,13 +121,15 @@ fun MHDropDown(
                             color = md_theme_light_primaryContainer,
                         )
                 ) {
-                    OutlinedTextField(
-                        label = { Text(text = label) },
-                        value = filter,
-                        onValueChange = { filter = it },
-                        singleLine = true,
-                        modifier = Modifier.padding(horizontal = 20.dp)
-                    )
+                    if (searchEnable) {
+                        OutlinedTextField(
+                            label = { Text(text = "Search") },
+                            value = filter,
+                            onValueChange = { filter = it },
+                            singleLine = true,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+                    }
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -140,24 +145,27 @@ fun MHDropDown(
                                 )
                             }
                         }
-                        var filteredList =
+                        val filteredList =
                             itemModelList.filter { it.itemName.contains(filter, true) }
-                        var groupedList: Map<String, List<MHDropdownItemModel>> =
-                            filteredList.sortedBy { it.itemName }.groupBy { it.category }
+                        val groupedList: Map<String, List<MHDropdownItemModel>> = if (groupEnable)
+                            filteredList.groupBy { it.category }
+                        else
+                            mapOf(pair = Pair("", filteredList))
                         groupedList.forEach { (category, itemList) ->
-                            stickyHeader {
-                                Text(
-                                    text = category,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 5.dp, vertical = 5.dp)
-                                        .background(color = md_theme_light_primaryContainer),
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                            if (groupEnable)
+                                stickyHeader {
+                                    Text(
+                                        text = category,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 5.dp, vertical = 5.dp)
+                                            .background(color = md_theme_light_primaryContainer),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
 
-                            itemsIndexed(itemList) { index, item ->
+                            itemsIndexed(if (groupEnable) itemList.sortedBy { it.itemName } else itemList) { index, item ->
                                 val selectedItem = item.index == selectedIndex
                                 drawItem(item, selectedItem, true) {
                                     onItemSelected(item.index, item)
@@ -235,7 +243,7 @@ fun MHDropDownPreview() {
                 )
             }
             var selectedIndex by remember { mutableStateOf(-1) }
-            var dataList = mutableListOf<MHDropdownItemModel>()
+            val dataList = mutableListOf<MHDropdownItemModel>()
             HunterWeapon.values().forEachIndexed { index, it ->
                 dataList.add(
                     MHDropdownItemModel(
@@ -252,7 +260,8 @@ fun MHDropDownPreview() {
                 selectedIndex = selectedIndex,
                 onItemSelected = { index, _ -> selectedIndex = index },
                 modifier = Modifier.padding(horizontal = 20.dp),
-                grouped = true
+                groupEnable = true,
+                searchEnable = true
             )
         }
     }

@@ -33,6 +33,7 @@ fun MyScaffold(title: String,
                scope: CoroutineScope,
                drawerState: DrawerState,
                onFloatingActionButtonClick: (() -> Unit)? = null,
+               onFloatingButtonContent: @Composable (() -> Unit)?,
                content: @Composable () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -47,7 +48,9 @@ fun MyScaffold(title: String,
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                 floatingActionButton = {
                     if (onFloatingActionButtonClick != null)
-                        MyFloatingActionButton(onFloatingActionButtonClick)
+                        //onFloatingButtonContent
+                        MyfloatingPreview()
+                        //MyFloatingActionButton(onFloatingActionButtonClick)
                 },
                 content = { padding ->
                     Box(modifier = Modifier.padding(padding)) {

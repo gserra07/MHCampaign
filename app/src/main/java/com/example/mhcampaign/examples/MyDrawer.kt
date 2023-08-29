@@ -30,11 +30,13 @@ import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.CampaignView
 import com.example.mhcampaign.HunterView
 import com.example.mhcampaign.MHDropDownPreview
-import com.example.mhcampaign.MyHunterSelectorPreview
+import com.example.mhcampaign.MyInventoryPreview
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
+import com.example.mhcampaign.model.Monster
+import com.example.mhcampaign.model.MonsterData
 import com.example.mhcampaign.model.PartItem
 import com.example.mhcampaign.model.PartModel
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
@@ -90,10 +92,15 @@ fun MyDrawerPreview() {
         val selectedItem = remember { mutableStateOf(menuItems[0]) }
         val drawerState = rememberDrawerState(DrawerValue.Closed)
 
+        val monsterList = mutableListOf(
+            MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0),
+            MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0),
+            MonsterData(Monster.ANJANATH, 1, 1, 0)
+        )
         val campaignList = listOf(
-            CampaignModel("Campaña 1", 2, 4).id(0),
-            CampaignModel("Campaña 2").id(1),
-            CampaignModel("Campaña 3").id(2)
+            CampaignModel("Campaña 1", 2, 4, monsterList = monsterList).id(0),
+            CampaignModel("Campaña 2",0,0).id(1),
+            CampaignModel("Campaña 3",0,0).id(2)
         )
         val hunterDataList = listOf(
             HunterData(
@@ -126,6 +133,7 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
+                            onFloatingButtonContent = {MyfloatingPreview()},
                             content = { CampaignView(campaignList, hunterDataList) })
                     }
 
@@ -135,6 +143,8 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
+                            onFloatingButtonContent = {MyfloatingPreview()},
+
                             content = { HunterView(dataList = hunterDataList) })
                     }
 
@@ -144,6 +154,8 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
+                            onFloatingButtonContent = {MyfloatingPreview()},
+
                             content = { MHDropDownPreview() })
                     }
 
@@ -153,6 +165,8 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {
                             },
+                            onFloatingButtonContent = {MyfloatingPreview()},
+
                             content = { MyInventoryPreview() })
 
                     }

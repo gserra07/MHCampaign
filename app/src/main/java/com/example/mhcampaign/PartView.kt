@@ -18,7 +18,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,7 +60,7 @@ fun PartView(
             .clickable { }
     ) {
         if (data != null) {
-            val (partIcon, partName, quantity) = createRefs()
+            val (partIcon, partName, quantity, addIcon, minusIcon) = createRefs()
             var valueText by remember { mutableStateOf("${data.count}") }
 
             Image(
@@ -81,6 +85,18 @@ fun PartView(
                     end.linkTo(quantity.start)
                     width = Dimension.fillToConstraints
                 })
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowUp,
+                contentDescription = "Add icon",
+                modifier = Modifier
+                    .constrainAs(addIcon) {
+                        top.linkTo(partIcon.top)
+                        start.linkTo(quantity.start)
+                        end.linkTo(quantity.end)
+                        bottom.linkTo(quantity.top, 2.dp)
+                    }
+                    .clickable { valueText = (valueText.toInt() + 1).toString() }
+            )
             BasicTextField(
                 value = valueText,
                 onValueChange = {
@@ -91,51 +107,35 @@ fun PartView(
                     }
                 },
                 maxLines = 1,
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.End),
+                textStyle = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .width(20.dp)
-                    .defaultMinSize(minWidth = 40.dp).constrainAs(quantity){
+                    .defaultMinSize(minWidth = 40.dp)
+                    .constrainAs(quantity) {
                         top.linkTo(partIcon.top)
-                        end.linkTo(parent.end,10.dp)
+                        end.linkTo(parent.end, 10.dp)
+                    },
+                readOnly = true
+            )
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = "Substract icon",
+                modifier = Modifier
+                    .constrainAs(minusIcon) {
+                        top.linkTo(quantity.bottom)
+                        start.linkTo(quantity.start)
+                        end.linkTo(quantity.end)
                         bottom.linkTo(partIcon.bottom)
                     }
-            )
+                    .clickable {
+                        if (valueText.toInt() > 0)
+                            valueText = (valueText.toInt() - 1).toString()
+                    }
 
+            )
         }
     }
-//    Row(
-//        verticalAlignment = Alignment.CenterVertically,
-//        modifier = Modifier
-//            .padding(paddingValues)
-//            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
-//    ) {
-//        Image(
-//            painter = painterResource(id = data.name.type.icon),
-//            contentDescription = "",
-//            modifier = Modifier.size(25.dp)
-//        )
-//        Spacer(modifier = Modifier.width(5.dp))
-//        Text(text = data.name.partName, fontSize = 13.sp)
-//        Spacer(modifier = Modifier.width(5.dp))
-//        var valueText by remember { mutableStateOf("${data.count}") }
-//        BasicTextField(
-//            value = valueText,
-//            onValueChange = {
-//                if (it.length < 3) {
-//                    valueText = it
-//                    data.count = it.toIntOrNull() ?: 0
-//                    onTextChange(data)
-//                }
-//            },
-//            maxLines = 1,
-//            textStyle = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.End),
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//            modifier = Modifier
-//                .width(40.dp)
-//                .defaultMinSize(minWidth = 40.dp)
-//        )
-//    }
 }
 
 @Preview(showSystemUi = true, device = "spec:width=351dp,height=891dp")

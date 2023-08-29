@@ -5,10 +5,12 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mhcampaign.examples.Inventory
 import com.example.mhcampaign.examples.MyDropDown
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
@@ -36,7 +37,7 @@ import com.example.mhcampaign.model.MonsterData
 @Composable
 fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterData>) {
 
-    var selectedIndex by remember {
+    var selectedCampaignIndex by remember {
         mutableStateOf(0)
     }
     var campaignHunters by remember {
@@ -57,36 +58,44 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
     Column {
 
         //Campaign selector
-        MyDropDown("Campaign", campaignList.map { it.name }, selectedIndex) { name, index ->
+        MyDropDown("Campaign", campaignList.map { it.name }, selectedCampaignIndex) { name, index ->
             Log.d("Dropdown", "$name  $index")
-            selectedIndex = index
+            selectedCampaignIndex = index
         }
         //Potions and days
-        val potions by remember { mutableStateOf(campaignList[selectedIndex].potions) }
-        val days by remember { mutableStateOf(campaignList[selectedIndex].days) }
+        var potions = campaignList[selectedCampaignIndex].potions
+        var days = campaignList[selectedCampaignIndex].days
+        Log.d("Campaign", "Pociones de bbdd ${campaignList[selectedCampaignIndex]}")
+        Log.d("Campaign", "Pociones de la view $potions")
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
             Box {
                 MySelector(
-                    potions, R.drawable.potion, maxLimit = 3, minLimit = 0
-                ) { Log.d("Campaign", "pociones $it") }
+                    potions, R.drawable.potion_icon, maxLimit = 3, minLimit = 0
+                ) {
+                    Log.d("Campaign", "Pociones de bbdd ${campaignList[selectedCampaignIndex]}")
+                    Log.d("Campaign", "Pociones de la view $it")
+                    campaignList[selectedCampaignIndex].potions = it
+                }
             }
             Box() {
-
-                MySelector(days, R.drawable.calendar_white, minLimit = 0) { }
+                MySelector(days, R.drawable.calendar_white, minLimit = 0) {
+                    campaignList[selectedCampaignIndex].days = it
+                }
             }
 
         }
 
-        //Campaing`s hunters
+        //Campaign`s hunters
 
-
-        campaignHunters = hunterDataList.filter { it.campaignId == campaignList[selectedIndex].id }
-            .toMutableList()
+        campaignHunters =
+            hunterDataList.filter { it.campaignId == campaignList[selectedCampaignIndex].id }
+                .toMutableList()
         campaignHunters = makeCampaignHunters(campaignHunters = campaignHunters)
 
 
         LazyVerticalGrid(
             horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(start = 20.dp),
             columns = GridCells.Fixed(2),
             content = {
                 itemsIndexed(campaignHunters) { index, hunterData ->
@@ -111,7 +120,7 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
                 )
                 editDialogVisibility = false
                 selectedHunter?.campaignId(-1)
-                hData?.campaignId(selectedIndex)
+                hData?.campaignId(selectedCampaignIndex)
             },
             onInventoryListener = {
                 inventoryVisibility = true
@@ -122,17 +131,18 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
                 editDialogVisibility = false
             })
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        val monsterList = listOf(
-            MonsterData(Monster.GREATJAGRAS, 1, 0, 0),
-            MonsterData(Monster.RATHALOS, 0, 2, 0)
-        )
+        //Campaign's monsters
+        val monsterList = campaignList[selectedCampaignIndex].monsterList
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth(),
             content = {
                 itemsIndexed(monsterList) { index, monsterData ->
-                    MonsterView(data = monsterData)
+                    MonsterView(
+                        data = monsterData,
+                        PaddingValues(vertical = 5.dp, horizontal = 20.dp)
+                    )
 
                 }
             })
@@ -158,13 +168,20 @@ fun makeCampaignHunters(
 @Preview(showSystemUi = true)
 @Composable
 fun MyCampaignreview() {
+    val monsterList = mutableListOf(
+        MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0),
+        MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0),
+        MonsterData(Monster.ANJANATH, 1, 1, 0)
+    )
     val campaignList = listOf(
-        CampaignModel("Campaña 1", 2, 4).id(1), CampaignModel("Campaña 2"), CampaignModel("Campaña 3")
+        CampaignModel("Campaña 1", 2, 3, monsterList = monsterList).id(0),
+        CampaignModel("Campaña 2", 0, 0).id(1),
+        CampaignModel("Campaña 3").id(2)
     )
     val dataList = listOf(
-        HunterData("hunter 1", HunterWeapon.BOW).campaignId(1),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES).campaignId(1),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD).campaignId(1),
+        HunterData("hunter 1", HunterWeapon.BOW).campaignId(0),
+        HunterData("hunter 2", HunterWeapon.DUALBLADES).campaignId(0),
+        HunterData("hunter 3", HunterWeapon.GREATSWORD).campaignId(0),
         HunterData("hunter 4", HunterWeapon.BOW),
         HunterData("hunter 5", HunterWeapon.LANCE),
         HunterData("hunter 6", HunterWeapon.INSECTGLAIVE)

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun MySelector(
     amountIn: Int,
-    imageDrawable: Int? = null,
+    icon: Int? = null,
     maxLimit: Int? = null,
     minLimit: Int? = null,
     iconSize: Dp = 60.dp,
@@ -37,7 +37,7 @@ fun MySelector(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            imageDrawable?.let { it1 -> painterResource(id = it1) }?.let { it2 ->
+            icon?.let { it1 -> painterResource(id = it1) }?.let { it2 ->
                 Image(
                     painter = it2,
                     contentDescription = "",
