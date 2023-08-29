@@ -3,13 +3,16 @@ package com.example.mhcampaign.model
 import com.example.mhcampaign.R
 
 enum class HunterWeapon(val weaponName: String, val icon: Int) {
-    BOW("Bow", R.drawable.weapon_bow_icon),
+    BOW(
+        "Bow",
+        R.drawable.weapon_bow_icon
+    ),
     CHARGEBLADE(
         "Charge Blade",
         R.drawable.weapon_charge_blade_icon
     ),
     DUALBLADES(
-        "Dual blades",
+        "Dual Blades",
         R.drawable.weapon_dual_blades_icon
     ),
     GREATSWORD(
@@ -49,7 +52,7 @@ enum class HunterWeapon(val weaponName: String, val icon: Int) {
         R.drawable.weapon_long_sword_icon
     ),
     SWITCHAXE(
-        "Switch Ax",
+        "Switch Axe",
         R.drawable.weapon_switch_axe_icon
     ),
     SWORDSHIELD(

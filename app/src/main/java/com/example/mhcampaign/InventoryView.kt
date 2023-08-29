@@ -42,8 +42,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
-import com.example.mhcampaign.model.PartItem
-import com.example.mhcampaign.model.PartModel
+import com.example.mhcampaign.model.enums.PartItem
+import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
