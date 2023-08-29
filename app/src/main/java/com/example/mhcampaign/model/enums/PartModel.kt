@@ -178,7 +178,7 @@ enum class PartItem(var partName: String, var partGroup: Group, var type: PartTy
     NERGIGANTE_CARAPACE("Nerg Carapace", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.part_monster_grey_icon),
     NERGIGANTE_GEM("Nerg Gem", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.gem_grey_icon),
     NERGIGANTE_HORN("Nerg Horn", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.claw_grey_icon),
-    NERGIGANTE_REGROWTH_PLATE("Nerg Regrowth Plate", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.part_monster_grey_icon),
+    NERGIGANTE_REGROWTH_PLATE("Nerg Regrowth Plate", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.plate_grey_icon),
     NERGIGANTE_TAIL("Nerg Tail", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.part_monster_grey_icon),
     NERGIGANTE_TALON("Nerg Talon", Group.MONSTER_PART, PartType.NERGIGANTE, R.drawable.part_monster_grey_icon),
 
