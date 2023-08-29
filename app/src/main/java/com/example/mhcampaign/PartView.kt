@@ -58,7 +58,7 @@ fun PartView(
             var valueText by remember { mutableStateOf("${data.count}") }
 
             Image(
-                painter = painterResource(id = data.name.type.icon),
+                painter = painterResource(id = data.name.partIcon),
                 contentDescription = "",
                 modifier = Modifier
                     .size(25.dp)
