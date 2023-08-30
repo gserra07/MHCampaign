@@ -38,6 +38,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
+import com.example.mhcampaign.ui.theme.md_theme_light_primary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,93 +50,94 @@ fun PartView(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 10.dp)
+            .padding(paddingValues)
             .defaultMinSize(minHeight = 30.dp)
-            .clickable { }
     ) {
-        if (data != null) {
-            val (partIcon, partName, quantity, addIcon, minusIcon) = createRefs()
-            var valueText by remember { mutableStateOf("${data.quantity}") }
+        val (partIcon, partName, quantity, addIcon, minusIcon) = createRefs()
+        var valueText by remember { mutableStateOf("${data.quantity}") }
 
-            Image(
-                painter = painterResource(id = data.name.partIcon),
-                contentDescription = "",
-                modifier = Modifier
-                    .size(25.dp)
-                    .constrainAs(partIcon) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                    }
-            )
-            Text(
-                text = data.name.partName,
-                fontSize = 12.sp,
-                lineHeight = 13.sp,
-                modifier = Modifier.constrainAs(partName) {
+        Image(
+            painter = painterResource(id = data.name.partIcon),
+            contentDescription = "",
+            modifier = Modifier
+                .size(25.dp)
+                .constrainAs(partIcon) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                }
+        )
+        Text(
+            text = data.name.partName,
+            fontSize = 12.sp,
+            lineHeight = 13.sp,
+            modifier = Modifier.constrainAs(partName) {
+                top.linkTo(partIcon.top)
+                start.linkTo(partIcon.end, 2.dp)
+                bottom.linkTo(partIcon.bottom)
+                end.linkTo(quantity.start)
+                width = Dimension.fillToConstraints
+            })
+        Icon(
+            imageVector = Icons.Filled.KeyboardArrowUp,
+            tint = md_theme_light_primary,
+            contentDescription = "Add icon",
+            modifier = Modifier
+                .constrainAs(addIcon) {
                     top.linkTo(partIcon.top)
-                    start.linkTo(partIcon.end, 5.dp)
+                    start.linkTo(quantity.start)
+                    end.linkTo(quantity.end)
+                    bottom.linkTo(partIcon.top)
+                }
+                .clickable { valueText = (valueText.toInt() + 1).toString() }
+        )
+        BasicTextField(
+            value = valueText,
+            onValueChange = {
+                if (it.length < 3) {
+                    valueText = it
+                    data.quantity = it.toIntOrNull() ?: 0
+                    onTextChange(data)
+                }
+            },
+            maxLines = 1,
+            textStyle = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier
+                .width(20.dp)
+                .defaultMinSize(minWidth = 40.dp)
+                .constrainAs(quantity) {
+                    top.linkTo(partIcon.top)
+                    end.linkTo(parent.end, 5.dp)
                     bottom.linkTo(partIcon.bottom)
-                    end.linkTo(quantity.start)
-                    width = Dimension.fillToConstraints
-                })
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowUp,
-                contentDescription = "Add icon",
-                modifier = Modifier
-                    .constrainAs(addIcon) {
-                        top.linkTo(partIcon.top)
-                        start.linkTo(quantity.start)
-                        end.linkTo(quantity.end)
-                        bottom.linkTo(quantity.top, 2.dp)
-                    }
-                    .clickable { valueText = (valueText.toInt() + 1).toString() }
-            )
-            BasicTextField(
-                value = valueText,
-                onValueChange = {
-                    if (it.length < 3) {
-                        valueText = it
-                        data.quantity = it.toIntOrNull() ?: 0
-                        onTextChange(data)
-                    }
                 },
-                maxLines = 1,
-                textStyle = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .width(20.dp)
-                    .defaultMinSize(minWidth = 40.dp)
-                    .constrainAs(quantity) {
-                        top.linkTo(partIcon.top)
-                        end.linkTo(parent.end, 10.dp)
-                    },
-                readOnly = true
-            )
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowDown,
-                contentDescription = "Substract icon",
-                modifier = Modifier
-                    .constrainAs(minusIcon) {
-                        top.linkTo(quantity.bottom)
-                        start.linkTo(quantity.start)
-                        end.linkTo(quantity.end)
-                        bottom.linkTo(partIcon.bottom)
-                    }
-                    .clickable {
-                        if (valueText.toInt() > 0)
-                            valueText = (valueText.toInt() - 1).toString()
-                    }
+            enabled = false,
+            readOnly = true
+        )
+        Icon(
+            imageVector = Icons.Filled.KeyboardArrowDown,
+            tint = md_theme_light_primary,
+            contentDescription = "Substract icon",
+            modifier = Modifier
+                .constrainAs(minusIcon) {
+                    top.linkTo(partIcon.bottom)
+                    start.linkTo(quantity.start)
+                    end.linkTo(quantity.end)
+                    bottom.linkTo(partIcon.bottom)
+                }
+                .clickable {
+                    if (valueText.toInt() > 0)
+                        valueText = (valueText.toInt() - 1).toString()
+                }
 
-            )
-        }
+        )
     }
 }
 
 @Preview(showSystemUi = true, device = "spec:width=351dp,height=891dp")
 @Composable
 fun MyPartPreview() {
-    var data = listOf(
+    val data = listOf(
         PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE).count(60),
         PartModel(PartItem.MEDIUM_BONE).count(60),
         PartModel(PartItem.MACHALITE).count(60),

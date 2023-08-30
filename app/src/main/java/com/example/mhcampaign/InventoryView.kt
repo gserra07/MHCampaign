@@ -2,6 +2,7 @@ package com.example.mhcampaign
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,11 +11,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +48,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.Group
 import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
@@ -68,22 +75,33 @@ fun Inventory(
                         color = md_theme_light_primaryContainer, shape = RoundedCornerShape(20.dp)
                     )
                     .padding(10.dp)
+                    .fillMaxHeight(0.9f)
                     .fillMaxWidth()
             ) {
-
-                LazyVerticalGrid(columns = GridCells.Fixed(2),
-                    modifier = Modifier.weight(1f),
-                    content = {
-                        itemsIndexed(hunterData.inventory) { _, item ->
+                val inventoryGrouped = hunterData.inventory.groupBy { it.name.partGroup }
+                val sorted = inventoryGrouped.toSortedMap(compareBy<Group> { it.indexOrder })
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    sorted.forEach { (group, list) ->
+                        header {
+                            Text(
+                                text = group.groupName,
+                                fontWeight = FontWeight.Bold
+                            ) // or any composable for your single row
+                        }
+                        itemsIndexed(list) { _, item ->
                             Box(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                PartView(item, PaddingValues(horizontal = 5.dp, vertical = 5.dp)) {
+                                PartView(item, PaddingValues(horizontal = 0.dp)) {
                                     Log.d("PartView", "${it.name}  ${it.quantity}")
                                 }
                             }
                         }
-                    })
+                    }
+                }
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
@@ -122,6 +140,13 @@ fun Inventory(
 
 }
 
+
+fun LazyGridScope.header(
+    content: @Composable LazyGridItemScope.() -> Unit
+) {
+    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewItemDialog(
@@ -131,6 +156,7 @@ fun NewItemDialog(
     onSaveListener: (partItem: PartItem, quantity: Int) -> Unit,
     onCloseListener: () -> Unit
 ) {
+    val context = LocalContext.current
     val availableItems =
         PartItem.values().filter { it -> !hunterData.inventory.map { it.name }.contains(it) }
     var selectedIndex by remember {
@@ -161,9 +187,10 @@ fun NewItemDialog(
                     dropdownItemModelList.add(
                         MHDropdownItemModel(
                             itemName = it.partName,
-                            itemIcon = it.type.icon,
+                            itemIcon = it.partIcon,
                             index = index,
-                            category = it.type.typeName
+                            category = it.partGroup.groupName,
+                            subCategory = it.type.typeName
                         )
                     )
                 }
@@ -173,7 +200,8 @@ fun NewItemDialog(
                     selectedIndex = selectedIndex,
                     onItemSelected = { index, _ -> selectedIndex = index },
                     modifier = Modifier.padding(horizontal = 20.dp),
-                    groupEnable = true
+                    groupEnable = true,
+                    heightPercentage = 0.9f
                 )
                 OutlinedTextField(
                     label = { Text(text = "Quantity") },
@@ -196,13 +224,19 @@ fun NewItemDialog(
                         selectedIndex = -1
                     }, modifier = Modifier.weight(1f)) {
                         Text(text = context.getString(R.string.cancel_string))
-                        Text(text = "Cancel")
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = {
-                        if (selectedIndex != -1) onSaveListener(
-                            availableItems[selectedIndex], quantity.toIntOrNull() ?: 0
-                        )
+                        if (selectedIndex != -1)
+                            onSaveListener(
+                                availableItems[selectedIndex], quantity.toIntOrNull() ?: 0
+                            )
+                        else
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.on_fail_add_item_string),
+                                Toast.LENGTH_LONG
+                            ).show()
                         selectedIndex = -1
                     }, modifier = Modifier.weight(1f)) {
                         Text(text = context.getString(R.string.add_item_string))

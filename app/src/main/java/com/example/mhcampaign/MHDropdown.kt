@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,6 +63,7 @@ fun MHDropDown(
     selectedIndex: Int = -1,
     searchEnable: Boolean = true,
     groupEnable: Boolean = true,
+    heightPercentage: Float = 1f,
     onItemSelected: (index: Int, item: MHDropdownItemModel) -> Unit,
     selectedItemToString: (MHDropdownItemModel) -> String = { it.itemName },
     drawItem: @Composable (MHDropdownItemModel, Boolean, Boolean, () -> Unit) -> Unit = { item, selected, itemEnabled, onClick ->
@@ -71,10 +73,9 @@ fun MHDropDown(
             enabled = itemEnabled,
             onClick = onClick,
         )
-    },
-
-    ) {
-    var expanded by remember { mutableStateOf(true) }
+    }
+) {
+    var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier.height(IntrinsicSize.Min)) {
         OutlinedTextField(
@@ -107,6 +108,7 @@ fun MHDropDown(
             properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Surface(
+                modifier = Modifier.fillMaxHeight(heightPercentage),
                 shape = RoundedCornerShape(12.dp),
             ) {
                 val listState = rememberLazyListState()
@@ -127,7 +129,7 @@ fun MHDropDown(
                             value = filter,
                             onValueChange = { filter = it },
                             singleLine = true,
-                            modifier = Modifier.padding(horizontal = 20.dp)
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
                         )
                     }
                     LazyColumn(
@@ -158,7 +160,7 @@ fun MHDropDown(
                                         text = category,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(horizontal = 5.dp, vertical = 5.dp)
+                                            .padding(horizontal = 5.dp)
                                             .background(color = md_theme_light_primaryContainer),
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold
@@ -172,7 +174,7 @@ fun MHDropDown(
                                     expanded = false
                                 }
 
-                                if (index < itemModelList.lastIndex) {
+                                if (index < itemList.lastIndex) {
                                     Divider(modifier = Modifier.padding(horizontal = 16.dp))
                                 }
                             }
@@ -225,6 +227,7 @@ data class MHDropdownItemModel(
     var itemName: String,
     var itemIcon: Int? = null,
     var category: String = "",
+    var subCategory: String = "",
     var index: Int
 )
 

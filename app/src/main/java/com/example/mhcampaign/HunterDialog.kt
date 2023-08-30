@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.mhcampaign.examples.LargeDropdownMenu
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
@@ -51,6 +50,17 @@ fun HunterDialog(
                 if (data != null) HunterWeapon.values().indexOf(data.hunterWeapon) else -1
             )
         }
+        val dataList = mutableListOf<MHDropdownItemModel>()
+        HunterWeapon.values().forEachIndexed { index, it ->
+            dataList.add(
+                MHDropdownItemModel(
+                    itemName = it.weaponName,
+                    itemIcon = it.icon,
+                    category = if (it.weaponName.contains("bow", true)) "Range" else "Melee",
+                    index = index
+                )
+            )
+        }
 
         Dialog(
             onDismissRequest = {onDismissListener() },
@@ -67,11 +77,14 @@ fun HunterDialog(
             ) {
                 Text(text = label, fontSize = 25.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                LargeDropdownMenu(
-                    label = "Hunter Weapon",
-                    items = HunterWeapon.values().asList(),
+                MHDropDown(
+                    label = "Filter",
+                    itemModelList = dataList,
                     selectedIndex = selectedIndex,
                     onItemSelected = { index, _ -> selectedIndex = index },
+                    groupEnable = false,
+                    searchEnable = false,
+                    heightPercentage = 0.8f
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 OutlinedTextField(
