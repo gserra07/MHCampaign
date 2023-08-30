@@ -35,7 +35,7 @@ enum class PartType(
     BLACK_DIABLOS("Black Diablos", R.drawable.monster_black_diablos_icon),
 
     //EXPANSIONS
-    KULU_YA_KU("Kulu-ya-ku", R.drawable.part_monster_grey_icon),
+    KULU_YA_KU("Kulu-ya-ku", R.drawable.monster_kulu_yaku_icon),
     KUSHALA_DAORA("Kushala Daora", R.drawable.monster_kushala_icon),
     TEOSTRA("Teostra", R.drawable.monster_teostra_icon),
     NERGIGANTE("Nergigante", R.drawable.monster_nergigante_icon),

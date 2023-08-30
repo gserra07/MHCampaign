@@ -55,7 +55,7 @@ fun PartView(
     ) {
         if (data != null) {
             val (partIcon, partName, quantity, addIcon, minusIcon) = createRefs()
-            var valueText by remember { mutableStateOf("${data.count}") }
+            var valueText by remember { mutableStateOf("${data.quantity}") }
 
             Image(
                 painter = painterResource(id = data.name.partIcon),
@@ -96,7 +96,7 @@ fun PartView(
                 onValueChange = {
                     if (it.length < 3) {
                         valueText = it
-                        data.count = it.toIntOrNull() ?: 0
+                        data.quantity = it.toIntOrNull() ?: 0
                         onTextChange(data)
                     }
                 },
@@ -147,7 +147,7 @@ fun MyPartPreview() {
     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(10.dp), content = {
         itemsIndexed(data) { index, item ->
             PartView(item, PaddingValues(horizontal = 10.dp, vertical = 10.dp)) {
-                Log.d("PartView", "${it.name}  ${it.count}")
+                Log.d("PartView", "${it.name}  ${it.quantity}")
             }
         }
 

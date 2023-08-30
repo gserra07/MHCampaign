@@ -79,7 +79,7 @@ fun Inventory(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 PartView(item, PaddingValues(horizontal = 5.dp, vertical = 5.dp)) {
-                                    Log.d("PartView", "${it.name}  ${it.count}")
+                                    Log.d("PartView", "${it.name}  ${it.quantity}")
                                 }
                             }
                         }
