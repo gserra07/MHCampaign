@@ -1,5 +1,7 @@
 package com.example.mhcampaign.model
 
+import com.example.mhcampaign.model.enums.PartModel
+
 class HunterData(
     var hunterName: String,
     var hunterWeapon: HunterWeapon,

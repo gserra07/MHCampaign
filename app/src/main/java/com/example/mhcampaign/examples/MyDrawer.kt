@@ -37,8 +37,8 @@ import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
 import com.example.mhcampaign.model.Monster
 import com.example.mhcampaign.model.MonsterData
-import com.example.mhcampaign.model.PartItem
-import com.example.mhcampaign.model.PartModel
+import com.example.mhcampaign.model.enums.PartItem
+import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
