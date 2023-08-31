@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +24,7 @@ import com.example.mhcampaign.model.Monster
 import com.example.mhcampaign.model.MonsterData
 
 @Composable
-fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues()) {
+fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues(), onChangeListener: (MonsterData) -> Unit) {
     var easyCount by remember {
         mutableStateOf(data.easyCount)
     }
@@ -35,7 +37,7 @@ fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues(
     ConstraintLayout(
         modifier = Modifier
             .padding(paddingValues)
-            .fillMaxWidth()
+//            .fillMaxWidth()
     ) {
         val (monsterIcon, counters) = createRefs()
 
@@ -50,7 +52,7 @@ fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues(
         Box(modifier = Modifier
             .constrainAs(counters) {
                 top.linkTo(monsterIcon.top)
-                start.linkTo(monsterIcon.end, 50.dp)
+                start.linkTo(monsterIcon.end, 30.dp)
                 bottom.linkTo(monsterIcon.bottom)
             }) {
             Column {
@@ -61,6 +63,7 @@ fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues(
                     iconSize = 40.dp
                 ) {
                     easyCount = it
+                    onChangeListener(data)
                 }
                 MySelector(
                     amountIn = mediumCount,
@@ -69,6 +72,7 @@ fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues(
                     iconSize = 40.dp
                 ) {
                     mediumCount = it
+                    onChangeListener(data)
                 }
                 MySelector(
                     amountIn = hardCount,
@@ -80,18 +84,24 @@ fun MonsterView(data: MonsterData, paddingValues: PaddingValues = PaddingValues(
                     iconSize = 40.dp
                 ) {
                     hardCount = it
+                    onChangeListener(data)
                 }
             }
         }
     }
 }
 
-fun MontserListView(
+@Composable
+fun MonsterListView(
     monsterList: MutableList<MonsterData>,
+    paddingValues: PaddingValues = PaddingValues(),
     onChangeListener: (MonsterData) -> Unit
 ) {
-
-
+    LazyColumn(modifier = Modifier.padding(paddingValues)) {
+        itemsIndexed(monsterList) { i, monster ->
+            MonsterView(data = monster){}
+        }
+    }
 }
 
 @Preview(showSystemUi = true)
@@ -99,8 +109,14 @@ fun MontserListView(
 fun MyMonsterPreview() {
     val data = MonsterData(Monster.GREAT_JAGRAS, 1, 0, 0)
     val data2 = MonsterData(Monster.RATHALOS, 0, 2, 0)
+    val monsterList = mutableListOf(data, data2)
+
+    MonsterListView(
+        monsterList = monsterList,
+        paddingValues = PaddingValues(start = 20.dp),
+        onChangeListener = {})
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        MonsterView(data = data)
+//        MonsterView(data = data)
         //MonsterView(data = data2)
     }
 }

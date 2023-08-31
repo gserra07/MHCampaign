@@ -56,7 +56,7 @@ fun HunterViewHolder(
                         }
                 )
                 Spacer(modifier = Modifier
-                    .width(15.dp)
+                    .width(10.dp)
                     .constrainAs(spacer) {
                         start.linkTo(weaponIcon.end)
                     })

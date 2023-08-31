@@ -13,37 +13,46 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mhcampaign.R
+import com.example.mhcampaign.ui.theme.md_theme_dark_primary
+import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
@@ -55,7 +64,7 @@ fun MyFloatingActionButton(onFloatingActionButtonClick: () -> Unit) {
 
 data class MultiFabItem(
     val id: Int,
-    @DrawableRes val iconRes: Int,
+    @DrawableRes val iconRes: Int? = null,
     val label: String = ""
 )
 
@@ -150,7 +159,7 @@ fun MultiFloatingActionButton(
             LazyColumn(
                 modifier = Modifier.wrapContentSize(),
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+                verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 items(items.size) { index ->
                     MiniFabItem(
@@ -158,7 +167,7 @@ fun MultiFloatingActionButton(
                         fabOption = fabOption,
                         onFabItemClicked = {
                             fabState.value = fabState.value.toggleValue()
-                            onFabItemClicked
+                            onFabItemClicked(it)
                         }
                     )
                 }
@@ -171,12 +180,16 @@ fun MultiFloatingActionButton(
             onClick = {
                 fabState.value = fabState.value.toggleValue()
                 stateChanged(fabState.value)
-            },
+            }, modifier = Modifier
+                .size(40.dp)
+                .align(alignment = End)
+            , containerColor = md_theme_dark_primary
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Add",
                 modifier = Modifier.rotate(rotation),
+                tint = Color.Black
             )
 
             /*Icon(
@@ -198,8 +211,9 @@ fun MiniFabItem(
     Row(
         modifier = Modifier
             .wrapContentSize()
+            .width(160.dp)
             .background(
-                color = md_theme_light_primaryContainer,
+                color = md_theme_dark_primary,
                 shape = RoundedCornerShape(50.dp)
             )
             .padding(end = 10.dp),
@@ -211,25 +225,27 @@ fun MiniFabItem(
                 text = item.label,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 6.dp, vertical = 4.dp)
                     .clickable { onFabItemClicked(item) }
             )
         }
-        /*
-                FloatingActionButton(
-                    onClick = {
-                        onFabItemClicked(item)
-                    },
-                    modifier = Modifier.size(40.dp),
-                    contentColor = fabOption.iconTint
-                ) {
-                    Icon(
-                        painter = painterResource(id = item.iconRes),
-                        contentDescription = "Float Icon",
-                        tint = fabOption.iconTint
-                    )
-                }*/
+        if (item.iconRes != null)
+            FloatingActionButton(
+                onClick = {
+                    onFabItemClicked(item)
+                },
+                modifier = Modifier.size(40.dp),
+                contentColor = fabOption.iconTint
+            ) {
+                Icon(
+                    painter = painterResource(id = item.iconRes),
+                    contentDescription = "Float Icon",
+                    tint = fabOption.iconTint
+                )
+            }
     }
 }
 
@@ -241,12 +257,12 @@ fun MyfloatingPreview() {
         items = listOf(
             MultiFabItem(
                 id = 1,
-                iconRes = R.drawable.potion_icon,
+//                iconRes = R.drawable.potion_icon,
                 label = "Add Campaign"
             ),
             MultiFabItem(
                 id = 2,
-                iconRes = R.drawable.potion_icon,
+//                iconRes = R.drawable.potion_icon,
                 label = "Add Monster"
             )
         ),
@@ -260,3 +276,44 @@ fun MyfloatingPreview() {
         )
     )
 }
+
+
+//@Composable
+//fun Screen1(
+//    setFabOnClick: (() -> Unit) -> Unit,
+//) {
+//    var name by remember { mutableStateOf(TextFieldValue("")) }
+//
+//    TextField(value = name, onValueChange = {name = it})
+//
+//    LaunchedEffect(Unit) {
+//        setFabOnClick { println("$name") }
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun MyActivity() {
+//    val navController = rememberNavController()
+//    val (fabOnClick, setFabOnClick) = remember { mutableStateOf<(() -> Unit)?>(null) }
+//
+//    Scaffold(
+//        floatingActionButton = {
+//            FloatingActionButton(onClick = {
+//                fabOnClick?.invoke()
+//            }) {
+//                Icon(Icons.Default.ReportProblem, null)
+//            }
+//        }
+//    ) { paddingValues ->
+//        NavHost(
+//            navController = navController,
+//            startDestination = Screen.Screen1.route,
+//            modifier = Modifier.padding(paddingValues)
+//        ) {
+//            composable(route = Screen.Screen1.route) {
+//                Screen1(setFabOnClick = setFabOnClick)
+//            }
+//        }
+//    }
+//}

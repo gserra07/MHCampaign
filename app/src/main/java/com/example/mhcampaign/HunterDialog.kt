@@ -63,7 +63,7 @@ fun HunterDialog(
         }
 
         Dialog(
-            onDismissRequest = {onDismissListener() },
+            onDismissRequest = { onDismissListener() },
             properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Column(
@@ -78,7 +78,7 @@ fun HunterDialog(
                 Text(text = label, fontSize = 25.sp)
                 Spacer(modifier = Modifier.height(20.dp))
                 MHDropDown(
-                    label = "Filter",
+                    label = "Hunter Weapon",
                     itemModelList = dataList,
                     selectedIndex = selectedIndex,
                     onItemSelected = { index, _ -> selectedIndex = index },
@@ -114,7 +114,10 @@ fun HunterDialog(
                         Text(text = "Cancel")
                     }
                     Button(onClick = {
-                        onConfirmListener(data, selectedIndex)
+                        if (data != null)
+                            onConfirmListener(data, selectedIndex)
+                        else
+                            onConfirmListener(HunterData(hunterName= hunterName, hunterWeapon = HunterWeapon.values()[selectedIndex]),selectedIndex)
                         data?.hunterName = hunterName
                         data?.hunterWeapon = HunterWeapon.values()[selectedIndex]
                     }) {

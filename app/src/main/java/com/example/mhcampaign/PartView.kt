@@ -40,7 +40,6 @@ import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PartView(
     data: PartModel,
@@ -129,7 +128,6 @@ fun PartView(
                     if (valueText.toInt() > 0)
                         valueText = (valueText.toInt() - 1).toString()
                 }
-
         )
     }
 }
@@ -143,7 +141,6 @@ fun MyPartPreview() {
         PartModel(PartItem.MACHALITE).count(60),
         PartModel(PartItem.DRAGONITE).count(60),
         PartModel(PartItem.GREAT_JAGRAS_CLAW).count(60),
-
         )
 
     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(10.dp), content = {
@@ -152,6 +149,5 @@ fun MyPartPreview() {
                 Log.d("PartView", "${it.name}  ${it.quantity}")
             }
         }
-
     })
 }

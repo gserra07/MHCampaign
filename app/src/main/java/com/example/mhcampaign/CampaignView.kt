@@ -2,12 +2,14 @@ package com.example.mhcampaign
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +35,9 @@ import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.Monster
 import com.example.mhcampaign.model.MonsterData
+import com.example.mhcampaign.ui.theme.md_theme_dark_primary
+import com.example.mhcampaign.ui.theme.md_theme_light_primary
+import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -55,13 +61,20 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
     }
 
 
-    Column {
+    Column(
+        modifier = Modifier
+            .background(
+                md_theme_light_primaryContainer
+            )
+            .fillMaxHeight()
+    ) {
 
         //Campaign selector
-        MyDropDown("Campaign", campaignList.map { it.name }, selectedCampaignIndex) { name, index ->
+        MyDropDown("Campaign", campaignList.map { it.name }, selectedCampaignIndex, paddingValues = PaddingValues(horizontal = 20.dp, vertical = 10.dp)) { name, index ->
             Log.d("Dropdown", "$name  $index")
             selectedCampaignIndex = index
         }
+        
         //Potions and days
         var potions = campaignList[selectedCampaignIndex].potions
         var days = campaignList[selectedCampaignIndex].days
@@ -78,7 +91,7 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
                 }
             }
             Box() {
-                MySelector(days, R.drawable.calendar_white, minLimit = 0) {
+                MySelector(days, R.drawable.days_icon, minLimit = 0) {
                     campaignList[selectedCampaignIndex].days = it
                 }
             }
@@ -95,7 +108,7 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
 
         LazyVerticalGrid(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(start = 20.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
             columns = GridCells.Fixed(2),
             content = {
                 itemsIndexed(campaignHunters) { index, hunterData ->
@@ -132,20 +145,30 @@ fun CampaignView(campaignList: List<CampaignModel>, hunterDataList: List<HunterD
             })
 
         Spacer(modifier = Modifier.height(10.dp))
+        Divider(color = md_theme_light_primary,modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(), thickness = 2.dp)
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         //Campaign's monsters
         val monsterList = campaignList[selectedCampaignIndex].monsterList
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth(),
-            content = {
-                itemsIndexed(monsterList) { index, monsterData ->
-                    MonsterView(
-                        data = monsterData,
-                        PaddingValues(vertical = 5.dp, horizontal = 20.dp)
-                    )
+//        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
+//            modifier = Modifier.fillMaxWidth(),
+//            content = {
+//                itemsIndexed(monsterList) { index, monsterData ->
+//                    MonsterView(
+//                        data = monsterData,
+//                        PaddingValues(vertical = 5.dp, horizontal = 20.dp)
+//                    )
+//
+//                }
+//            })
+        Box {
 
-                }
-            })
+            MonsterListView(
+                monsterList = monsterList,
+                paddingValues = PaddingValues(start = 20.dp),
+                onChangeListener = {})
+        }
         selectedHunter?.let {
             Inventory(hunterData = it, visibility = inventoryVisibility, onCloseListener = {
                 inventoryVisibility = false
