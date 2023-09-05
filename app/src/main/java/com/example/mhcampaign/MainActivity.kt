@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.mhcampaign.counter.MySelector
 import com.example.mhcampaign.examples.MyDrawerPreview
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 
@@ -54,48 +55,12 @@ class MainActivity : ComponentActivity() {
 //                    DropDownPreview()
 //                    MyAlertPreview()
 //                    MyRecyclePreview()
-                MyDrawerPreview()
+                    MyDrawerPreview()
                 }
             }
         }
     }
 
-    @Composable
-    fun exampleSelector() {
-        var potions by remember { mutableStateOf(0) }
-        var days by remember { mutableStateOf(0) }
-        Row(horizontalArrangement = Arrangement.SpaceAround) {
-            Box {
-                MySelector(
-                    potions,
-                    R.drawable.potion
-                ) {
-                    Toast.makeText(
-                            this@MainActivity,
-                            "Pociones $potions",
-                            Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-            Box() {
-                MySelector(days, R.drawable.calendar_white) {
-                    Toast.makeText(
-                            this@MainActivity,
-                            "Dias $days",
-                            Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-    }
-
-    @Preview(showSystemUi = true)
-    @Composable
-    fun GreetingPreview() {
-        MHCampaignTheme {
-            exampleSelector()
-        }
-    }
 }
 
 
@@ -105,10 +70,10 @@ fun SuperText() {
         text = "Penesaurio",
         textAlign = TextAlign.Center,
         modifier = Modifier
-                .fillMaxWidth()
-                .height(65.dp)
-                .padding(top = 15.dp)
-                .background(color = Color.Cyan)
+            .fillMaxWidth()
+            .height(65.dp)
+            .padding(top = 15.dp)
+            .background(color = Color.Cyan)
     )
 }
 
@@ -118,8 +83,8 @@ fun MyBox() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Box(
             modifier = Modifier
-                    .background(color = Color.Cyan)
-                    .verticalScroll(rememberScrollState())
+                .background(color = Color.Cyan)
+                .verticalScroll(rememberScrollState())
         ) {
             Column {
                 SuperText()

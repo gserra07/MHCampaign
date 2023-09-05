@@ -35,12 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mhcampaign.CampaignView
+import com.example.mhcampaign.campaign.CampaignView
 import com.example.mhcampaign.HunterDialog
 import com.example.mhcampaign.HunterView
 import com.example.mhcampaign.MHDropDownPreview
 import com.example.mhcampaign.MyInventoryPreview
 import com.example.mhcampaign.R
+import com.example.mhcampaign.campaign.CampaignViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
@@ -112,7 +113,7 @@ fun MyDrawerPreview() {
             MenuItem(3, "Parts", Icons.Rounded.Build),
         )
         val selectedItem = remember { mutableStateOf(menuItems[0]) }
-        val drawerState = rememberDrawerState(DrawerValue.Open)
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
         var newHunterVisibility by remember {
             mutableStateOf(false)
         }
@@ -125,8 +126,8 @@ fun MyDrawerPreview() {
             MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0),
             MonsterData(Monster.ANJANATH, 1, 1, 0)
         )
-        val campaignList = listOf(
-            CampaignModel("Campaña 1", 2, 4, monsterList = monsterList).id(0),
+        val campaignList = mutableListOf(
+            CampaignModel("Campaña 1", 2, 4, list = monsterList).id(0),
             CampaignModel("Campaña 2", 0, 0).id(1),
             CampaignModel("Campaña 3", 0, 0).id(2)
         )
@@ -194,7 +195,7 @@ fun MyDrawerPreview() {
                                     },
                                     onInventoryListener = { })
                             },
-                            content = { CampaignView(campaignList, hunterDataList) })
+                            content = { CampaignView(campaignList, hunterDataList, campaignViewModel = CampaignViewModel(campaignList, hunterDataList)) })
                     }
 
                     1 -> {

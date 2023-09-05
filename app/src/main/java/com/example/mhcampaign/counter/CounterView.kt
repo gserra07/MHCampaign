@@ -1,6 +1,5 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.counter
 
-import android.view.RoundedCorner
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,14 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,21 +31,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.mhcampaign.R
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
-import com.example.mhcampaign.ui.theme.md_theme_light_inversePrimary
-import com.example.mhcampaign.ui.theme.md_theme_light_primary
-import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
 fun MySelector(
-    amountIn: Int,
+    counterViewModel: CounterViewModel = CounterViewModel(),
     icon: Int? = null,
-    maxLimit: Int? = null,
-    minLimit: Int? = null,
     iconSize: Dp = 60.dp,
     onValueChange: (Int) -> Unit
 ) {
-    var amount by remember { mutableStateOf(amountIn) }
+    val count :Int by counterViewModel.count.observeAsState(initial = 0)
     Box(contentAlignment = Alignment.Center) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -81,18 +74,20 @@ fun MySelector(
                         .width(25.dp)
                         .height(25.dp)
                         .clickable {
-                            if (minLimit != null) {
-                                if (amount > minLimit)
-                                    amount--
-                            } else
-                                amount--
-                            onValueChange(amount)
+//                            if (minLimit != null) {
+//                                if (amount > minLimit)
+//                                    amount--
+//                            } else
+//                                amount--
+                            counterViewModel.substract()
+                            onValueChange(count)
                         },
                     colorFilter = ColorFilter.tint(md_theme_dark_primary)
                 )
             }
             Text(
-                text = "$amount",
+//                text = "$amount",
+                text = "$count",
                 modifier = Modifier
                     .padding(horizontal = 7.dp)
                     .width(25.dp),
@@ -117,12 +112,13 @@ fun MySelector(
                         .width(25.dp)
                         .height(25.dp)
                         .clickable {
-                            if (maxLimit != null) {
-                                if (amount < maxLimit)
-                                    amount++
-                            } else
-                                amount++
-                            onValueChange(amount)
+//                            if (maxLimit != null) {
+//                                if (amount < maxLimit)
+//                                    amount++
+//                            } else
+//                                amount++
+                            counterViewModel.add()
+                            onValueChange(count)
                         },
                     colorFilter = ColorFilter.tint(md_theme_dark_primary)
                 )
@@ -134,19 +130,19 @@ fun MySelector(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun MyViewPreview() {
-    var potions by remember { mutableStateOf(0) }
-    var days by remember { mutableStateOf(0) }
+    val potionsModel = CounterViewModel(0)
+    val daysModel = CounterViewModel(0)
     Row(horizontalArrangement = Arrangement.SpaceAround) {
         Box {
 
             MySelector(
-                potions,
+                potionsModel,
                 R.drawable.potion
             ) { }
         }
         Box() {
 
-            MySelector(days, R.drawable.calendar_white) { }
+            MySelector(daysModel, R.drawable.calendar_white) { }
         }
 
     }
