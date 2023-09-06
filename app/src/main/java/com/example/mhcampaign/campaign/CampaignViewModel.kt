@@ -12,6 +12,7 @@ class CampaignViewModel(
 ) {
     private val _campaignList = MutableLiveData<MutableList<CampaignModel>>(campaignListIn)
     val campaignList: LiveData<MutableList<CampaignModel>> = _campaignList
+
     private val _hunterList = MutableLiveData<MutableList<HunterData>>(hunterListIn)
     val hunterList: LiveData<MutableList<HunterData>> = _hunterList
 

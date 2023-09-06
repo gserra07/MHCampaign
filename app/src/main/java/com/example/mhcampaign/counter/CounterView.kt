@@ -19,9 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +38,7 @@ fun MySelector(
     iconSize: Dp = 60.dp,
     onValueChange: (Int) -> Unit
 ) {
-    val count :Int by counterViewModel.count.observeAsState(initial = 0)
+    val count: Int by counterViewModel.count.observeAsState(initial = 0)
     Box(contentAlignment = Alignment.Center) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -56,7 +53,7 @@ fun MySelector(
                 )
             }
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 modifier = Modifier.size(25.dp),  //avoid the oval shape
                 shape = CircleShape,
                 border = BorderStroke(1.dp, Color.Black),
@@ -74,19 +71,13 @@ fun MySelector(
                         .width(25.dp)
                         .height(25.dp)
                         .clickable {
-//                            if (minLimit != null) {
-//                                if (amount > minLimit)
-//                                    amount--
-//                            } else
-//                                amount--
-                            counterViewModel.substract()
+                            counterViewModel.subtract()
                             onValueChange(count)
                         },
                     colorFilter = ColorFilter.tint(md_theme_dark_primary)
                 )
             }
             Text(
-//                text = "$amount",
                 text = "$count",
                 modifier = Modifier
                     .padding(horizontal = 7.dp)
@@ -94,7 +85,7 @@ fun MySelector(
                 textAlign = TextAlign.Center
             )
             OutlinedButton(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 modifier = Modifier.size(25.dp),  //avoid the oval shape
                 shape = CircleShape,
                 border = BorderStroke(1.dp, Color.Black),
@@ -112,11 +103,6 @@ fun MySelector(
                         .width(25.dp)
                         .height(25.dp)
                         .clickable {
-//                            if (maxLimit != null) {
-//                                if (amount < maxLimit)
-//                                    amount++
-//                            } else
-//                                amount++
                             counterViewModel.add()
                             onValueChange(count)
                         },

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
 class CounterViewModel(
-    private var amount: Int = 0,
+    amount: Int = 0,
     private var maxLimit: Int? = null,
     private var minLimit: Int? = null,
 ) {
@@ -16,8 +16,8 @@ class CounterViewModel(
             _count.value = _count.value!! + 1
     }
 
-    fun substract() {
-        if ((maxLimit != null && _count.value!! > minLimit!!) || minLimit == null)
+    fun subtract() {
+        if ((minLimit != null && _count.value!! > minLimit!!) || minLimit == null)
             _count.value = _count.value!! - 1
     }
 }
