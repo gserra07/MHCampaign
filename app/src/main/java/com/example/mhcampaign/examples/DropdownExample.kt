@@ -56,116 +56,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.mhcampaign.MHSimpleDropDown
 import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Composable
-fun MyDropDown(
-    label: String,
-    itemList: List<String>,
-    selectedIndex: Int = 0,
-    paddingValues: PaddingValues = PaddingValues(32.dp),
-    onSelectoptionListener: (String, Int) -> Unit
-) {
 
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("") }
-    var dropDownWidth by remember { mutableStateOf(0) }
-    if (selectedIndex >= 0)
-        selectedText = itemList[selectedIndex]
-    CompositionLocalProvider(
-        LocalTextInputService provides null
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-        ) {
-            ExposedDropdownMenuBox(
-                expanded = expanded, onExpandedChange = {
-                    expanded = !expanded
-                }, modifier = Modifier.fillMaxWidth()
-
-            ) {
-
-                val focusRequester = remember { FocusRequester() }
-                val focusManager = LocalFocusManager.current
-                focusManager.clearFocus()
-                OutlinedTextField(
-                    label = { Text(text = label) },
-                    value = selectedText,
-                    enabled = true,
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester)
-                        .onSizeChanged {
-                            dropDownWidth = it.width
-                        },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    onValueChange = { },
-                    readOnly = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        textColor = Black,
-                        containerColor = Color.Transparent,
-//                        focusedLabelColor = Sand,
-                        unfocusedLabelColor = md_theme_light_primary,
-//                        focusedBorderColor = Sand,
-                        unfocusedBorderColor = md_theme_light_primary,
-//                        focusedTrailingIconColor = Sand,
-//                        unfocusedTrailingIconColor = Sand)
-                    )
-                )
-//            TextField(
-//                value = selectedText,
-//                onValueChange = {},
-//                readOnly = true,
-//                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-//                modifier = Modifier
-//                    .menuAnchor()
-//                    .fillMaxWidth()
-//                    .focusRequester(focusRequester)
-//                    .onSizeChanged {
-//                        dropDownWidth = it.width
-//                    },
-//                label = { Text(text = label) },
-//                colors = TextFieldDefaults.textFieldColors(
-//                    containerColor = md_theme_light_primaryContainer,
-////                        focusedLabelColor = Sand,
-//                        unfocusedLabelColor = md_theme_light_primaryContainer,
-//                    unfocusedIndicatorColor = md_theme_light_primary
-////                        focusedBorderColor = Sand,
-////                        unfocusedBorderColor = Sand,
-////                        focusedTrailingIconColor = Sand,
-////                        unfocusedTrailingIconColor = Sand)
-//
-//                )
-//            )
-
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier
-                        .width(with(LocalDensity.current) { dropDownWidth.toDp() })
-                ) {
-                    itemList.forEachIndexed { index, item ->
-                        DropdownMenuItem(text = { Text(text = item) }, onClick = {
-                            selectedText = item
-                            expanded = false
-                            onSelectoptionListener(selectedText, index)
-                            focusManager.clearFocus()
-                        })
-                    }
-                }
-            }
-        }
-    }
-}
 
 
 @Preview(showSystemUi = true)
@@ -174,7 +74,7 @@ fun DropDownPreview() {
     val coffeeDrinks = listOf("Americano", "Cappuccino", "Espresso", "Latte", "Mocha")
     Column {
 
-        MyDropDown("Campaign", coffeeDrinks) { name, index -> Log.d("Dropdown", "$name  $index") }
+        MHSimpleDropDown("Campaign", coffeeDrinks) { name, index -> Log.d("Dropdown", "$name  $index") }
         var selectedIndex by remember { mutableStateOf(-1) }
         LargeDropdownMenu(
             label = "Hunter Weapon",
@@ -216,17 +116,7 @@ fun LargeDropdownMenu(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             onValueChange = { },
             readOnly = true,
-//                colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        textColor = Black,
-//                        containerColor = Color.Transparent,
-//                        focusedLabelColor = Sand,
-//                        unfocusedLabelColor = Sand,
-//                        focusedBorderColor = Sand,
-//                        unfocusedBorderColor = Sand,
-//                        focusedTrailingIconColor = Sand,
-//                        unfocusedTrailingIconColor = Sand)
-
-        )
+            )
 
         // Transparent clickable surface on top of OutlinedTextField
         Surface(

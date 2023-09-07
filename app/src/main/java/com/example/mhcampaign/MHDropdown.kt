@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,7 +23,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -37,9 +40,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,14 +57,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.mhcampaign.examples.MyDropDown
 import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun MHDropDown(
+fun MHLargeDropDown(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     label: String,
@@ -86,6 +96,7 @@ fun MHDropDown(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             onValueChange = { },
             readOnly = true,
+            colors = GetTextFieldColors()
         )
 
         // Transparent clickable surface on top of OutlinedTextField
@@ -129,7 +140,8 @@ fun MHDropDown(
                             value = filter,
                             onValueChange = { filter = it },
                             singleLine = true,
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                            colors = GetTextFieldColors()
                         )
                     }
                     LazyColumn(
@@ -231,6 +243,76 @@ data class MHDropdownItemModel(
     var index: Int
 )
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+fun MHSimpleDropDown(
+    label: String,
+    itemList: List<String>,
+    selectedIndex: Int = -1,
+    paddingValues: PaddingValues = PaddingValues(32.dp),
+    onSelectoptionListener: (String, Int) -> Unit
+) {
+
+    var expanded by remember { mutableStateOf(false) }
+    var selectedText by remember { mutableStateOf("") }
+    var dropDownWidth by remember { mutableStateOf(0) }
+    if (selectedIndex >= 0)
+        selectedText = itemList[selectedIndex]
+    CompositionLocalProvider(
+        LocalTextInputService provides null
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues)
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = expanded, onExpandedChange = {
+                    expanded = !expanded
+                }, modifier = Modifier.fillMaxWidth()
+
+            ) {
+
+                val focusRequester = remember { FocusRequester() }
+                val focusManager = LocalFocusManager.current
+                focusManager.clearFocus()
+                OutlinedTextField(
+                    label = { Text(text = label) },
+                    value = selectedText,
+                    enabled = true,
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .onSizeChanged {
+                            dropDownWidth = it.width
+                        },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    onValueChange = { },
+                    readOnly = true,
+                    colors = GetTextFieldColors()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier
+                        .width(with(LocalDensity.current) { dropDownWidth.toDp() })
+                ) {
+                    itemList.forEachIndexed { index, item ->
+                        DropdownMenuItem(text = { Text(text = item) }, onClick = {
+                            selectedText = item
+                            expanded = false
+                            onSelectoptionListener(selectedText, index)
+                            focusManager.clearFocus()
+                        })
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Preview(showSystemUi = true)
 @Composable
 fun MHDropDownPreview() {
@@ -239,7 +321,7 @@ fun MHDropDownPreview() {
         val coffeeDrinks = listOf("Americano", "Cappuccino", "Espresso", "Latte", "Mocha")
         Column {
 
-            MyDropDown("Campaign", coffeeDrinks) { name, index ->
+            MHSimpleDropDown("Campaign", coffeeDrinks) { name, index ->
                 Log.d(
                     "Dropdown",
                     "$name  $index"
@@ -257,7 +339,7 @@ fun MHDropDownPreview() {
                     )
                 )
             }
-            MHDropDown(
+            MHLargeDropDown(
                 label = "Filter",
                 itemModelList = dataList,
                 selectedIndex = selectedIndex,
