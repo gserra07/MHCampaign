@@ -176,7 +176,7 @@ fun CampaignView(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth(),
-            thickness = 2.dp
+            thickness = 1.dp
         )
 
         Spacer(modifier = Modifier.height(10.dp))

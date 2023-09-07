@@ -1,9 +1,11 @@
 package com.example.mhcampaign
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,6 +62,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
+import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -119,8 +122,13 @@ fun MHLargeDropDown(
             properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Surface(
-                modifier = Modifier.fillMaxHeight(heightPercentage),
-                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier
+                    .fillMaxHeight(heightPercentage)
+                    .border(
+                        BorderStroke(1.dp, md_theme_light_primary),
+                        shape = RoundedCornerShape(20.dp)
+                    ),
+                shape = RoundedCornerShape(20.dp),
             ) {
                 val listState = rememberLazyListState()
                 if (selectedIndex > -1) {

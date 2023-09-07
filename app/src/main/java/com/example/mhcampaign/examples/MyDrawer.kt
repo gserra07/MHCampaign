@@ -39,12 +39,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.campaign.CampaignView
 import com.example.mhcampaign.HunterDialog
-import com.example.mhcampaign.HunterView
+import com.example.mhcampaign.huntersView.HunterView
 import com.example.mhcampaign.MHDropDownPreview
 import com.example.mhcampaign.MonsterDialog
 import com.example.mhcampaign.MyInventoryPreview
 import com.example.mhcampaign.R
 import com.example.mhcampaign.campaign.CampaignViewModel
+import com.example.mhcampaign.huntersView.HuntersViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
@@ -215,7 +216,7 @@ fun MyDrawerPreview() {
                                     }
                                 )
                             },
-                            content = { HunterView(dataList = hunterDataList) })
+                            content = { HunterView(HuntersViewModel( hunterDataList)) })
                     }
 
                     2 -> {

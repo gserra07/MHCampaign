@@ -1,7 +1,9 @@
 package com.example.mhcampaign
 
 import android.content.Context
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
+import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,6 +74,10 @@ fun HunterDialog(
                 modifier = Modifier
                     .background(
                         color = md_theme_light_primaryContainer,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .border(
+                        BorderStroke(1.dp, md_theme_light_primary),
                         shape = RoundedCornerShape(20.dp)
                     )
                     .padding(24.dp)
@@ -119,7 +126,12 @@ fun HunterDialog(
                         if (data != null)
                             onConfirmListener(data, selectedIndex)
                         else
-                            onConfirmListener(HunterData(hunterName= hunterName, hunterWeapon = HunterWeapon.values()[selectedIndex]),selectedIndex)
+                            onConfirmListener(
+                                HunterData(
+                                    hunterName = hunterName,
+                                    hunterWeapon = HunterWeapon.values()[selectedIndex]
+                                ), selectedIndex
+                            )
                         data?.hunterName = hunterName
                         data?.hunterWeapon = HunterWeapon.values()[selectedIndex]
                     }) {

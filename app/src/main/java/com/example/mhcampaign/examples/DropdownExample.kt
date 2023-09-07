@@ -1,13 +1,13 @@
 package com.example.mhcampaign.examples
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,18 +21,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -41,31 +36,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.mhcampaign.MHSimpleDropDown
 import com.example.mhcampaign.model.HunterWeapon
-import com.example.mhcampaign.ui.theme.GetTextFieldColors
-import com.example.mhcampaign.ui.theme.MHCampaignTheme
-import com.example.mhcampaign.ui.theme.md_theme_dark_primary
-import com.example.mhcampaign.ui.theme.md_theme_light_onSurfaceVariant
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
-
-
 
 
 @Preview(showSystemUi = true)
@@ -74,7 +55,12 @@ fun DropDownPreview() {
     val coffeeDrinks = listOf("Americano", "Cappuccino", "Espresso", "Latte", "Mocha")
     Column {
 
-        MHSimpleDropDown("Campaign", coffeeDrinks) { name, index -> Log.d("Dropdown", "$name  $index") }
+        MHSimpleDropDown("Campaign", coffeeDrinks) { name, index ->
+            Log.d(
+                "Dropdown",
+                "$name  $index"
+            )
+        }
         var selectedIndex by remember { mutableStateOf(-1) }
         LargeDropdownMenu(
             label = "Hunter Weapon",
@@ -116,7 +102,7 @@ fun LargeDropdownMenu(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             onValueChange = { },
             readOnly = true,
-            )
+        )
 
         // Transparent clickable surface on top of OutlinedTextField
         Surface(
@@ -135,6 +121,7 @@ fun LargeDropdownMenu(
         ) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, md_theme_light_primary),
             ) {
                 val listState = rememberLazyListState()
                 if (selectedIndex > -1) {

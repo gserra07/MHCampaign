@@ -222,7 +222,7 @@ fun MiniFabItem(
     Row(
         modifier = Modifier
             .wrapContentSize()
-            .width(160.dp)
+            .width(140.dp)
             .background(
                 color = md_theme_dark_primary,
                 shape = RoundedCornerShape(50.dp)

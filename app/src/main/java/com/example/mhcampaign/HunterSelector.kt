@@ -2,7 +2,9 @@ package com.example.mhcampaign
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
+import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
@@ -72,6 +75,7 @@ fun HunterSelector(
                             color = md_theme_light_primaryContainer,
                             shape = RoundedCornerShape(20.dp)
                         )
+                        .border(BorderStroke(1.dp, md_theme_light_primary),shape = RoundedCornerShape(20.dp))
                         .padding(24.dp)
                         .fillMaxWidth()
                 ) {
@@ -95,7 +99,7 @@ fun HunterSelector(
                             }
                         }
                         ) {
-                            Text(text = "Go Inventory")
+                            Text(text = "Go Inventory",modifier = Modifier)
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
