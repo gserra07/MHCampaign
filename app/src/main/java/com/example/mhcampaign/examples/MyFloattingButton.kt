@@ -8,11 +8,15 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,22 +27,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -52,8 +54,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mhcampaign.R
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
-import com.example.mhcampaign.ui.theme.md_theme_light_primary
-import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
 fun MyFloatingActionButton(onFloatingActionButtonClick: () -> Unit) {
@@ -180,17 +180,28 @@ fun MultiFloatingActionButton(
             onClick = {
                 fabState.value = fabState.value.toggleValue()
                 stateChanged(fabState.value)
-            }, modifier = Modifier
+            },
+            modifier = Modifier
                 .size(40.dp)
-                .align(alignment = End)
-            , containerColor = md_theme_dark_primary
+                .align(alignment = End),
+            containerColor = md_theme_dark_primary,
         ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add",
-                modifier = Modifier.rotate(rotation),
-                tint = Color.Black
-            )
+            Box(
+                modifier = Modifier.fillMaxSize().border(
+                    BorderStroke(1.dp, Color.Black),
+                    shape = RoundedCornerShape(16.dp)
+                ), contentAlignment = Center
+            ) {
+
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier
+                        .rotate(rotation),
+
+                    tint = Color.Black
+                )
+            }
 
             /*Icon(
                 painter = painterResource(id = fabIcon.iconRes),
@@ -216,6 +227,7 @@ fun MiniFabItem(
                 color = md_theme_dark_primary,
                 shape = RoundedCornerShape(50.dp)
             )
+            .border(BorderStroke(1.dp, Color.Black), shape = RoundedCornerShape(50.dp))
             .padding(end = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -276,44 +288,3 @@ fun MyfloatingPreview() {
         )
     )
 }
-
-
-//@Composable
-//fun Screen1(
-//    setFabOnClick: (() -> Unit) -> Unit,
-//) {
-//    var name by remember { mutableStateOf(TextFieldValue("")) }
-//
-//    TextField(value = name, onValueChange = {name = it})
-//
-//    LaunchedEffect(Unit) {
-//        setFabOnClick { println("$name") }
-//    }
-//}
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun MyActivity() {
-//    val navController = rememberNavController()
-//    val (fabOnClick, setFabOnClick) = remember { mutableStateOf<(() -> Unit)?>(null) }
-//
-//    Scaffold(
-//        floatingActionButton = {
-//            FloatingActionButton(onClick = {
-//                fabOnClick?.invoke()
-//            }) {
-//                Icon(Icons.Default.ReportProblem, null)
-//            }
-//        }
-//    ) { paddingValues ->
-//        NavHost(
-//            navController = navController,
-//            startDestination = Screen.Screen1.route,
-//            modifier = Modifier.padding(paddingValues)
-//        ) {
-//            composable(route = Screen.Screen1.route) {
-//                Screen1(setFabOnClick = setFabOnClick)
-//            }
-//        }
-//    }
-//}
