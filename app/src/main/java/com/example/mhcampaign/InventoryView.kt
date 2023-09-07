@@ -51,6 +51,7 @@ import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.enums.Group
 import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
+import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
@@ -194,7 +195,7 @@ fun NewItemDialog(
                         )
                     )
                 }
-                MHDropDown(
+                MHLargeDropDown(
                     label = "New Item",
                     itemModelList = dropdownItemModelList,
                     selectedIndex = selectedIndex,
@@ -209,7 +210,8 @@ fun NewItemDialog(
                     onValueChange = { quantity = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     singleLine = true,
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    colors = GetTextFieldColors()
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))

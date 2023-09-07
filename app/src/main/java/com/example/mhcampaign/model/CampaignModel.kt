@@ -2,6 +2,7 @@ package com.example.mhcampaign.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.mhcampaign.model.enums.Monster
 
 data class CampaignModel(
     var name: String,
@@ -30,6 +31,7 @@ data class CampaignModel(
 
     fun addMonster(monster: Monster) {
         _monsterList.value?.add(MonsterData(monster))
+        _monsterList.value = _monsterList.value?.sortedBy { it.monster.index }?.toMutableList()
     }
 
     fun updateMonsterList(list: MutableList<MonsterData>) {

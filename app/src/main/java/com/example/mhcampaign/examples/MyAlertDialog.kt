@@ -32,14 +32,15 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.R
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
 fun MyAlertDialog(
-        visibility: Boolean,
-        onDismissListener: () -> Unit,
-        onConfirmListener: (String) -> Unit
+    visibility: Boolean,
+    onDismissListener: () -> Unit,
+    onConfirmListener: (String) -> Unit
 ) {
     if (visibility) {
         var body by remember {
@@ -47,19 +48,19 @@ fun MyAlertDialog(
         }
         AlertDialog(
 
-                onDismissRequest = { body = "no hagas trampas" },
-                confirmButton = {
-                    TextButton(onClick = { onConfirmListener(body) }) {
-                        Text(text = "Aceptar")
-                    }
-                },
-                title = { Text(text = "titlulo de la alerta") },
-                text = { Text(text = body) },
-                dismissButton = {
-                    TextButton(onClick = { onDismissListener() }) {
-                        Text(text = "Cancelar")
-                    }
+            onDismissRequest = { body = "no hagas trampas" },
+            confirmButton = {
+                TextButton(onClick = { onConfirmListener(body) }) {
+                    Text(text = "Aceptar")
                 }
+            },
+            title = { Text(text = "titlulo de la alerta") },
+            text = { Text(text = body) },
+            dismissButton = {
+                TextButton(onClick = { onDismissListener() }) {
+                    Text(text = "Cancelar")
+                }
+            }
         )
     }
 }
@@ -67,11 +68,11 @@ fun MyAlertDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyCustomDialog(
-        visibility: Boolean,
-        data: HunterData? = null,
-        onDismissListener: () -> Unit,
-        onConfirmListener: (String, Int) -> Unit,
-        context: Context = LocalContext.current
+    visibility: Boolean,
+    data: HunterData? = null,
+    onDismissListener: () -> Unit,
+    onConfirmListener: (String, Int) -> Unit,
+    context: Context = LocalContext.current
 ) {
     MHCampaignTheme(darkTheme = false) {
 
@@ -80,41 +81,47 @@ fun MyCustomDialog(
                 mutableStateOf(data?.hunterName ?: "")
             }
             var selectedIndex by remember {
-                mutableStateOf(if (data != null) HunterWeapon.values().indexOf(data.hunterWeapon) else -1)
+                mutableStateOf(
+                    if (data != null) HunterWeapon.values().indexOf(data.hunterWeapon) else -1
+                )
             }
 
             Dialog(
-                    onDismissRequest = { },
-                    properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+                onDismissRequest = { },
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
+                )
             ) {
                 Column(
-                        modifier = Modifier
-                                .background(
-                                        color = md_theme_light_primaryContainer,
-                                        shape = RoundedCornerShape(20.dp)
-                                )
-                                .padding(24.dp)
-                                .fillMaxWidth()
+                    modifier = Modifier
+                        .background(
+                            color = md_theme_light_primaryContainer,
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                        .padding(24.dp)
+                        .fillMaxWidth()
                 ) {
                     Text(text = "Edit Hunter", fontSize = 25.sp)
                     Spacer(modifier = Modifier.height(20.dp))
                     LargeDropdownMenu(
-                            label = "Hunter Weapon",
-                            items = HunterWeapon.values().asList(),
-                            selectedIndex = selectedIndex,
-                            onItemSelected = { index, _ -> selectedIndex = index },
+                        label = "Hunter Weapon",
+                        items = HunterWeapon.values().asList(),
+                        selectedIndex = selectedIndex,
+                        onItemSelected = { index, _ -> selectedIndex = index },
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     OutlinedTextField(
-                            label = { Text(text = "Hunter name") },
-                            value = hunterName,
-                            onValueChange = { hunterName = it },
-                            singleLine = true
+                        label = { Text(text = "Hunter name") },
+                        value = hunterName,
+                        onValueChange = { hunterName = it },
+                        singleLine = true,
+                        colors = GetTextFieldColors()
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     Row(
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            modifier = Modifier.fillMaxWidth()
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Button(onClick = { onDismissListener() }) {
                             Text(text = "Cancel")
@@ -152,12 +159,18 @@ fun MyAlertPreview() {
 //    MyAlertDialog(visibility = visible, onConfirmListener = onConfrim, onDismissListener = {})
     MHCampaignTheme(darkTheme = false) {
 
-        MyCustomDialog(visibility = visible, data, onConfirmListener = { hunterName, selectedIndex ->
-            data.hunterName = hunterName
-            data.hunterWeapon = HunterWeapon.values()[selectedIndex]
-            visible = false
-        }, onDismissListener = {
-            visible = false
-        }, context = LocalContext.current)
+        MyCustomDialog(
+            visibility = visible,
+            data,
+            onConfirmListener = { hunterName, selectedIndex ->
+                data.hunterName = hunterName
+                data.hunterWeapon = HunterWeapon.values()[selectedIndex]
+                visible = false
+            },
+            onDismissListener = {
+                visible = false
+            },
+            context = LocalContext.current
+        )
     }
 }

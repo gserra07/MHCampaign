@@ -30,6 +30,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,7 +78,7 @@ fun HunterDialog(
             ) {
                 Text(text = label, fontSize = 25.sp)
                 Spacer(modifier = Modifier.height(20.dp))
-                MHDropDown(
+                MHLargeDropDown(
                     label = "Hunter Weapon",
                     itemModelList = dataList,
                     selectedIndex = selectedIndex,
@@ -91,7 +92,8 @@ fun HunterDialog(
                     label = { Text(text = "Hunter name") },
                     value = hunterName,
                     onValueChange = { hunterName = it },
-                    singleLine = true
+                    singleLine = true,
+                    colors = GetTextFieldColors()
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 if (data != null) {

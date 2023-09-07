@@ -30,33 +30,35 @@ import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.HunterSelector
 import com.example.mhcampaign.HunterViewHolder
 import com.example.mhcampaign.Inventory
+import com.example.mhcampaign.MHSimpleDropDown
 import com.example.mhcampaign.MonsterListView
 import com.example.mhcampaign.counter.MySelector
 import com.example.mhcampaign.R
 import com.example.mhcampaign.counter.CounterViewModel
-import com.example.mhcampaign.examples.MyDropDown
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
-import com.example.mhcampaign.model.Monster
 import com.example.mhcampaign.model.MonsterData
 import com.example.mhcampaign.model.MonsterListViewModel
+import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun CampaignView(
-    campaignList: List<CampaignModel>,
-    hunterDataList: List<HunterData>,
-    campaignViewModel: CampaignViewModel
+    campaignList: MutableList<CampaignModel>,
+    hunterDataList: MutableList<HunterData>,
+    campaignViewModel: CampaignViewModel,
+    selectedCampaign: Int = 0,
+    onCampaignChange: (index: Int) -> Unit
 ) {
     val campaignHunters: MutableList<HunterData?> by campaignViewModel.campaignHunters.observeAsState(
         initial = hunterDataList.filter { it.campaignId == campaignList[0].id }
             .toMutableList()
     )
     val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
-        initial = 0
+        initial = selectedCampaign
     )
     val selectedCampaign: CampaignModel by campaignViewModel.selectedCampaign.observeAsState(
         initial = campaignList[selectedCampaignIndex]
@@ -71,6 +73,7 @@ fun CampaignView(
     var selectedHunterPosition by remember {
         mutableStateOf(0)
     }
+    val logName = "Campaign"
 
 
     Column(
@@ -82,21 +85,18 @@ fun CampaignView(
     ) {
 
         //Campaign selector
-        MyDropDown(
+        MHSimpleDropDown(
             "Campaign",
             campaignList.map { it.name },
             selectedCampaignIndex,
             paddingValues = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
         ) { name, index ->
             Log.d("Dropdown", "$name  $index")
+            onCampaignChange(index)
             campaignViewModel.onCampaignIndexChange(index)
         }
 
         //Potions and days
-//        var potions = selectedCampaign2.potions
-//        var days = selectedCampaign2.days
-//        Log.d("Campaign", "Pociones de bbdd ${campaignList[selectedCampaignIndex]}")
-//        Log.d("Campaign", "Pociones de la view $potions")
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
             Box {
                 MySelector(
@@ -107,8 +107,6 @@ fun CampaignView(
                     ),
                     R.drawable.potion_icon
                 ) {
-//                    Log.d("Campaign", "Pociones de bbdd ${campaignList[selectedCampaignIndex]}")
-                    Log.d("Campaign", "Pociones de la view $it")
                     campaignViewModel.onPotionsChange(it)
                 }
             }
@@ -166,7 +164,7 @@ fun CampaignView(
                 campaignViewModel.onInventoryDialogVisibilityChange(true)
                 selectedHunter = it
             },
-            onDeleteListener = { item, index ->
+            onDeleteListener = { item, _ ->
                 campaignViewModel.removeCampaignHunter(item)
                 item?.campaignId(-1)
                 campaignViewModel.onHunterDialogVisibilityChange(false)
@@ -201,32 +199,21 @@ fun CampaignView(
             MonsterListView(
                 monsterList = MonsterListViewModel(monsterList),
                 paddingValues = PaddingValues(start = 20.dp),
-                onChangeListener = {
-                    selectedCampaign.updateMonsterList(it)
+                onChangeListener = { i, m ->
+                    // Log.d(logName, "Monster: ${m.monster.monsterName} easy ${m.easyCount.value} medium ${m.mediumCount.value}")
                 })
         }
         selectedHunter?.let {
             Inventory(hunterData = it, visibility = inventoryVisibility, onCloseListener = {
-                campaignViewModel.onInventoryDialogVisibilityChange( false)
+                campaignViewModel.onInventoryDialogVisibilityChange(false)
             })
         }
     }
 }
 
-//fun makeCampaignHunters(
-//    campaignHunters: MutableList<HunterData?>,
-//): MutableList<HunterData?> {
-//    campaignHunters.toMutableList()
-//    while (campaignHunters.size < 4) {
-//        campaignHunters.add(null)
-//    }
-//
-//    return campaignHunters
-//}
-
 @Preview(showSystemUi = true)
 @Composable
-fun MyCampaignreview() {
+fun MyCampaignPreview() {
     val monsterList = mutableListOf(
         MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0),
         MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0),
@@ -245,5 +232,9 @@ fun MyCampaignreview() {
         HunterData("hunter 5", HunterWeapon.LANCE),
         HunterData("hunter 6", HunterWeapon.INSECTGLAIVE)
     )
-    CampaignView(campaignList, dataList, CampaignViewModel(campaignList, dataList))
+    CampaignView(
+        campaignList,
+        dataList,
+        CampaignViewModel(campaignList, dataList),
+    ) {}
 }

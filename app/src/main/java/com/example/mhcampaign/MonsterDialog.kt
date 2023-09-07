@@ -4,9 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,37 +27,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.MonsterData
+import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
-fun HunterSelector(
+fun MonsterDialog(
     visibility: Boolean,
-    dataList: List<HunterData>,
-    selectedHunter: HunterData? = null,
+    dataList: MutableList<Monster>,
     onDismissListener: () -> Unit,
-    onConfirmListener: (hunterData: HunterData?, index: Int) -> Unit,
-    onDeleteListener: (hunterData: HunterData?, index: Int) -> Unit,
-    onInventoryListener: (HunterData) -> Unit,
+    onConfirmListener: ( index: Int,hunterData: Monster) -> Unit,
     context: Context = LocalContext.current
 ) {
     MHCampaignTheme(darkTheme = false) {
 
         if (visibility) {
-            val hunterName by remember {
-                mutableStateOf(selectedHunter?.hunterName ?: "")
-            }
             var selectedIndex by remember {
-                mutableStateOf(
-                    if (selectedHunter != null)
-                        dataList.map { it.hunterName }.indexOf(selectedHunter.hunterName)
-                    else -1
-                )
+                mutableStateOf(-1)
             }
+            val availableMonsters = Monster.values().filter {
+                !dataList.map { m ->
+                    m
+                }.contains(it)
+            }.sortedBy { it.index }
             Dialog(
-                onDismissRequest = { onDismissListener()},
+                onDismissRequest = { onDismissListener() },
                 properties = DialogProperties(
                     dismissOnBackPress = true,
                     dismissOnClickOutside = true
@@ -75,36 +67,29 @@ fun HunterSelector(
                         .padding(24.dp)
                         .fillMaxWidth()
                 ) {
-                    Text(text = "Select Hunter", fontSize = 25.sp)
+                    val dropdownMonsterList = mutableListOf<MHDropdownItemModel>()
+                    Text(text = "Select Monster", fontSize = 25.sp)
                     Spacer(modifier = Modifier.height(20.dp))
-                    MHSimpleDropDown(
-                        label = "Hunter Name",
-                        itemList = dataList.map { it.hunterName },
+                    availableMonsters.forEachIndexed { index, it ->
+                        dropdownMonsterList.add(
+                            MHDropdownItemModel(
+                                itemName = it.monsterName,
+                                itemIcon = it.icon,
+                                index = index,
+                            )
+                        )
+                    }
+                    MHLargeDropDown(
+                        label = "New Monster",
+                        itemModelList = dropdownMonsterList,
                         selectedIndex = selectedIndex,
-                        paddingValues = PaddingValues(horizontal = 32.dp)
-                    ) { name, index ->
-                        Log.d("Dropdown", "$name  $index")
-                        selectedIndex = index
-                    }
+                        onItemSelected = { index, _ -> selectedIndex = index },
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        groupEnable = false,
+                        heightPercentage = 0.6f
+                    )
 
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        TextButton(onClick = {
-                            if (selectedHunter != null) {
-                                onInventoryListener(selectedHunter)
-                            }
-                        }
-                        ) {
-                            Text(text = "Go Inventory")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Button(onClick = { onDeleteListener(selectedHunter, selectedIndex) }) {
-                            Text(text = "Remove Hunter")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                     Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                         modifier = Modifier.fillMaxWidth()
@@ -116,10 +101,15 @@ fun HunterSelector(
                             Text(text = "Cancel")
                         }
                         Button(onClick = {
-                            onConfirmListener(
-                                if (selectedIndex >= 0) dataList[selectedIndex] else null,
-                                selectedIndex
-                            )
+                            if (selectedIndex >= 0) {
+                                onConfirmListener(
+                                    selectedIndex,
+                                    availableMonsters[selectedIndex]
+                                )
+                            }
+                            else{
+
+                            }
                         }, modifier = Modifier.width(100.dp)) {
                             Text(text = context.getString(R.string.save_string))
                         }
@@ -132,14 +122,11 @@ fun HunterSelector(
 
 @Preview(showSystemUi = true)
 @Composable
-fun MyHunterSelectorPreview() {
-    val data = listOf<HunterData>(
-        HunterData("hunter 1", HunterWeapon.BOW),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
-        HunterData("hunter 4", HunterWeapon.INSECTGLAIVE),
+fun MyMonsterSelectorPreview() {
+    val monsterList = mutableListOf(
+        Monster.GREAT_JAGRAS,
+        Monster.PUKEI_PUKEI,
+        Monster.ANJANATH,
     )
     var visible by remember {
         mutableStateOf(true)
@@ -151,12 +138,10 @@ fun MyHunterSelectorPreview() {
         visible = false
         Log.d("Preview", body)
     }
-    HunterSelector(visibility = visible,
-        dataList = data,
-//            selectedHunter = data[1],
-        context = LocalContext.current,
-        onDismissListener = { },
-        onConfirmListener = { hData, index -> },
-        onInventoryListener = {},
-        onDeleteListener = { data, index -> })
+    MonsterDialog(visibility = visible,
+        dataList = monsterList,
+        onDismissListener = { visible = false},
+        onConfirmListener = { hData, index ->
+            visible = false
+        },)
 }

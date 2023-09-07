@@ -25,11 +25,13 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +41,7 @@ import com.example.mhcampaign.campaign.CampaignView
 import com.example.mhcampaign.HunterDialog
 import com.example.mhcampaign.HunterView
 import com.example.mhcampaign.MHDropDownPreview
+import com.example.mhcampaign.MonsterDialog
 import com.example.mhcampaign.MyInventoryPreview
 import com.example.mhcampaign.R
 import com.example.mhcampaign.campaign.CampaignViewModel
@@ -46,8 +49,8 @@ import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
-import com.example.mhcampaign.model.Monster
 import com.example.mhcampaign.model.MonsterData
+import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
@@ -117,15 +120,26 @@ fun MyDrawerPreview() {
         var newHunterVisibility by remember {
             mutableStateOf(false)
         }
+        var newMonsterVisibility by remember {
+            mutableStateOf(false)
+        }
         var createdHunter: HunterData? by remember {
             mutableStateOf(null)
         }
 
-        val monsterList = mutableListOf(
-            MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0),
-            MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0),
-            MonsterData(Monster.ANJANATH, 1, 1, 0)
-        )
+        var selectedCampaignIndex: Int by remember {
+            mutableIntStateOf(0)
+        }
+
+        val monsterList = remember {
+            mutableStateListOf<MonsterData>()
+
+        }
+
+        monsterList.add(MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0))
+        monsterList.add(MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0))
+        monsterList.add(MonsterData(Monster.ANJANATH, 1, 1, 0))
+
         val campaignList = mutableListOf(
             CampaignModel("Campaña 1", 2, 4, list = monsterList).id(0),
             CampaignModel("Campaña 2", 0, 0).id(1),
@@ -134,14 +148,17 @@ fun MyDrawerPreview() {
         val hunterDataList = remember {
             mutableStateListOf<HunterData>()
         }
-        hunterDataList.add( HunterData(
-            "Ganexy", HunterWeapon.DUALBLADES, mutableListOf(
-                PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
-                PartModel(PartItem.CARBALITE),
-                PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
-                PartModel(PartItem.GREAT_JAGRAS_CLAW),
-            )
-        ).campaignId(0))
+
+        hunterDataList.add(
+            HunterData(
+                "Ganexy", HunterWeapon.DUALBLADES, mutableListOf(
+                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+                    PartModel(PartItem.CARBALITE),
+                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+                    PartModel(PartItem.GREAT_JAGRAS_CLAW),
+                )
+            ).campaignId(0)
+        )
         hunterDataList.add(HunterData("Adriatus", HunterWeapon.HEAVYBOWGUN).campaignId(0))
         hunterDataList.add(HunterData("Garatoth", HunterWeapon.SWITCHAXE).campaignId(0))
         hunterDataList.add(HunterData("Ingravitto", HunterWeapon.CHARGEBLADE))
@@ -160,42 +177,27 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {},
                             onFloatingButtonContent = {
-                                var newHunterVisibility by remember {
-                                    mutableStateOf(false)
-                                }
-                                MultiFloatingActionButton(
-                                    items = listOf(
-                                        MultiFabItem(
-                                            id = 1, label = "Add Campaign"
-                                        ), MultiFabItem(
-                                            id = 2, label = "Add Monster"
-                                        )
-                                    ), fabIcon = FabIcon(
-                                        iconRes = R.drawable.add_black, iconRotate = 45f
-                                    ), onFabItemClicked = {
-                                        when (it.id) {
-                                            0 -> {
-
-                                            }
-
-                                            1 -> {
-
-                                            }
-                                        }
-                                    }, fabOption = FabOption(
-                                        iconTint = Color.White, showLabel = true
-                                    )
+                                FABCampaign(
+                                    visible = newMonsterVisibility,
+                                    campaignModel = campaignList[selectedCampaignIndex],
+                                    onMonsterCreated = {
+                                        campaignList[selectedCampaignIndex].addMonster(it)
+                                    }
                                 )
-                                HunterDialog(visibility = newHunterVisibility,
-                                    label = "New Hunter",
-                                    data = null,
-                                    onDismissListener = { newHunterVisibility = false },
-                                    onConfirmListener = { item, index ->
-                                        newHunterVisibility = false
-                                    },
-                                    onInventoryListener = { })
                             },
-                            content = { CampaignView(campaignList, hunterDataList, campaignViewModel = CampaignViewModel(campaignList, hunterDataList)) })
+                            content = {
+                                CampaignView(
+                                    campaignList,
+                                    hunterDataList,
+                                    campaignViewModel = CampaignViewModel(
+                                        campaignList,
+                                        hunterDataList
+                                    ),
+                                    selectedCampaign = selectedCampaignIndex
+                                ) {
+                                    selectedCampaignIndex = it
+                                }
+                            })
                     }
 
                     1 -> {
@@ -204,19 +206,15 @@ fun MyDrawerPreview() {
                             drawerState = drawerState,
                             onFloatingActionButtonClick = {},
                             onFloatingButtonContent = {
-//                                if (fabOnClick != null) {
                                 FABHunters(
                                     visible = newHunterVisibility,
                                     hunterDataList = hunterDataList,
                                     onHunterCreated = {
                                         createdHunter = it
-//                                        hunterDataList.add(it)
                                         newHunterVisibility = false
                                     }
                                 )
-//                                }
                             },
-
                             content = { HunterView(dataList = hunterDataList) })
                     }
 
@@ -249,6 +247,55 @@ fun MyDrawerPreview() {
 }
 
 @Composable
+fun FABCampaign(
+    visible: Boolean,
+    campaignModel: CampaignModel,
+    onMonsterCreated: (Monster) -> Unit
+) {
+    var newMonsterVisibility by remember {
+        mutableStateOf(visible)
+    }
+    var createdMonster: MonsterData? by remember {
+        mutableStateOf(null)
+    }
+
+    MultiFloatingActionButton(
+        items = listOf(
+            MultiFabItem(
+                id = 0, label = "Add Monster"
+            ), MultiFabItem(
+                id = 1, label = "Add Campaign"
+            )
+        ), fabIcon = FabIcon(
+            iconRes = R.drawable.add_black, iconRotate = 45f
+        ), onFabItemClicked = {
+            when (it.id) {
+                0 -> {
+                    newMonsterVisibility = true
+                }
+
+                1 -> {
+
+                }
+            }
+        }, fabOption = FabOption(
+            iconTint = Color.White, showLabel = true
+        )
+    )
+    campaignModel.monsterList.value?.map { it.monster }?.let {
+        MonsterDialog(
+            visibility = newMonsterVisibility,
+            dataList = it.toMutableStateList(),
+            onDismissListener = { newMonsterVisibility = false },
+            onConfirmListener = { i, m ->
+                onMonsterCreated(m)
+                newMonsterVisibility = false
+            }
+        )
+    }
+}
+
+@Composable
 fun FABHunters(
     visible: Boolean,
     hunterDataList: MutableList<HunterData>,
@@ -277,8 +324,6 @@ fun FABHunters(
             iconTint = Color.White, showLabel = true
         )
     )
-//    createdHunter?.let { onHunterCreated.invoke(it) }
-
     HunterDialog(visibility = newHunterVisibility,
         label = "New Hunter",
         data = null,
