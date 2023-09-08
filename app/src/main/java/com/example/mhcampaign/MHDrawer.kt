@@ -40,7 +40,7 @@ import com.example.mhcampaign.huntersView.HunterView
 import com.example.mhcampaign.huntersView.HuntersViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
 import com.example.mhcampaign.model.MonsterData
 import com.example.mhcampaign.model.enums.Monster
@@ -144,7 +144,7 @@ fun MyDrawerPreview() {
 
         hunterDataList.add(
                 HunterData(
-                        "Ganexy", HunterWeapon.DUALBLADES, mutableListOf(
+                        "Ganexy", HunterWeapon.DUAL_BLADES, mutableListOf(
                         PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
                         PartModel(PartItem.CARBALITE),
                         PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
@@ -152,10 +152,10 @@ fun MyDrawerPreview() {
                 )
                 ).campaignId(0)
         )
-        hunterDataList.add(HunterData("Adriatus", HunterWeapon.HEAVYBOWGUN).campaignId(0))
-        hunterDataList.add(HunterData("Garatoth", HunterWeapon.SWITCHAXE).campaignId(0))
-        hunterDataList.add(HunterData("Ingravitto", HunterWeapon.CHARGEBLADE))
-        hunterDataList.add(HunterData("Guille", HunterWeapon.LONGSWORD).campaignId(0))
+        hunterDataList.add(HunterData("Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(0))
+        hunterDataList.add(HunterData("Garatoth", HunterWeapon.SWITCH_AXE).campaignId(0))
+        hunterDataList.add(HunterData("Ingravitto", HunterWeapon.CHARGE_BLADE))
+        hunterDataList.add(HunterData("Guille", HunterWeapon.LONG_SWORD).campaignId(0))
         hunterDataList.add(HunterData("SpiderWolf", HunterWeapon.BOW))
 
         val campaignViewModel = CampaignViewModel(
