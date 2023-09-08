@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
@@ -139,11 +139,11 @@ fun HunterSelector(
 fun MyHunterSelectorPreview() {
     val data = listOf<HunterData>(
         HunterData("hunter 1", HunterWeapon.BOW),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
-        HunterData("hunter 4", HunterWeapon.INSECTGLAIVE),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterData("hunter 4", HunterWeapon.INSECT_GLAIVE),
     )
     var visible by remember {
         mutableStateOf(true)

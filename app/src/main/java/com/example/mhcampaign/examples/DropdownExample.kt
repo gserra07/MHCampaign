@@ -44,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.mhcampaign.MHSimpleDropDown
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
@@ -74,15 +74,15 @@ fun DropDownPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LargeDropdownMenu(
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    label: String,
-    notSetLabel: String? = null,
-    items: List<HunterWeapon>,
-    selectedIndex: Int = -1,
-    onItemSelected: (index: Int, item: HunterWeapon) -> Unit,
-    selectedItemToString: (HunterWeapon) -> String = { it.weaponName },
-    drawItem: @Composable (HunterWeapon, Boolean, Boolean, () -> Unit) -> Unit = { item, selected, itemEnabled, onClick ->
+        modifier: Modifier = Modifier,
+        enabled: Boolean = true,
+        label: String,
+        notSetLabel: String? = null,
+        items: List<HunterWeapon>,
+        selectedIndex: Int = -1,
+        onItemSelected: (index: Int, item: HunterWeapon) -> Unit,
+        selectedItemToString: (HunterWeapon) -> String = { it.weaponName },
+        drawItem: @Composable (HunterWeapon, Boolean, Boolean, () -> Unit) -> Unit = { item, selected, itemEnabled, onClick ->
         LargeDropdownMenuItem(
             weapon = item,
             selected = selected,
@@ -164,10 +164,10 @@ fun LargeDropdownMenu(
 
 @Composable
 fun LargeDropdownMenuItem(
-    weapon: HunterWeapon,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
+        weapon: HunterWeapon,
+        selected: Boolean,
+        enabled: Boolean,
+        onClick: () -> Unit,
 ) {
     val contentColor = when {
         !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)

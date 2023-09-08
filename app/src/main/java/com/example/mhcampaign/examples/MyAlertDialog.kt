@@ -31,7 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.R
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
@@ -144,7 +144,7 @@ fun MyCustomDialog(
 @Composable
 fun MyAlertPreview() {
     var data by remember {
-        mutableStateOf(HunterData("Hunter1", HunterWeapon.CHARGEBLADE))
+        mutableStateOf(HunterData("Hunter1", HunterWeapon.CHARGE_BLADE))
     }
     var visible by remember {
         mutableStateOf(false)
