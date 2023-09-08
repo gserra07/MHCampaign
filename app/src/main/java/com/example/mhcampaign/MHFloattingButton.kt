@@ -1,6 +1,7 @@
-package com.example.mhcampaign.examples
+package com.example.mhcampaign
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
@@ -23,7 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -39,6 +39,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.End
@@ -52,15 +54,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mhcampaign.R
+import com.example.mhcampaign.model.CampaignModel
+import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
 
-@Composable
-fun MyFloatingActionButton(onFloatingActionButtonClick: () -> Unit) {
-    FloatingActionButton(onClick = { onFloatingActionButtonClick() }, shape = CircleShape) {
-        Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-    }
-}
 
 data class MultiFabItem(
     val id: Int,
@@ -131,13 +129,13 @@ fun FabOption(
 
 @Composable
 fun MultiFloatingActionButton(
-    modifier: Modifier = Modifier,
-    items: List<MultiFabItem>,
-    fabState: MutableState<MultiFabState> = rememberMultiFabState(),
-    fabIcon: FabIcon,
-    fabOption: FabOption = FabOption(),
-    onFabItemClicked: (fabItem: MultiFabItem) -> Unit,
-    stateChanged: (fabState: MultiFabState) -> Unit = {}
+        modifier: Modifier = Modifier,
+        items: List<MultiFabItem>,
+        fabState: MutableState<MultiFabState> = rememberMultiFabState(),
+        fabIcon: FabIcon,
+        fabOption: FabOption = FabOption(),
+        onFabItemClicked: (fabItem: MultiFabItem) -> Unit,
+        stateChanged: (fabState: MultiFabState) -> Unit = {}
 ) {
     val rotation by animateFloatAsState(
         if (fabState.value == MultiFabState.Expand) {
@@ -215,9 +213,9 @@ fun MultiFloatingActionButton(
 
 @Composable
 fun MiniFabItem(
-    item: MultiFabItem,
-    fabOption: FabOption,
-    onFabItemClicked: (item: MultiFabItem) -> Unit
+        item: MultiFabItem,
+        fabOption: FabOption,
+        onFabItemClicked: (item: MultiFabItem) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -261,10 +259,102 @@ fun MiniFabItem(
     }
 }
 
+
+@Composable
+fun FABCampaign(
+        visible: Boolean,
+        campaignModel: CampaignModel,
+        onMonsterCreated: (Monster) -> Unit
+) {
+    var newMonsterVisibility by remember {
+        mutableStateOf(visible)
+    }
+
+    MultiFloatingActionButton(
+            items = listOf(
+                    MultiFabItem(
+                            id = 0, label = "Add Monster"
+                    ), MultiFabItem(
+                    id = 1, label = "Add Campaign"
+            )
+            ), fabIcon = FabIcon(
+            iconRes = R.drawable.add_black, iconRotate = 45f
+    ), onFabItemClicked = {
+        when (it.id) {
+            0 -> {
+                newMonsterVisibility = true
+            }
+
+            1 -> {
+
+            }
+        }
+    }, fabOption = FabOption(
+            iconTint = Color.White, showLabel = true
+    )
+    )
+    campaignModel.monsterList.value?.map { it.monster }?.let {
+        MonsterDialog(
+                visibility = newMonsterVisibility,
+                dataList = it.toMutableStateList(),
+                onDismissListener = { newMonsterVisibility = false },
+                onConfirmListener = { i, m ->
+                    onMonsterCreated(m)
+                    newMonsterVisibility = false
+                }
+        )
+    }
+}
+
+@Composable
+fun FABHunters(
+        visible: Boolean,
+        hunterDataList: MutableList<HunterData>,
+        onHunterCreated: (HunterData) -> Unit
+) {
+    var newHunterVisibility by remember {
+        mutableStateOf(visible)
+    }
+    var createdHunter: HunterData? by remember {
+        mutableStateOf(null)
+    }
+    MultiFloatingActionButton(
+            items = listOf(
+                    MultiFabItem(
+                            id = 0, label = "Add Hunter"
+                    )
+            ), fabIcon = FabIcon(
+            iconRes = R.drawable.add_black, iconRotate = 45f
+    ), onFabItemClicked = {
+        when (it.id) {
+            0 -> {
+                newHunterVisibility = true
+            }
+        }
+    }, fabOption = FabOption(
+            iconTint = Color.White, showLabel = true
+    )
+    )
+    HunterDialog(visibility = newHunterVisibility,
+            label = "New Hunter",
+            data = null,
+            onDismissListener = { newHunterVisibility = false },
+            onConfirmListener = { item, index ->
+                if (item != null) {
+                    Log.d("drawer", item.hunterName)
+                    createdHunter = item
+                    hunterDataList.add(item)
+                }
+                newHunterVisibility = false
+            },
+            onInventoryListener = { })
+}
+
+
 @Preview(showSystemUi = true)
 @Composable
-fun MyfloatingPreview() {
-    var context = LocalContext.current
+fun MyFloatingPreview() {
+    val context = LocalContext.current
     MultiFloatingActionButton(
         items = listOf(
             MultiFabItem(
