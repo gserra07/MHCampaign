@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.mhcampaign.MHSimpleDropDown
 import com.example.mhcampaign.examples.LargeDropdownMenu
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

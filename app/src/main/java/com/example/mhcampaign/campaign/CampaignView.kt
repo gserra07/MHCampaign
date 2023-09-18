@@ -37,7 +37,7 @@ import com.example.mhcampaign.R
 import com.example.mhcampaign.counter.CounterViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.MonsterData
 import com.example.mhcampaign.model.MonsterListViewModel
 import com.example.mhcampaign.model.enums.Monster
@@ -226,11 +226,11 @@ fun MyCampaignPreview() {
     )
     val dataList = mutableListOf(
         HunterData("hunter 1", HunterWeapon.BOW).campaignId(0),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES).campaignId(0),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD).campaignId(0),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES).campaignId(0),
+        HunterData("hunter 3", HunterWeapon.GREAT_SWORD).campaignId(0),
         HunterData("hunter 4", HunterWeapon.BOW),
         HunterData("hunter 5", HunterWeapon.LANCE),
-        HunterData("hunter 6", HunterWeapon.INSECTGLAIVE)
+        HunterData("hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
     CampaignView(
         campaignList,

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 
 @Composable
@@ -124,14 +124,14 @@ fun HunterViewHolderPreview() {
     val corutinesScope = rememberCoroutineScope()
     var data = listOf<HunterData>(
         HunterData("hunter 1", HunterWeapon.BOW),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 3", HunterWeapon.CHARGEBLADE)
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 3", HunterWeapon.CHARGE_BLADE)
     )
     Column {
         HunterViewHolder(

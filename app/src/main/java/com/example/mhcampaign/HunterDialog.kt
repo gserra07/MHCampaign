@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer

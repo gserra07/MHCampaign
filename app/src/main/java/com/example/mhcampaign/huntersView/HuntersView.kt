@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -20,8 +19,7 @@ import com.example.mhcampaign.HunterDialog
 import com.example.mhcampaign.HunterViewHolder
 import com.example.mhcampaign.Inventory
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
-import com.example.mhcampaign.ui.theme.md_theme_light_primary
+import com.example.mhcampaign.model.enums.HunterWeapon
 
 @Composable
 fun HunterView(huntersViewModel: HuntersViewModel) {
@@ -102,11 +100,11 @@ fun HunterView(huntersViewModel: HuntersViewModel) {
 fun HunterViewPreview() {
     val data = mutableListOf(
         HunterData("hunter 1", HunterWeapon.HAMMER),
-        HunterData("hunter 2", HunterWeapon.DUALBLADES),
-        HunterData("hunter 3", HunterWeapon.GREATSWORD),
+        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
         HunterData("hunter 4", HunterWeapon.BOW),
         HunterData("hunter 5", HunterWeapon.LANCE),
-        HunterData("hunter 6", HunterWeapon.INSECTGLAIVE)
+        HunterData("hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
     HunterView(HuntersViewModel(data))
 }

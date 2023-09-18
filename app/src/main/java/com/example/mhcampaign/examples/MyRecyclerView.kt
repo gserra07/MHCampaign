@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.HunterViewHolder
 import com.example.mhcampaign.model.HunterData
-import com.example.mhcampaign.model.HunterWeapon
+import com.example.mhcampaign.model.enums.HunterWeapon
 import kotlinx.coroutines.launch
 
 @Composable
@@ -78,13 +78,13 @@ fun SimpleRecycleView(data: List<HunterData>) {
 @Composable
 fun MyRecyclePreview() {
     var data = listOf<HunterData>(HunterData("hunter 1", HunterWeapon.BOW),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 2", HunterWeapon.DUALBLADES),
-            HunterData("hunter 3", HunterWeapon.CHARGEBLADE))
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterData("hunter 3", HunterWeapon.CHARGE_BLADE))
     SimpleRecycleView(data)
 }
