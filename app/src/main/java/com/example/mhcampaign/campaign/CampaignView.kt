@@ -232,9 +232,11 @@ fun MyCampaignPreview() {
         HunterData("hunter 5", HunterWeapon.LANCE),
         HunterData("hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
+    var campaignViewModel = CampaignViewModel()
+    campaignViewModel.init(campaignList,dataList)
     CampaignView(
         campaignList,
         dataList,
-        CampaignViewModel(campaignList, dataList),
+        campaignViewModel,
     ) {}
 }

@@ -3,17 +3,20 @@ package com.example.mhcampaign.campaign
 import androidx.constraintlayout.compose.Visibility
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class CampaignViewModel(
-    private val campaignListIn: MutableList<CampaignModel> = mutableListOf(),
-    private var hunterListIn: MutableList<HunterData> = mutableListOf()
-) {
-    private val _campaignList = MutableLiveData<MutableList<CampaignModel>>(campaignListIn)
+@HiltViewModel
+class CampaignViewModel @Inject constructor(
+
+) : ViewModel() {
+    private val _campaignList = MutableLiveData<MutableList<CampaignModel>>()
     val campaignList: LiveData<MutableList<CampaignModel>> = _campaignList
 
-    private val _hunterList = MutableLiveData<MutableList<HunterData>>(hunterListIn)
+    private val _hunterList = MutableLiveData<MutableList<HunterData>>()
     val hunterList: LiveData<MutableList<HunterData>> = _hunterList
 
     private val _selectedCampaign = MutableLiveData<CampaignModel>()
@@ -35,8 +38,12 @@ class CampaignViewModel(
     val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
 
 
-
-    init {
+    fun init(
+        campaignListIn: MutableList<CampaignModel> = mutableListOf(),
+        hunterListIn: MutableList<HunterData> = mutableListOf()
+    ) {
+        _campaignList.value = campaignListIn
+        _hunterList.value = hunterListIn
         _selectedCampaignIndex.value = 0
         _selectedCampaign.value = _campaignList.value?.get(0)
         _campaignHunters.value = _hunterList.value?.filter { it.campaignId == campaignListIn[0].id }
@@ -46,7 +53,7 @@ class CampaignViewModel(
 
     fun onCampaignIndexChange(index: Int) {
         _selectedCampaignIndex.value = index
-        _selectedCampaign.value = campaignListIn[index]
+        _selectedCampaign.value = _campaignList.value?.get(index)
         makeCampaignHunters()
     }
 
@@ -62,10 +69,11 @@ class CampaignViewModel(
         _selectedCampaign.value?.days(days)
     }
 
-    fun onHunterDialogVisibilityChange(visibility: Boolean){
+    fun onHunterDialogVisibilityChange(visibility: Boolean) {
         _hunterDialogVisibility.value = visibility
     }
-    fun onInventoryDialogVisibilityChange(visibility: Boolean){
+
+    fun onInventoryDialogVisibilityChange(visibility: Boolean) {
         _inventoryDialogVisibility.value = visibility
     }
 
@@ -93,7 +101,7 @@ class CampaignViewModel(
     fun makeCampaignHunters(
     ) {
         val list = mutableListOf<HunterData?>()
-        hunterListIn.filter { it.campaignId == _selectedCampaign.value?.id }.forEach {
+        _hunterList.value?.filter { it.campaignId == _selectedCampaign.value?.id }?.forEach {
             list.add(it)
         }
 
