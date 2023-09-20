@@ -1,4 +1,4 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box

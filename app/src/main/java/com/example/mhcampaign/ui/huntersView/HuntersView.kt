@@ -1,4 +1,4 @@
-package com.example.mhcampaign.huntersView
+package com.example.mhcampaign.ui.huntersView
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.mhcampaign.HunterDialog
-import com.example.mhcampaign.HunterViewHolder
-import com.example.mhcampaign.Inventory
+import com.example.mhcampaign.ui.HunterDialog
+import com.example.mhcampaign.ui.HunterViewHolder
+import com.example.mhcampaign.ui.Inventory
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.enums.HunterWeapon
 

@@ -8,7 +8,7 @@ class HunterData(
         var hunterWeapon: HunterWeapon,
         var inventory: MutableList<PartModel> = mutableListOf()
 ) {
-    var campaignId: Int? = null
+    var campaignId: Int = -1
     fun campaignId(i: Int): HunterData {
         campaignId = i
         return this

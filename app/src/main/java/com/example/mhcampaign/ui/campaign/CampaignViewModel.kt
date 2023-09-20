@@ -1,22 +1,39 @@
-package com.example.mhcampaign.campaign
+package com.example.mhcampaign.ui.campaign
 
-import androidx.constraintlayout.compose.Visibility
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mhcampaign.domain.AddCampaignUseCase
+import com.example.mhcampaign.domain.GetCampaignsUseCase
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import com.example.mhcampaign.ui.CampaignUIState
+import com.example.mhcampaign.ui.CampaignUIState.Success
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-@HiltViewModel
-class CampaignViewModel @Inject constructor(
-
+//@HiltViewModel
+class CampaignViewModel constructor(
+    private val addCampaignUseCase: AddCampaignUseCase,
+    private val getCampaignsUseCase: GetCampaignsUseCase
 ) : ViewModel() {
-    private val _campaignList = MutableLiveData<MutableList<CampaignModel>>()
-    val campaignList: LiveData<MutableList<CampaignModel>> = _campaignList
 
-    private val _hunterList = MutableLiveData<MutableList<HunterData>>()
+    val uiState: StateFlow<CampaignUIState> =
+        getCampaignsUseCase().map(::Success).catch { Error(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
+
+
+//    private var uiState: StateFlow<CampaignUIState>  =  MutableStateFlow(CampaignUIState.Loading)
+
+//    private val _campaignList = MutableLiveData<MutableList<CampaignModel>>(mutableListOf())
+//    val campaignList: LiveData<MutableList<CampaignModel>> = _campaignList
+
+    private val _hunterList = MutableLiveData<MutableList<HunterData>>(mutableListOf())
     val hunterList: LiveData<MutableList<HunterData>> = _hunterList
 
     private val _selectedCampaign = MutableLiveData<CampaignModel>()
@@ -37,23 +54,39 @@ class CampaignViewModel @Inject constructor(
     private val _inventoryDialogVisibility = MutableLiveData<Boolean>(false)
     val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
 
+//    init {
+//        viewModelScope.launch {
+//            uiState = getCampaignsUseCase().map(::Success).catch { Error(it) }
+//                .stateIn(
+//                    viewModelScope,
+//                    SharingStarted.WhileSubscribed(5000),
+//                    CampaignUIState.Loading
+//                )
+////            _campaignList.postValue(result)
+//        }
+//    }
 
     fun init(
         campaignListIn: MutableList<CampaignModel> = mutableListOf(),
-        hunterListIn: MutableList<HunterData> = mutableListOf()
+        hunterListIn: MutableList<HunterData> = mutableListOf(),
     ) {
-        _campaignList.value = campaignListIn
+
+//       var cosa = getCampaignsUseCase().map(::Success).catch { Error(it) }
+//            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
+
+//        _campaignList.value = campaignListIn
         _hunterList.value = hunterListIn
         _selectedCampaignIndex.value = 0
-        _selectedCampaign.value = _campaignList.value?.get(0)
+
+        _selectedCampaign.value = campaignListIn[0]
         _campaignHunters.value = _hunterList.value?.filter { it.campaignId == campaignListIn[0].id }
             ?.toMutableList()
         makeCampaignHunters()
     }
 
-    fun onCampaignIndexChange(index: Int) {
+    fun onCampaignIndexChange(index: Int, campaignModel: CampaignModel) {
         _selectedCampaignIndex.value = index
-        _selectedCampaign.value = _campaignList.value?.get(index)
+        _selectedCampaign.value = campaignModel
         makeCampaignHunters()
     }
 
@@ -75,6 +108,12 @@ class CampaignViewModel @Inject constructor(
 
     fun onInventoryDialogVisibilityChange(visibility: Boolean) {
         _inventoryDialogVisibility.value = visibility
+    }
+
+    fun onAddCampaign(campaignModel: CampaignModel) {
+        viewModelScope.launch {
+            addCampaignUseCase(campaignModel)
+        }
     }
 
     fun removeCampaignHunter(hunter: HunterData?) {
@@ -112,3 +151,4 @@ class CampaignViewModel @Inject constructor(
     }
 
 }
+

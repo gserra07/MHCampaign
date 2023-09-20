@@ -1,16 +1,16 @@
-package com.example.mhcampaign.model
+package com.example.mhcampaign.ui.monsters
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.mhcampaign.model.enums.Monster
+import com.example.mhcampaign.model.MonsterDataModel
 
-data class MonsterData(
-    private val _monster: Monster,
-    private val _easy: Int = 0,
-    private val _medium: Int = 0,
-    private val _hard: Int = 0
+data class MonsterViewModel(
+    val monsterData: MonsterDataModel
 ) {
-    val monster = _monster
+    val monster = monsterData.monster
+    private val _easy: Int = monsterData.easy
+    private val _medium: Int = monsterData.medium
+    private val _hard: Int = monsterData.hard
 
     private val _easyCount: MutableLiveData<Int> = MutableLiveData(_easy)
     val easyCount: MutableLiveData<Int> = _easyCount
@@ -26,15 +26,16 @@ data class MonsterData(
         _easyCount.value = easy
         _mediumCount.value = medium
         _hardCount.value = hard
+        monsterData.updateValues(easy,medium,hard)
     }
 
 }
 
-class MonsterListViewModel(list: MutableList<MonsterData>) {
-    var _monsterList = MutableLiveData<MutableList<MonsterData>>(list)
-    var monsterList: LiveData<MutableList<MonsterData>> = _monsterList
+class MonsterListViewModel(list: MutableList<MonsterDataModel>) {
+    var _monsterList = MutableLiveData<MutableList<MonsterDataModel>>(list)
+    var monsterList: LiveData<MutableList<MonsterDataModel>> = _monsterList
 
-    fun updateMonster(index: Int, monster: MonsterData) {
+    fun updateMonster(index: Int, monster: MonsterDataModel) {
         _monsterList.value?.set(index, monster)
     }
 }

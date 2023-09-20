@@ -1,4 +1,4 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.ui
 
 import android.util.Log
 import androidx.compose.foundation.Image

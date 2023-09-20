@@ -1,4 +1,4 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.ui
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mhcampaign.R
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.enums.Monster
@@ -129,13 +130,13 @@ fun FabOption(
 
 @Composable
 fun MultiFloatingActionButton(
-        modifier: Modifier = Modifier,
-        items: List<MultiFabItem>,
-        fabState: MutableState<MultiFabState> = rememberMultiFabState(),
-        fabIcon: FabIcon,
-        fabOption: FabOption = FabOption(),
-        onFabItemClicked: (fabItem: MultiFabItem) -> Unit,
-        stateChanged: (fabState: MultiFabState) -> Unit = {}
+    modifier: Modifier = Modifier,
+    items: List<MultiFabItem>,
+    fabState: MutableState<MultiFabState> = rememberMultiFabState(),
+    fabIcon: FabIcon,
+    fabOption: FabOption = FabOption(),
+    onFabItemClicked: (fabItem: MultiFabItem) -> Unit,
+    stateChanged: (fabState: MultiFabState) -> Unit = {}
 ) {
     val rotation by animateFloatAsState(
         if (fabState.value == MultiFabState.Expand) {
@@ -185,10 +186,12 @@ fun MultiFloatingActionButton(
             containerColor = md_theme_dark_primary,
         ) {
             Box(
-                modifier = Modifier.fillMaxSize().border(
-                    BorderStroke(1.dp, Color.Black),
-                    shape = RoundedCornerShape(16.dp)
-                ), contentAlignment = Center
+                modifier = Modifier
+                    .fillMaxSize()
+                    .border(
+                        BorderStroke(1.dp, Color.Black),
+                        shape = RoundedCornerShape(16.dp)
+                    ), contentAlignment = Center
             ) {
 
                 Icon(
@@ -213,9 +216,9 @@ fun MultiFloatingActionButton(
 
 @Composable
 fun MiniFabItem(
-        item: MultiFabItem,
-        fabOption: FabOption,
-        onFabItemClicked: (item: MultiFabItem) -> Unit
+    item: MultiFabItem,
+    fabOption: FabOption,
+    onFabItemClicked: (item: MultiFabItem) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -262,55 +265,56 @@ fun MiniFabItem(
 
 @Composable
 fun FABCampaign(
-        visible: Boolean,
-        campaignModel: CampaignModel,
-        onMonsterCreated: (Monster) -> Unit
+    visible: Boolean,
+    campaignModel: CampaignModel,
+    onMonsterCreated: (Monster) -> Unit,
+    addCampaignClick: () -> Unit
 ) {
     var newMonsterVisibility by remember {
         mutableStateOf(visible)
     }
 
     MultiFloatingActionButton(
-            items = listOf(
-                    MultiFabItem(
-                            id = 0, label = "Add Monster"
-                    ), MultiFabItem(
-                    id = 1, label = "Add Campaign"
+        items = listOf(
+            MultiFabItem(
+                id = 0, label = "Add Monster"
+            ), MultiFabItem(
+                id = 1, label = "Add Campaign"
             )
-            ), fabIcon = FabIcon(
+        ), fabIcon = FabIcon(
             iconRes = R.drawable.add_black, iconRotate = 45f
-    ), onFabItemClicked = {
-        when (it.id) {
-            0 -> {
-                newMonsterVisibility = true
-            }
+        ), onFabItemClicked = {
+            when (it.id) {
+                0 -> {
+                    newMonsterVisibility = true
+                }
 
-            1 -> {
-
+                1 -> {
+                    addCampaignClick()
+                }
             }
-        }
-    }, fabOption = FabOption(
+        }, fabOption = FabOption(
             iconTint = Color.White, showLabel = true
-    )
+        )
     )
     campaignModel.monsterList.value?.map { it.monster }?.let {
         MonsterDialog(
-                visibility = newMonsterVisibility,
-                dataList = it.toMutableStateList(),
-                onDismissListener = { newMonsterVisibility = false },
-                onConfirmListener = { i, m ->
-                    onMonsterCreated(m)
-                    newMonsterVisibility = false
-                }
+            visibility = newMonsterVisibility,
+            dataList = it.toMutableStateList(),
+            onDismissListener = { newMonsterVisibility = false },
+            onConfirmListener = { i, m ->
+                onMonsterCreated(m)
+                newMonsterVisibility = false
+            }
         )
     }
 }
 
 @Composable
 fun FABHunters(
-        visible: Boolean,
-        hunterDataList: MutableList<HunterData>,
-        onHunterCreated: (HunterData) -> Unit
+    visible: Boolean,
+    hunterDataList: MutableList<HunterData>,
+    onHunterCreated: (HunterData) -> Unit
 ) {
     var newHunterVisibility by remember {
         mutableStateOf(visible)
@@ -319,35 +323,35 @@ fun FABHunters(
         mutableStateOf(null)
     }
     MultiFloatingActionButton(
-            items = listOf(
-                    MultiFabItem(
-                            id = 0, label = "Add Hunter"
-                    )
-            ), fabIcon = FabIcon(
+        items = listOf(
+            MultiFabItem(
+                id = 0, label = "Add Hunter"
+            )
+        ), fabIcon = FabIcon(
             iconRes = R.drawable.add_black, iconRotate = 45f
-    ), onFabItemClicked = {
-        when (it.id) {
-            0 -> {
-                newHunterVisibility = true
+        ), onFabItemClicked = {
+            when (it.id) {
+                0 -> {
+                    newHunterVisibility = true
+                }
             }
-        }
-    }, fabOption = FabOption(
+        }, fabOption = FabOption(
             iconTint = Color.White, showLabel = true
-    )
+        )
     )
     HunterDialog(visibility = newHunterVisibility,
-            label = "New Hunter",
-            data = null,
-            onDismissListener = { newHunterVisibility = false },
-            onConfirmListener = { item, index ->
-                if (item != null) {
-                    Log.d("drawer", item.hunterName)
-                    createdHunter = item
-                    hunterDataList.add(item)
-                }
-                newHunterVisibility = false
-            },
-            onInventoryListener = { })
+        label = "New Hunter",
+        data = null,
+        onDismissListener = { newHunterVisibility = false },
+        onConfirmListener = { item, index ->
+            if (item != null) {
+                Log.d("drawer", item.hunterName)
+                createdHunter = item
+                hunterDataList.add(item)
+            }
+            newHunterVisibility = false
+        },
+        onInventoryListener = { })
 }
 
 

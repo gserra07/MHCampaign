@@ -1,4 +1,4 @@
-package com.example.mhcampaign.campaign
+package com.example.mhcampaign.ui.campaign
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -27,20 +27,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mhcampaign.HunterSelector
-import com.example.mhcampaign.HunterViewHolder
-import com.example.mhcampaign.Inventory
-import com.example.mhcampaign.MHSimpleDropDown
-import com.example.mhcampaign.MonsterListView
-import com.example.mhcampaign.counter.MySelector
+import com.example.mhcampaign.ui.HunterSelector
+import com.example.mhcampaign.ui.HunterViewHolder
+import com.example.mhcampaign.ui.Inventory
+import com.example.mhcampaign.ui.MHSimpleDropDown
+import com.example.mhcampaign.ui.monsters.MonsterListView
+import com.example.mhcampaign.ui.counter.MySelector
 import com.example.mhcampaign.R
-import com.example.mhcampaign.counter.CounterViewModel
+import com.example.mhcampaign.ui.counter.CounterViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.MonsterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
-import com.example.mhcampaign.model.MonsterData
-import com.example.mhcampaign.model.MonsterListViewModel
 import com.example.mhcampaign.model.enums.Monster
+import com.example.mhcampaign.ui.monsters.MonsterListViewModel
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
@@ -93,7 +93,7 @@ fun CampaignView(
         ) { name, index ->
             Log.d("Dropdown", "$name  $index")
             onCampaignChange(index)
-            campaignViewModel.onCampaignIndexChange(index)
+            campaignViewModel.onCampaignIndexChange(index,campaignList[index])
         }
 
         //Potions and days
@@ -215,15 +215,16 @@ fun CampaignView(
 @Composable
 fun MyCampaignPreview() {
     val monsterList = mutableListOf(
-        MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0),
-        MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0),
-        MonsterData(Monster.ANJANATH, 1, 1, 0)
+        MonsterDataModel(Monster.GREAT_JAGRAS, 1, 2, 0),
+        MonsterDataModel(Monster.PUKEI_PUKEI, 1, 1, 0),
+        MonsterDataModel(Monster.ANJANATH, 1, 1, 0)
     )
-    val campaignList = mutableListOf(
-        CampaignModel("Campaña 1", 2, 3, list = monsterList).id(0),
-        CampaignModel("Campaña 2", 0, 0).id(1),
-        CampaignModel("Campaña 3").id(2)
-    )
+    val campaignList =mutableListOf(
+        CampaignModel(id = 1, name = "Campaña 1", potions = 2, days = 4, list = monsterList),
+        CampaignModel(id = 2, name = "Campaña 2"),
+        CampaignModel(id = 3, name = "Campaña 3"),
+
+        )
     val dataList = mutableListOf(
         HunterData("hunter 1", HunterWeapon.BOW).campaignId(0),
         HunterData("hunter 2", HunterWeapon.DUAL_BLADES).campaignId(0),
@@ -232,11 +233,11 @@ fun MyCampaignPreview() {
         HunterData("hunter 5", HunterWeapon.LANCE),
         HunterData("hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
-    var campaignViewModel = CampaignViewModel()
-    campaignViewModel.init(campaignList,dataList)
-    CampaignView(
-        campaignList,
-        dataList,
-        campaignViewModel,
-    ) {}
+//    var campaignViewModel = CampaignViewModel()
+//    campaignViewModel.init(campaignList,dataList)
+//    CampaignView(
+//        campaignList,
+//        dataList,
+//        campaignViewModel,
+//    ) {}
 }

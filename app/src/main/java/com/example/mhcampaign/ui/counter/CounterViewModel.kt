@@ -1,4 +1,4 @@
-package com.example.mhcampaign.counter
+package com.example.mhcampaign.ui.counter
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

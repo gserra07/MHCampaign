@@ -1,4 +1,4 @@
-package com.example.mhcampaign.huntersView
+package com.example.mhcampaign.ui.huntersView
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.mhcampaign.MHSimpleDropDown
+import com.example.mhcampaign.ui.MHSimpleDropDown
 import com.example.mhcampaign.examples.LargeDropdownMenu
 import com.example.mhcampaign.model.enums.HunterWeapon
 

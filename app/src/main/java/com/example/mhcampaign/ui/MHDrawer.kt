@@ -1,4 +1,4 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.ui
 
 import android.annotation.SuppressLint
 import android.widget.Toast
@@ -34,15 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mhcampaign.campaign.CampaignView
-import com.example.mhcampaign.campaign.CampaignViewModel
-import com.example.mhcampaign.huntersView.HunterView
-import com.example.mhcampaign.huntersView.HuntersViewModel
+import com.example.mhcampaign.ui.campaign.CampaignView
+import com.example.mhcampaign.ui.campaign.CampaignViewModel
+import com.example.mhcampaign.ui.huntersView.HunterView
+import com.example.mhcampaign.ui.huntersView.HuntersViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
-import com.example.mhcampaign.model.MonsterData
+import com.example.mhcampaign.model.MonsterDataModel
 import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
@@ -125,18 +125,18 @@ fun MyDrawerPreview() {
 //        }
 
         val monsterList = remember {
-            mutableStateListOf<MonsterData>()
+            mutableStateListOf<MonsterDataModel>()
 
         }
 
-        monsterList.add(MonsterData(Monster.GREAT_JAGRAS, 1, 2, 0))
-        monsterList.add(MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0))
-        monsterList.add(MonsterData(Monster.ANJANATH, 1, 1, 0))
+        monsterList.add(MonsterDataModel(Monster.GREAT_JAGRAS, 1, 2, 0))
+        monsterList.add(MonsterDataModel(Monster.PUKEI_PUKEI, 1, 1, 0))
+        monsterList.add(MonsterDataModel(Monster.ANJANATH, 1, 1, 0))
 
         val campaignList = mutableListOf(
-            CampaignModel("Campaña 1", 2, 4, list = monsterList).id(0),
-            CampaignModel("Campaña 2", 0, 0).id(1),
-            CampaignModel("Campaña 3", 0, 0).id(2)
+            CampaignModel(id = 1, name = "Campaña 1", potions = 2, days = 4, list = monsterList),
+            CampaignModel(id = 2, name = "Campaña 2"),
+            CampaignModel(id = 3, name = "Campaña 3"),
         )
         val hunterDataList = remember {
             mutableStateListOf<HunterData>()
@@ -158,90 +158,90 @@ fun MyDrawerPreview() {
         hunterDataList.add(HunterData("Guille", HunterWeapon.LONG_SWORD).campaignId(0))
         hunterDataList.add(HunterData("SpiderWolf", HunterWeapon.BOW))
 
-        val campaignViewModel = CampaignViewModel()
-        campaignViewModel.init(campaignList, hunterDataList)
-        val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
-            initial = 0
-        )
-
-        MHDrawer(scope = scope,
-            items = menuItems,
-            selectedItem = selectedItem,
-            drawerState = drawerState,
-            content = {
-                when (selectedItem.value.index) {
-                    0 -> {
-                        //Campaign View
-                        MHScaffold(title = selectedItem.value.name,
-                            scope = scope,
-                            drawerState = drawerState,
-                            onFloatingActionButtonClick = {},
-                            onFloatingButtonContent = {
-                                FABCampaign(
-                                    visible = newMonsterVisibility,
-                                    campaignModel = campaignList[selectedCampaignIndex],
-                                    onMonsterCreated = {
-                                        campaignViewModel.selectedCampaign.value?.addMonster(it)
-//                                                    campaignList[selectedCampaignIndex].addMonster(it)
-                                    }
-                                )
-                            },
-                            content = {
-                                CampaignView(
-                                    campaignList,
-                                    hunterDataList,
-                                    campaignViewModel = campaignViewModel,
-                                    selectedCampaign = selectedCampaignIndex
-                                ) {
-//                                            selectedCampaignIndex = it
-                                }
-                            })
-                    }
-
-                    1 -> {
-                        //Hunters View
-                        MHScaffold(title = selectedItem.value.name,
-                            scope = scope,
-                            drawerState = drawerState,
-                            onFloatingActionButtonClick = {},
-                            onFloatingButtonContent = {
-                                FABHunters(
-                                    visible = newHunterVisibility,
-                                    hunterDataList = hunterDataList,
-                                    onHunterCreated = {
-                                        createdHunter = it
-                                        newHunterVisibility = false
-                                    }
-                                )
-                            },
-                            content = { HunterView(HuntersViewModel(hunterDataList)) })
-                    }
-
-                    2 -> {
-                        //Quick Guide View
-                        val context = LocalContext.current
-                        MHScaffold(title = selectedItem.value.name,
-                            scope = scope,
-                            drawerState = drawerState,
-                            onFloatingActionButtonClick = {
-                                Toast.makeText(context, "it.labe", Toast.LENGTH_SHORT).show()
-                            },
-                            onFloatingButtonContent = { MyFloatingPreview() },
-
-                            content = { MHDropDownPreview() })
-                    }
-
-                    else -> {
-                        MHScaffold(title = selectedItem.value.name,
-                            scope = scope,
-                            drawerState = drawerState,
-                            onFloatingActionButtonClick = {},
-                            onFloatingButtonContent = { MyFloatingPreview() },
-
-                            content = { MyInventoryPreview() })
-
-                    }
-                }
-            })
+//        val campaignViewModel = CampaignViewModel()
+//        campaignViewModel.init(campaignList, hunterDataList)
+//        val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
+//            initial = 0
+//        )
+//
+//        MHDrawer(scope = scope,
+//            items = menuItems,
+//            selectedItem = selectedItem,
+//            drawerState = drawerState,
+//            content = {
+//                when (selectedItem.value.index) {
+//                    0 -> {
+//                        //Campaign View
+//                        MHScaffold(title = selectedItem.value.name,
+//                            scope = scope,
+//                            drawerState = drawerState,
+//                            onFloatingActionButtonClick = {},
+//                            onFloatingButtonContent = {
+//                                FABCampaign(
+//                                    visible = newMonsterVisibility,
+//                                    campaignModel = campaignList[selectedCampaignIndex],
+//                                    onMonsterCreated = {
+//                                        campaignViewModel.selectedCampaign.value?.addMonster(it)
+////                                                    campaignList[selectedCampaignIndex].addMonster(it)
+//                                    }
+//                                )
+//                            },
+//                            content = {
+//                                CampaignView(
+//                                    campaignList,
+//                                    hunterDataList,
+//                                    campaignViewModel = campaignViewModel,
+//                                    selectedCampaign = selectedCampaignIndex
+//                                ) {
+////                                            selectedCampaignIndex = it
+//                                }
+//                            })
+//                    }
+//
+//                    1 -> {
+//                        //Hunters View
+//                        MHScaffold(title = selectedItem.value.name,
+//                            scope = scope,
+//                            drawerState = drawerState,
+//                            onFloatingActionButtonClick = {},
+//                            onFloatingButtonContent = {
+//                                FABHunters(
+//                                    visible = newHunterVisibility,
+//                                    hunterDataList = hunterDataList,
+//                                    onHunterCreated = {
+//                                        createdHunter = it
+//                                        newHunterVisibility = false
+//                                    }
+//                                )
+//                            },
+//                            content = { HunterView(HuntersViewModel(hunterDataList)) })
+//                    }
+//
+//                    2 -> {
+//                        //Quick Guide View
+//                        val context = LocalContext.current
+//                        MHScaffold(title = selectedItem.value.name,
+//                            scope = scope,
+//                            drawerState = drawerState,
+//                            onFloatingActionButtonClick = {
+//                                Toast.makeText(context, "it.labe", Toast.LENGTH_SHORT).show()
+//                            },
+//                            onFloatingButtonContent = { MyFloatingPreview() },
+//
+//                            content = { MHDropDownPreview() })
+//                    }
+//
+//                    else -> {
+//                        MHScaffold(title = selectedItem.value.name,
+//                            scope = scope,
+//                            drawerState = drawerState,
+//                            onFloatingActionButtonClick = {},
+//                            onFloatingButtonContent = { MyFloatingPreview() },
+//
+//                            content = { MyInventoryPreview() })
+//
+//                    }
+//                }
+//            })
     }
 }

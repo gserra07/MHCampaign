@@ -1,4 +1,4 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.ui
 
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.mhcampaign.R
 import com.example.mhcampaign.model.HunterData
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors

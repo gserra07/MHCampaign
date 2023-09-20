@@ -1,6 +1,5 @@
-package com.example.mhcampaign
+package com.example.mhcampaign.ui.monsters
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,17 +18,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.mhcampaign.counter.CounterViewModel
-import com.example.mhcampaign.counter.MySelector
-import com.example.mhcampaign.model.MonsterData
-import com.example.mhcampaign.model.MonsterListViewModel
+import com.example.mhcampaign.R
+import com.example.mhcampaign.model.MonsterDataModel
+import com.example.mhcampaign.ui.counter.CounterViewModel
+import com.example.mhcampaign.ui.counter.MySelector
 import com.example.mhcampaign.model.enums.Monster
 
 @Composable
 fun MonsterView(
-    data: MonsterData,
+    data: MonsterViewModel,
     paddingValues: PaddingValues = PaddingValues(),
-    onChangeListener: (MonsterData) -> Unit
+    onChangeListener: (MonsterViewModel) -> Unit
 ) {
     val easyCount: Int by data.easyCount.observeAsState(initial = 0)
     val mediumCount: Int by data.mediumCount.observeAsState(initial = 0)
@@ -105,13 +104,14 @@ fun MonsterView(
 fun MonsterListView(
     monsterList: MonsterListViewModel,
     paddingValues: PaddingValues = PaddingValues(),
-    onChangeListener: (index:Int,MonsterData) -> Unit
+    onChangeListener: (index:Int, MonsterViewModel) -> Unit
 ) {
-    val list: MutableList<MonsterData> by monsterList.monsterList.observeAsState(
+    val list: MutableList<MonsterDataModel> by monsterList.monsterList.observeAsState(
         initial = mutableListOf()
     )
+    val viewModelList = list.map { MonsterViewModel(it) }
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
-        itemsIndexed(list) { i, monster ->
+        itemsIndexed(viewModelList) { i, monster ->
             MonsterView(data = monster) {
                 //monsterList.updateMonster(i, monster)
                 onChangeListener(i,monster)
@@ -123,8 +123,8 @@ fun MonsterListView(
 @Preview(showSystemUi = true)
 @Composable
 fun MyMonsterPreview() {
-    val data = MonsterData(Monster.GREAT_JAGRAS, 1, 0, 0)
-    val data2 = MonsterData(Monster.RATHALOS, 0, 2, 0)
+    val data = MonsterDataModel(Monster.GREAT_JAGRAS, 1, 0, 0)
+    val data2 = MonsterDataModel(Monster.RATHALOS, 0, 2, 0)
     val monsterList = mutableListOf(data, data2)
 
     MonsterListView(

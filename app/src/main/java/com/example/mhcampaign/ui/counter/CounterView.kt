@@ -1,4 +1,4 @@
-package com.example.mhcampaign.counter
+package com.example.mhcampaign.ui.counter
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
