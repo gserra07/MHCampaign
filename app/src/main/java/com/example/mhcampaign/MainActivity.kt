@@ -86,15 +86,8 @@ class MainActivity : ComponentActivity() {
                     var text by remember {
                         mutableStateOf("")
                     }
-                    val _context = baseContext
-                    var campaignDao =
-                        DatabaseModule().provideCampaignDatabase(_context).campaignDao()
-                    var repository = CampaignRepository(campaignDao)
-                    var getCampaignsUseCase = GetCampaignsUseCase(repository)
-                    var list = getCampaignsUseCase.invoke()
-                    var addCampaignUseCase = AddCampaignUseCase(repository)
-                    val campaignViewModel: CampaignViewModel =
-                        CampaignViewModel(addCampaignUseCase, getCampaignsUseCase)
+                    val campaignViewModel =
+                        CampaignViewModel(baseContext)
                     AddDrawer(campaignViewModel)
                 }
             }
@@ -102,7 +95,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddDrawer(campaignViewModel: CampaignViewModel) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -234,6 +226,8 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                                 visible = newMonsterVisibility,
                                 campaignModel = campaignList[selectedCampaignIndex],
                                 onMonsterCreated = {
+                                    campaignViewModel.onAddMonster(it)
+
                                     campaignViewModel.selectedCampaign.value?.addMonster(it)
 //                                                    campaignList[selectedCampaignIndex].addMonster(it)
                                 },
@@ -248,10 +242,10 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                                 campaignList.toMutableList(),
                                 hunterDataList,
                                 campaignViewModel = campaignViewModel,
-                                selectedCampaign = selectedCampaignIndex
-                            ) {
-//                                            selectedCampaignIndex = it
-                            }
+                                selectedCampaign = selectedCampaignIndex,
+                                onCampaignChange = {},
+                                onMonsterChange = { campaignViewModel.onChangeMonster(it) }
+                            )
                         })
                 }
 

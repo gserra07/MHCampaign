@@ -51,7 +51,8 @@ fun CampaignView(
     hunterDataList: MutableList<HunterData>,
     campaignViewModel: CampaignViewModel,
     selectedCampaign: Int = 0,
-    onCampaignChange: (index: Int) -> Unit
+    onCampaignChange: (index: Int) -> Unit,
+    onMonsterChange: (MutableList<MonsterDataModel>) ->Unit
 ) {
     val campaignHunters: MutableList<HunterData?> by campaignViewModel.campaignHunters.observeAsState(
         initial = hunterDataList.filter { it.campaignId == campaignList[0].id }
@@ -200,6 +201,7 @@ fun CampaignView(
                 monsterList = MonsterListViewModel(monsterList),
                 paddingValues = PaddingValues(start = 20.dp),
                 onChangeListener = { i, m ->
+                    onMonsterChange(monsterList)
                     // Log.d(logName, "Monster: ${m.monster.monsterName} easy ${m.easyCount.value} medium ${m.mediumCount.value}")
                 })
         }

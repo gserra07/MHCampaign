@@ -104,17 +104,18 @@ fun MonsterView(
 fun MonsterListView(
     monsterList: MonsterListViewModel,
     paddingValues: PaddingValues = PaddingValues(),
-    onChangeListener: (index:Int, MonsterViewModel) -> Unit
+    onChangeListener: (index: Int, MonsterViewModel) -> Unit
 ) {
     val list: MutableList<MonsterDataModel> by monsterList.monsterList.observeAsState(
         initial = mutableListOf()
     )
-    val viewModelList = list.map { MonsterViewModel(it) }
+    var viewModelList = list.map { MonsterViewModel(it) }
+    viewModelList = viewModelList.sortedBy { it.monster.index }?.toMutableList()!!
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         itemsIndexed(viewModelList) { i, monster ->
             MonsterView(data = monster) {
                 //monsterList.updateMonster(i, monster)
-                onChangeListener(i,monster)
+                onChangeListener(i, monster)
             }
         }
     }
@@ -130,7 +131,7 @@ fun MyMonsterPreview() {
     MonsterListView(
         monsterList = MonsterListViewModel(monsterList),
         paddingValues = PaddingValues(start = 20.dp),
-        onChangeListener = {i,m->})
+        onChangeListener = { i, m -> })
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 //        MonsterView(data = data)
         //MonsterView(data = data2)

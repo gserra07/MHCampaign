@@ -1,31 +1,39 @@
 package com.example.mhcampaign.ui.campaign
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mhcampaign.data.CampaignRepository
+import com.example.mhcampaign.data.di.DatabaseModule
 import com.example.mhcampaign.domain.AddCampaignUseCase
 import com.example.mhcampaign.domain.GetCampaignsUseCase
+import com.example.mhcampaign.domain.UpdateCampaignUseCase
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.MonsterDataModel
+import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.CampaignUIState
 import com.example.mhcampaign.ui.CampaignUIState.Success
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 //@HiltViewModel
-class CampaignViewModel constructor(
-    private val addCampaignUseCase: AddCampaignUseCase,
-    private val getCampaignsUseCase: GetCampaignsUseCase
+class CampaignViewModel @Inject constructor(
+    context: Context
 ) : ViewModel() {
+    var addCampaignUseCase: AddCampaignUseCase
+    var getCampaignsUseCase: GetCampaignsUseCase
+    var updateCampaignUseCase: UpdateCampaignUseCase
 
-    val uiState: StateFlow<CampaignUIState> =
-        getCampaignsUseCase().map(::Success).catch { Error(it) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
+    var uiState: StateFlow<CampaignUIState> = MutableStateFlow(CampaignUIState.Loading)
 
 
 //    private var uiState: StateFlow<CampaignUIState>  =  MutableStateFlow(CampaignUIState.Loading)
@@ -54,17 +62,16 @@ class CampaignViewModel constructor(
     private val _inventoryDialogVisibility = MutableLiveData<Boolean>(false)
     val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
 
-//    init {
-//        viewModelScope.launch {
-//            uiState = getCampaignsUseCase().map(::Success).catch { Error(it) }
-//                .stateIn(
-//                    viewModelScope,
-//                    SharingStarted.WhileSubscribed(5000),
-//                    CampaignUIState.Loading
-//                )
-////            _campaignList.postValue(result)
-//        }
-//    }
+    init {
+        val campaignDao =
+            DatabaseModule().provideCampaignDatabase(context).campaignDao()
+        val repository = CampaignRepository(campaignDao)
+        getCampaignsUseCase = GetCampaignsUseCase(repository)
+        addCampaignUseCase = AddCampaignUseCase(repository)
+        updateCampaignUseCase = UpdateCampaignUseCase(repository)
+        uiState = getCampaignsUseCase().map(::Success).catch { Error(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
+    }
 
     fun init(
         campaignListIn: MutableList<CampaignModel> = mutableListOf(),
@@ -96,10 +103,29 @@ class CampaignViewModel constructor(
 
     fun onPotionsChange(potions: Int) {
         _selectedCampaign.value?.potions(potions)
+        updateBBDD()
     }
 
     fun onDaysChange(days: Int) {
         _selectedCampaign.value?.days(days)
+        updateBBDD()
+    }
+
+    fun onAddMonster(monster: Monster) {
+        _selectedCampaign.value?.addMonster(monster)
+
+        updateBBDD()
+    }
+
+    fun onChangeMonster(monsterList: MutableList<MonsterDataModel>) {
+        _selectedCampaign.value?.updateMonsterList(monsterList)
+        updateBBDD()
+    }
+
+    private fun updateBBDD() {
+        viewModelScope.launch {
+            _selectedCampaign.value?.let { updateCampaignUseCase(it) }
+        }
     }
 
     fun onHunterDialogVisibilityChange(visibility: Boolean) {
@@ -117,7 +143,6 @@ class CampaignViewModel constructor(
     }
 
     fun removeCampaignHunter(hunter: HunterData?) {
-
         if (hunter != null && _hunterList.value?.any { it == hunter } == true) {
             _hunterList.value?.filter { it == hunter }?.get(0)?.campaignId(-1)
         }
@@ -127,9 +152,9 @@ class CampaignViewModel constructor(
     fun addCampaignHunter(hunterPrevious: HunterData?, hunter: HunterData?) {
         if (hunter != null && hunter != hunterPrevious) {
             if (_hunterList.value?.any { it == hunter } == true) {
-                _selectedCampaignIndex.value?.let { campaignIndex ->
+                _selectedCampaign.value?.id?.let { campaignId ->
                     _hunterList.value?.filter { it == hunter }?.get(0)?.campaignId(
-                        campaignIndex
+                        campaignId
                     )
                 }
             }
@@ -149,6 +174,7 @@ class CampaignViewModel constructor(
         }
         _campaignHunters.value = list
     }
+
 
 }
 
