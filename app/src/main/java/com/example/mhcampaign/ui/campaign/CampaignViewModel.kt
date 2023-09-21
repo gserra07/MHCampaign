@@ -5,13 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mhcampaign.data.CampaignRepository
+import com.example.mhcampaign.data.campaign.CampaignRepository
 import com.example.mhcampaign.data.di.DatabaseModule
-import com.example.mhcampaign.domain.AddCampaignUseCase
-import com.example.mhcampaign.domain.GetCampaignsUseCase
-import com.example.mhcampaign.domain.UpdateCampaignUseCase
+import com.example.mhcampaign.data.hunters.HuntersRepository
+import com.example.mhcampaign.domain.campaign.AddCampaignUseCase
+import com.example.mhcampaign.domain.campaign.GetCampaignsUseCase
+import com.example.mhcampaign.domain.campaign.UpdateCampaignUseCase
+import com.example.mhcampaign.domain.hunters.AddHunterUseCase
 import com.example.mhcampaign.model.CampaignModel
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.MonsterDataModel
 import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.CampaignUIState
@@ -33,6 +35,8 @@ class CampaignViewModel @Inject constructor(
     var getCampaignsUseCase: GetCampaignsUseCase
     var updateCampaignUseCase: UpdateCampaignUseCase
 
+    var addHunterUseCase: AddHunterUseCase
+
     var uiState: StateFlow<CampaignUIState> = MutableStateFlow(CampaignUIState.Loading)
 
 
@@ -41,8 +45,8 @@ class CampaignViewModel @Inject constructor(
 //    private val _campaignList = MutableLiveData<MutableList<CampaignModel>>(mutableListOf())
 //    val campaignList: LiveData<MutableList<CampaignModel>> = _campaignList
 
-    private val _hunterList = MutableLiveData<MutableList<HunterData>>(mutableListOf())
-    val hunterList: LiveData<MutableList<HunterData>> = _hunterList
+    private val _hunterList = MutableLiveData<MutableList<HunterDataModel>>(mutableListOf())
+    val hunterList: LiveData<MutableList<HunterDataModel>> = _hunterList
 
     private val _selectedCampaign = MutableLiveData<CampaignModel>()
     val selectedCampaign: LiveData<CampaignModel> = _selectedCampaign
@@ -50,11 +54,11 @@ class CampaignViewModel @Inject constructor(
     private val _selectedCampaignIndex = MutableLiveData<Int>()
     val selectedCampaignIndex: LiveData<Int> = _selectedCampaignIndex
 
-    private val _campaignHunters = MutableLiveData<MutableList<HunterData?>>()
-    val campaignHunters: LiveData<MutableList<HunterData?>> = _campaignHunters
+    private val _campaignHunters = MutableLiveData<MutableList<HunterDataModel?>>()
+    val campaignHunters: LiveData<MutableList<HunterDataModel?>> = _campaignHunters
 
-    private val _selectedHunter = MutableLiveData<HunterData?>()
-    val selectedHunter: LiveData<HunterData?> = _selectedHunter
+    private val _selectedHunter = MutableLiveData<HunterDataModel?>()
+    val selectedHunter: LiveData<HunterDataModel?> = _selectedHunter
 
     private val _hunterDialogVisibility = MutableLiveData<Boolean>(false)
     val hunterDialogVisibility: LiveData<Boolean> = _hunterDialogVisibility
@@ -64,18 +68,22 @@ class CampaignViewModel @Inject constructor(
 
     init {
         val campaignDao =
-            DatabaseModule().provideCampaignDatabase(context).campaignDao()
-        val repository = CampaignRepository(campaignDao)
-        getCampaignsUseCase = GetCampaignsUseCase(repository)
-        addCampaignUseCase = AddCampaignUseCase(repository)
-        updateCampaignUseCase = UpdateCampaignUseCase(repository)
+            DatabaseModule().provideDatabase(context).campaignDao()
+        var huntersDao = DatabaseModule().provideDatabase(context).huntersDao()
+        val campaignRepository = CampaignRepository(campaignDao)
+        val huntersRepository = HuntersRepository(huntersDao)
+
+        getCampaignsUseCase = GetCampaignsUseCase(campaignRepository)
+        addCampaignUseCase = AddCampaignUseCase(campaignRepository)
+        updateCampaignUseCase = UpdateCampaignUseCase(campaignRepository)
+        addHunterUseCase = AddHunterUseCase(huntersRepository)
         uiState = getCampaignsUseCase().map(::Success).catch { Error(it) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
     }
 
     fun init(
         campaignListIn: MutableList<CampaignModel> = mutableListOf(),
-        hunterListIn: MutableList<HunterData> = mutableListOf(),
+        hunterListIn: MutableList<HunterDataModel> = mutableListOf(),
     ) {
 
 //       var cosa = getCampaignsUseCase().map(::Success).catch { Error(it) }
@@ -97,7 +105,7 @@ class CampaignViewModel @Inject constructor(
         makeCampaignHunters()
     }
 
-    fun onSelectedHunterChange(hunterData: HunterData?) {
+    fun onSelectedHunterChange(hunterData: HunterDataModel?) {
         _selectedHunter.value = hunterData
     }
 
@@ -142,14 +150,20 @@ class CampaignViewModel @Inject constructor(
         }
     }
 
-    fun removeCampaignHunter(hunter: HunterData?) {
+    fun onAddHunter(hunter: HunterDataModel) {
+        viewModelScope.launch {
+            addHunterUseCase(hunter)
+        }
+    }
+
+    fun removeCampaignHunter(hunter: HunterDataModel?) {
         if (hunter != null && _hunterList.value?.any { it == hunter } == true) {
             _hunterList.value?.filter { it == hunter }?.get(0)?.campaignId(-1)
         }
         makeCampaignHunters()
     }
 
-    fun addCampaignHunter(hunterPrevious: HunterData?, hunter: HunterData?) {
+    fun addCampaignHunter(hunterPrevious: HunterDataModel?, hunter: HunterDataModel?) {
         if (hunter != null && hunter != hunterPrevious) {
             if (_hunterList.value?.any { it == hunter } == true) {
                 _selectedCampaign.value?.id?.let { campaignId ->
@@ -164,7 +178,7 @@ class CampaignViewModel @Inject constructor(
 
     fun makeCampaignHunters(
     ) {
-        val list = mutableListOf<HunterData?>()
+        val list = mutableListOf<HunterDataModel?>()
         _hunterList.value?.filter { it.campaignId == _selectedCampaign.value?.id }?.forEach {
             list.add(it)
         }
@@ -174,7 +188,6 @@ class CampaignViewModel @Inject constructor(
         }
         _campaignHunters.value = list
     }
-
 
 }
 

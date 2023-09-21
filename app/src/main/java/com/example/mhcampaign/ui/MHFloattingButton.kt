@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mhcampaign.R
 import com.example.mhcampaign.model.CampaignModel
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
 
@@ -313,13 +313,13 @@ fun FABCampaign(
 @Composable
 fun FABHunters(
     visible: Boolean,
-    hunterDataList: MutableList<HunterData>,
-    onHunterCreated: (HunterData) -> Unit
+    hunterDataList: MutableList<HunterDataModel>,
+    onHunterCreated: (HunterDataModel) -> Unit
 ) {
     var newHunterVisibility by remember {
         mutableStateOf(visible)
     }
-    var createdHunter: HunterData? by remember {
+    var createdHunter: HunterDataModel? by remember {
         mutableStateOf(null)
     }
     MultiFloatingActionButton(
@@ -347,7 +347,8 @@ fun FABHunters(
             if (item != null) {
                 Log.d("drawer", item.hunterName)
                 createdHunter = item
-                hunterDataList.add(item)
+                onHunterCreated(item)
+                //hunterDataList.add(item)
             }
             newHunterVisibility = false
         },

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.R
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
@@ -40,10 +40,10 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HunterDialog(
-    visibility: Boolean, data: HunterData? = null, label: String,
+    visibility: Boolean, data: HunterDataModel? = null, label: String,
     onDismissListener: () -> Unit,
-    onConfirmListener: (HunterData?, Int) -> Unit,
-    onInventoryListener: (HunterData) -> Unit,
+    onConfirmListener: (HunterDataModel?, Int) -> Unit,
+    onInventoryListener: (HunterDataModel) -> Unit,
     context: Context = LocalContext.current
 ) {
     if (visibility) {
@@ -128,7 +128,7 @@ fun HunterDialog(
                             onConfirmListener(data, selectedIndex)
                         else
                             onConfirmListener(
-                                HunterData(
+                                HunterDataModel(id=-1,
                                     hunterName = hunterName,
                                     hunterWeapon = HunterWeapon.values()[selectedIndex]
                                 ), selectedIndex

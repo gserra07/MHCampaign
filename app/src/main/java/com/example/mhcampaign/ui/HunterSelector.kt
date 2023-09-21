@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.R
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
@@ -42,12 +42,12 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 @Composable
 fun HunterSelector(
     visibility: Boolean,
-    dataList: List<HunterData>,
-    selectedHunter: HunterData? = null,
+    dataList: List<HunterDataModel>,
+    selectedHunter: HunterDataModel? = null,
     onDismissListener: () -> Unit,
-    onConfirmListener: (hunterData: HunterData?, index: Int) -> Unit,
-    onDeleteListener: (hunterData: HunterData?, index: Int) -> Unit,
-    onInventoryListener: (HunterData) -> Unit,
+    onConfirmListener: (hunterData: HunterDataModel?, index: Int) -> Unit,
+    onDeleteListener: (hunterData: HunterDataModel?, index: Int) -> Unit,
+    onInventoryListener: (HunterDataModel) -> Unit,
     context: Context = LocalContext.current
 ) {
     MHCampaignTheme(darkTheme = false) {
@@ -138,13 +138,13 @@ fun HunterSelector(
 @Preview(showSystemUi = true)
 @Composable
 fun MyHunterSelectorPreview() {
-    val data = listOf<HunterData>(
-        HunterData("hunter 1", HunterWeapon.BOW),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterData("hunter 4", HunterWeapon.INSECT_GLAIVE),
+    val data = listOf<HunterDataModel>(
+        HunterDataModel(0,"hunter 1", HunterWeapon.BOW),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0,"hunter 4", HunterWeapon.INSECT_GLAIVE),
     )
     var visible by remember {
         mutableStateOf(true)

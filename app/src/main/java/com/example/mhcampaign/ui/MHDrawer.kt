@@ -1,7 +1,6 @@
 package com.example.mhcampaign.ui
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,22 +23,16 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mhcampaign.ui.campaign.CampaignView
-import com.example.mhcampaign.ui.campaign.CampaignViewModel
-import com.example.mhcampaign.ui.huntersView.HunterView
-import com.example.mhcampaign.ui.huntersView.HuntersViewModel
 import com.example.mhcampaign.model.CampaignModel
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.MenuItem
 import com.example.mhcampaign.model.MonsterDataModel
@@ -116,7 +109,7 @@ fun MyDrawerPreview() {
         val newMonsterVisibility by remember {
             mutableStateOf(false)
         }
-        var createdHunter: HunterData? by remember {
+        var createdHunter: HunterDataModel? by remember {
             mutableStateOf(null)
         }
 
@@ -139,11 +132,11 @@ fun MyDrawerPreview() {
             CampaignModel(id = 3, name = "Campaña 3"),
         )
         val hunterDataList = remember {
-            mutableStateListOf<HunterData>()
+            mutableStateListOf<HunterDataModel>()
         }
 
         hunterDataList.add(
-            HunterData(
+            HunterDataModel(0,
                 "Ganexy", HunterWeapon.DUAL_BLADES, mutableListOf(
                     PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
                     PartModel(PartItem.CARBALITE),
@@ -152,11 +145,11 @@ fun MyDrawerPreview() {
                 )
             ).campaignId(0)
         )
-        hunterDataList.add(HunterData("Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(0))
-        hunterDataList.add(HunterData("Garatoth", HunterWeapon.SWITCH_AXE).campaignId(0))
-        hunterDataList.add(HunterData("Ingravitto", HunterWeapon.CHARGE_BLADE))
-        hunterDataList.add(HunterData("Guille", HunterWeapon.LONG_SWORD).campaignId(0))
-        hunterDataList.add(HunterData("SpiderWolf", HunterWeapon.BOW))
+        hunterDataList.add(HunterDataModel(0,"Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(0))
+        hunterDataList.add(HunterDataModel(0,"Garatoth", HunterWeapon.SWITCH_AXE).campaignId(0))
+        hunterDataList.add(HunterDataModel(0,"Ingravitto", HunterWeapon.CHARGE_BLADE))
+        hunterDataList.add(HunterDataModel(0,"Guille", HunterWeapon.LONG_SWORD).campaignId(0))
+        hunterDataList.add(HunterDataModel(0,"SpiderWolf", HunterWeapon.BOW))
 
 //        val campaignViewModel = CampaignViewModel()
 //        campaignViewModel.init(campaignList, hunterDataList)

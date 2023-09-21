@@ -21,12 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.ui.HunterViewHolder
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import kotlinx.coroutines.launch
 
 @Composable
-fun SimpleRecycleView(data: List<HunterData>) {
+fun SimpleRecycleView(data: List<HunterDataModel>) {
     val rvState = rememberLazyListState()
     val corutinesScope = rememberCoroutineScope()
     Column {
@@ -77,14 +77,14 @@ fun SimpleRecycleView(data: List<HunterData>) {
 @Preview(showSystemUi = true)
 @Composable
 fun MyRecyclePreview() {
-    var data = listOf<HunterData>(HunterData("hunter 1", HunterWeapon.BOW),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-            HunterData("hunter 3", HunterWeapon.CHARGE_BLADE))
+    var data = listOf<HunterDataModel>(HunterDataModel(0,"hunter 1", HunterWeapon.BOW),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+            HunterDataModel(0,"hunter 3", HunterWeapon.CHARGE_BLADE))
     SimpleRecycleView(data)
 }

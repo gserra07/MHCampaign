@@ -2,8 +2,9 @@ package com.example.mhcampaign.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.mhcampaign.data.CampaignDao
+import com.example.mhcampaign.data.campaign.CampaignDao
 import com.example.mhcampaign.data.MHCampaignDataBase
+import com.example.mhcampaign.data.hunters.HunterDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideCampaignDatabase(@ApplicationContext context: Context) =
+    fun provideDatabase(@ApplicationContext context: Context) =
         Room.databaseBuilder(context, MHCampaignDataBase::class.java,
             MHCAMPAIGN_DATABASE_NAME
         ).build()
@@ -29,6 +30,11 @@ class DatabaseModule {
     @Provides
     fun provideCampaignDao(campaignDatabase: MHCampaignDataBase): CampaignDao {
         return campaignDatabase.campaignDao()
+    }
+    @Singleton
+    @Provides
+    fun provideHuntersDao(campaignDatabase: MHCampaignDataBase): HunterDao {
+        return campaignDatabase.huntersDao()
     }
 
 }

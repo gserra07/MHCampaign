@@ -2,9 +2,8 @@ package com.example.mhcampaign.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.mhcampaign.data.CampaignEntity
+import com.example.mhcampaign.data.campaign.CampaignEntity
 import com.example.mhcampaign.model.enums.Monster
-import com.example.mhcampaign.ui.monsters.MonsterViewModel
 
 data class CampaignModel(
     var id: Int = -1,
@@ -43,8 +42,9 @@ data class CampaignModel(
 }
 
 fun CampaignEntity.toDomain() = CampaignModel(
+    id = id,
     name = name,
     potions = potions,
     days = days,
     list = monsterList
-).id(id)
+)

@@ -2,16 +2,16 @@ package com.example.mhcampaign.ui.huntersView
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 
 class HuntersViewModel(
-    hunterListIn: MutableList<HunterData> = mutableListOf()
+    hunterListIn: MutableList<HunterDataModel> = mutableListOf()
 ) {
     private val _hunterList = MutableLiveData(hunterListIn)
-    val hunterList: LiveData<MutableList<HunterData>> = _hunterList
+    val hunterList: LiveData<MutableList<HunterDataModel>> = _hunterList
 
-    private val _selectedHunter = MutableLiveData<HunterData?>()
-    val selectedHunter: LiveData<HunterData?> = _selectedHunter
+    private val _selectedHunter = MutableLiveData<HunterDataModel?>()
+    val selectedHunter: LiveData<HunterDataModel?> = _selectedHunter
 
     private val _hunterDialogVisibility = MutableLiveData(false)
     val hunterDialogVisibility: LiveData<Boolean> = _hunterDialogVisibility
@@ -20,7 +20,7 @@ class HuntersViewModel(
     val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
 
 
-    fun onSelectedHunterChange(hunterData: HunterData?) {
+    fun onSelectedHunterChange(hunterData: HunterDataModel?) {
         _selectedHunter.value = hunterData
     }
 
@@ -32,7 +32,7 @@ class HuntersViewModel(
         _inventoryDialogVisibility.value = visibility
     }
 
-    fun addHunter(item: HunterData) {
+    fun addHunter(item: HunterDataModel) {
         _hunterList.value?.add(item)
     }
 

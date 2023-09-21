@@ -1,4 +1,4 @@
-package com.example.mhcampaign.data
+package com.example.mhcampaign.data.campaign
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

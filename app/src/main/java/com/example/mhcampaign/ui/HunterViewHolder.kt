@@ -25,15 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 
 @Composable
 fun HunterViewHolder(
-    data: HunterData? = null,
+    data: HunterDataModel? = null,
     position: Int = -1,
-    onEditListener: (data:HunterData?,position:Int) -> Unit
+    onEditListener: (data:HunterDataModel?, position:Int) -> Unit
 ) {
     MHCampaignTheme(darkTheme = false) {
 
@@ -122,16 +122,16 @@ fun HunterViewHolder(
 fun HunterViewHolderPreview() {
     val rvState = rememberLazyListState()
     val corutinesScope = rememberCoroutineScope()
-    var data = listOf<HunterData>(
-        HunterData("hunter 1", HunterWeapon.BOW),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 3", HunterWeapon.CHARGE_BLADE)
+    var data = listOf<HunterDataModel>(
+        HunterDataModel(0,"hunter 1", HunterWeapon.BOW),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 3", HunterWeapon.CHARGE_BLADE)
     )
     Column {
         HunterViewHolder(
@@ -143,7 +143,7 @@ fun HunterViewHolderPreview() {
         ) {
             itemsIndexed(HunterWeapon.values()) { index, value ->
                 HunterViewHolder(
-                    data = HunterData(hunterName = "Hunter $index", value),
+                    data = HunterDataModel(id=0,hunterName = "Hunter $index", value),
                     onEditListener = { data,int -> Log.d(data?.hunterName, "") })
                 if (index != HunterWeapon.values().size - 1)
                     Divider(

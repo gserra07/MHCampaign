@@ -1,4 +1,4 @@
-package com.example.mhcampaign.data
+package com.example.mhcampaign.data.campaign
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CampaignDao {
-    @Query("SELECT * from campaign_table")
-    suspend fun getAllCampaigns(): List<CampaignEntity>
 
     @Query("SELECT * from campaign_table")
     fun getCampaigns(): Flow<List<CampaignEntity>>

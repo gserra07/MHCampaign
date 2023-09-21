@@ -1,6 +1,6 @@
-package com.example.mhcampaign.domain
+package com.example.mhcampaign.domain.campaign
 
-import com.example.mhcampaign.data.CampaignRepository
+import com.example.mhcampaign.data.campaign.CampaignRepository
 import com.example.mhcampaign.model.CampaignModel
 
 class UpdateCampaignUseCase constructor(private val  campaignRepository: CampaignRepository) {

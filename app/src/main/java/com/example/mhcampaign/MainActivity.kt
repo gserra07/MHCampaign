@@ -1,6 +1,7 @@
 package com.example.mhcampaign
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -42,16 +43,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.mhcampaign.data.CampaignRepository
-import com.example.mhcampaign.data.di.DatabaseModule
-import com.example.mhcampaign.domain.AddCampaignUseCase
-import com.example.mhcampaign.domain.GetCampaignsUseCase
 import com.example.mhcampaign.ui.campaign.CampaignView
 import com.example.mhcampaign.ui.campaign.CampaignViewModel
 import com.example.mhcampaign.ui.huntersView.HunterView
 import com.example.mhcampaign.ui.huntersView.HuntersViewModel
 import com.example.mhcampaign.model.CampaignModel
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.MenuItem
 import com.example.mhcampaign.model.MonsterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
@@ -122,6 +119,7 @@ private fun AddDrawer(campaignViewModel: CampaignViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignModel>) {
+    var context = LocalContext.current
 
     val scope = rememberCoroutineScope()
     val menuItems = listOf(
@@ -138,7 +136,7 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
     val newMonsterVisibility by remember {
         mutableStateOf(false)
     }
-    var createdHunter: HunterData? by remember {
+    var createdHunter: HunterDataModel? by remember {
         mutableStateOf(null)
     }
 
@@ -168,8 +166,9 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
             )
     }
     val hunterDataList = remember {
-        mutableStateListOf<HunterData>(
-            HunterData(
+        mutableStateListOf<HunterDataModel>(
+            HunterDataModel(
+                0,
                 "Ganexy", HunterWeapon.DUAL_BLADES, mutableListOf(
                     PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
                     PartModel(PartItem.CARBALITE),
@@ -177,11 +176,11 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                     PartModel(PartItem.GREAT_JAGRAS_CLAW),
                 )
             ).campaignId(0),
-            HunterData("Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(1),
-            HunterData("Garatoth", HunterWeapon.SWITCH_AXE).campaignId(1),
-            HunterData("Ingravitto", HunterWeapon.CHARGE_BLADE),
-            HunterData("Guille", HunterWeapon.LONG_SWORD).campaignId(1),
-            HunterData("SpiderWolf", HunterWeapon.BOW),
+            HunterDataModel(0, "Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(1),
+            HunterDataModel(0, "Garatoth", HunterWeapon.SWITCH_AXE).campaignId(1),
+            HunterDataModel(0, "Ingravitto", HunterWeapon.CHARGE_BLADE),
+            HunterDataModel(0, "Guille", HunterWeapon.LONG_SWORD).campaignId(1),
+            HunterDataModel(0, "SpiderWolf", HunterWeapon.BOW),
         )
     }
 
@@ -228,7 +227,7 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                                 onMonsterCreated = {
                                     campaignViewModel.onAddMonster(it)
 
-                                    campaignViewModel.selectedCampaign.value?.addMonster(it)
+                                    //campaignViewModel.selectedCampaign.value?.addMonster(it)
 //                                                    campaignList[selectedCampaignIndex].addMonster(it)
                                 },
                                 addCampaignClick = {
@@ -260,7 +259,8 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                                 visible = newHunterVisibility,
                                 hunterDataList = hunterDataList,
                                 onHunterCreated = {
-                                    createdHunter = it
+                                    //createdHunter = it
+                                    campaignViewModel.onAddHunter(it)
                                     newHunterVisibility = false
                                 }
                             )

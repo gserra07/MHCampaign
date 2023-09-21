@@ -1,9 +1,8 @@
-package com.example.mhcampaign.domain
+package com.example.mhcampaign.domain.campaign
 
-import com.example.mhcampaign.data.CampaignRepository
+import com.example.mhcampaign.data.campaign.CampaignRepository
 import com.example.mhcampaign.model.CampaignModel
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 class GetCampaignsUseCase  constructor(
     private val repository: CampaignRepository

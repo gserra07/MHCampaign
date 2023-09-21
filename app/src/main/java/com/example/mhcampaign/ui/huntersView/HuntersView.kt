@@ -18,13 +18,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.mhcampaign.ui.HunterDialog
 import com.example.mhcampaign.ui.HunterViewHolder
 import com.example.mhcampaign.ui.Inventory
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 
 @Composable
 fun HunterView(huntersViewModel: HuntersViewModel) {
 
-    val selectedHunter: HunterData? by huntersViewModel.selectedHunter.observeAsState(
+    val selectedHunter: HunterDataModel? by huntersViewModel.selectedHunter.observeAsState(
         initial = null
     )
     val hunterDialogVisibility: Boolean by huntersViewModel.hunterDialogVisibility.observeAsState(
@@ -99,12 +99,12 @@ fun HunterView(huntersViewModel: HuntersViewModel) {
 @Composable
 fun HunterViewPreview() {
     val data = mutableListOf(
-        HunterData("hunter 1", HunterWeapon.HAMMER),
-        HunterData("hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterData("hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterData("hunter 4", HunterWeapon.BOW),
-        HunterData("hunter 5", HunterWeapon.LANCE),
-        HunterData("hunter 6", HunterWeapon.INSECT_GLAIVE)
+        HunterDataModel(0,"hunter 1", HunterWeapon.HAMMER),
+        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0,"hunter 4", HunterWeapon.BOW),
+        HunterDataModel(0,"hunter 5", HunterWeapon.LANCE),
+        HunterDataModel(0,"hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
     HunterView(HuntersViewModel(data))
 }

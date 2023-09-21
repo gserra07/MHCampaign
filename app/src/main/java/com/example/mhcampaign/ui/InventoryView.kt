@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.R
-import com.example.mhcampaign.model.HunterData
+import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.enums.Group
 import com.example.mhcampaign.model.enums.PartItem
@@ -60,10 +60,10 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
 fun Inventory(
-    hunterData: HunterData,
+    hunterData: HunterDataModel,
     visibility: Boolean,
     context: Context = LocalContext.current,
-    onCloseListener: (HunterData) -> Unit
+    onCloseListener: (HunterDataModel) -> Unit
 ) {
     var childVisibility by remember {
         mutableStateOf(false)
@@ -157,7 +157,7 @@ fun LazyGridScope.header(
 @Composable
 fun NewItemDialog(
     visibility: Boolean,
-    hunterData: HunterData,
+    hunterData: HunterDataModel,
     context: Context = LocalContext.current,
     onSaveListener: (partItem: PartItem, quantity: Int) -> Unit,
     onCloseListener: () -> Unit
@@ -271,7 +271,7 @@ fun MyInventoryPreview() {
         }
 
     }
-    val data = HunterData(
+    val data = HunterDataModel(0,
         "Hunter 1", HunterWeapon.LANCE, mutableListOf(
             PartModel(PartItem.SMALL_BONE, 0), PartModel(PartItem.HARDBONE, 3),
             PartModel(PartItem.DRAGONITE, 1), PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
