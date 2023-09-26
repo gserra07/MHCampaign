@@ -18,11 +18,15 @@ class HunterEntity(
 
     )
 
-fun HunterDataModel.toDataBase() =
-    HunterEntity(
-        id = id,
+fun HunterDataModel.toDataBase(isNew: Boolean = false): HunterEntity {
+    var hunterEntity = HunterEntity(
         hunterName = hunterName,
         hunterWeapon = hunterWeapon,
         inventory = inventory,
         campaignId = campaignId
     )
+    if (!isNew)
+        hunterEntity.id = id
+    return hunterEntity
+}
+

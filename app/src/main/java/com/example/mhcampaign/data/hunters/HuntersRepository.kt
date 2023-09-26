@@ -13,7 +13,7 @@ class HuntersRepository @Inject constructor(
         hunterDao.getHunters().map { items -> items.map { it.toDomain() } }
 
     suspend fun addHunter(hunterDataModel: HunterDataModel) {
-        hunterDao.addHunter(hunterDataModel.toDataBase())
+        hunterDao.addHunter(hunterDataModel.toDataBase(true))
     }
 
     suspend fun updateHunter(hunterDataModel: HunterDataModel) {

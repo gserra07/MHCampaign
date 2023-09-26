@@ -5,7 +5,7 @@ import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.enums.PartModel
 
 class HunterDataModel(
-    var id: Int,
+    var id: Int = -1,
     var hunterName: String,
     var hunterWeapon: HunterWeapon,
     var inventory: MutableList<PartModel> = mutableListOf(),

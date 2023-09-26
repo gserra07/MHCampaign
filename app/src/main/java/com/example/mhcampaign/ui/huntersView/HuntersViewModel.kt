@@ -1,14 +1,38 @@
 package com.example.mhcampaign.ui.huntersView
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.mhcampaign.data.di.DatabaseModule
+import com.example.mhcampaign.data.hunters.HuntersRepository
+import com.example.mhcampaign.domain.hunters.AddHunterUseCase
+import com.example.mhcampaign.domain.hunters.GetHuntersUseCase
+import com.example.mhcampaign.domain.hunters.UpdateHunterUseCase
 import com.example.mhcampaign.model.HunterDataModel
+import com.example.mhcampaign.ui.CampaignUIState
+import com.example.mhcampaign.ui.HuntersUIState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class HuntersViewModel(
-    hunterListIn: MutableList<HunterDataModel> = mutableListOf()
-) {
-    private val _hunterList = MutableLiveData(hunterListIn)
-    val hunterList: LiveData<MutableList<HunterDataModel>> = _hunterList
+    context: Context
+) : ViewModel() {
+
+    var addHunterUseCase: AddHunterUseCase
+    var getHuntersUseCase: GetHuntersUseCase
+    var updateHunterUseCase: UpdateHunterUseCase
+
+    var uiStateHunters: StateFlow<HuntersUIState> = MutableStateFlow(HuntersUIState.Loading)
+
+//    private val _hunterList = MutableLiveData(hunterListIn)
+//    val hunterList: LiveData<MutableList<HunterDataModel>> = _hunterList
 
     private val _selectedHunter = MutableLiveData<HunterDataModel?>()
     val selectedHunter: LiveData<HunterDataModel?> = _selectedHunter
@@ -19,6 +43,17 @@ class HuntersViewModel(
     private val _inventoryDialogVisibility = MutableLiveData(false)
     val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
 
+    init {
+        var huntersDao = DatabaseModule().provideDatabase(context).huntersDao()
+        val huntersRepository = HuntersRepository(huntersDao)
+
+        addHunterUseCase = AddHunterUseCase(huntersRepository)
+        getHuntersUseCase = GetHuntersUseCase(huntersRepository)
+        updateHunterUseCase = UpdateHunterUseCase(huntersRepository)
+
+        uiStateHunters = getHuntersUseCase().map(HuntersUIState::SuccessHunters).catch { Error(it) }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HuntersUIState.Loading)
+    }
 
     fun onSelectedHunterChange(hunterData: HunterDataModel?) {
         _selectedHunter.value = hunterData
@@ -32,8 +67,16 @@ class HuntersViewModel(
         _inventoryDialogVisibility.value = visibility
     }
 
-    fun addHunter(item: HunterDataModel) {
-        _hunterList.value?.add(item)
+    fun onAddHunter(item: HunterDataModel) {
+        viewModelScope.launch {
+            addHunterUseCase(item)
+        }
+    }
+
+    fun onUpdateHunter(item: HunterDataModel) {
+        viewModelScope.launch {
+            updateHunterUseCase(item)
+        }
     }
 
 }

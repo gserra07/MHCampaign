@@ -1,7 +1,6 @@
 package com.example.mhcampaign
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -58,6 +57,7 @@ import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.CampaignUIState
 import com.example.mhcampaign.ui.FABCampaign
 import com.example.mhcampaign.ui.FABHunters
+import com.example.mhcampaign.ui.HuntersUIState
 import com.example.mhcampaign.ui.MHDrawer
 import com.example.mhcampaign.ui.MHDropDownPreview
 import com.example.mhcampaign.ui.MHScaffold
@@ -83,9 +83,14 @@ class MainActivity : ComponentActivity() {
                     var text by remember {
                         mutableStateOf("")
                     }
+                    val hunterViewModel =
+                        HuntersViewModel(baseContext)
                     val campaignViewModel =
                         CampaignViewModel(baseContext)
-                    AddDrawer(campaignViewModel)
+                    AddDrawer(
+                        campaignViewModel,
+                        hunterViewModel
+                    )
                 }
             }
         }
@@ -93,24 +98,45 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun AddDrawer(campaignViewModel: CampaignViewModel) {
+private fun AddDrawer(campaignViewModel: CampaignViewModel, huntersViewModel: HuntersViewModel) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val uistate by produceState<CampaignUIState>(
+    val uistateHunters by produceState<HuntersUIState>(
+        initialValue = HuntersUIState.Loading,
+        key1 = lifecycle,
+        key2 = huntersViewModel
+    ) {
+        lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+            huntersViewModel.uiStateHunters.collect {
+                value = it
+            }
+        }
+    }
+    val uistateCampaign by produceState<CampaignUIState>(
         initialValue = CampaignUIState.Loading,
         key1 = lifecycle,
         key2 = campaignViewModel
     ) {
         lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-            campaignViewModel.uiState.collect {
+            campaignViewModel.uiStateCampaign.collect {
                 value = it
             }
         }
     }
-    when (uistate) {
+    when (uistateCampaign) {
         is CampaignUIState.Error -> {}
         CampaignUIState.Loading -> {}
         is CampaignUIState.Success -> {
-            InitDrawer(campaignViewModel, (uistate as CampaignUIState.Success).campaigns)
+            when (uistateHunters){
+                is HuntersUIState.Error -> {}
+                HuntersUIState.Loading -> {}
+                is HuntersUIState.SuccessHunters -> InitDrawer(
+                    campaignViewModel,
+                    (uistateCampaign as CampaignUIState.Success).campaigns,
+                    huntersViewModel,
+                    (uistateHunters as HuntersUIState.SuccessHunters).hunters
+                )
+            }
+
         }
     }
 
@@ -118,7 +144,12 @@ private fun AddDrawer(campaignViewModel: CampaignViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignModel>) {
+fun InitDrawer(
+    campaignViewModel: CampaignViewModel,
+    campaigns: List<CampaignModel>,
+    huntersViewModel: HuntersViewModel,
+    hunters: List<HunterDataModel>
+) {
     var context = LocalContext.current
 
     val scope = rememberCoroutineScope()
@@ -165,7 +196,7 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
 
             )
     }
-    val hunterDataList = remember {
+    val hunterList = hunters.ifEmpty {
         mutableStateListOf<HunterDataModel>(
             HunterDataModel(
                 0,
@@ -175,14 +206,14 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                     PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
                     PartModel(PartItem.GREAT_JAGRAS_CLAW),
                 )
-            ).campaignId(0),
+            ).campaignId(1),
             HunterDataModel(0, "Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(1),
             HunterDataModel(0, "Garatoth", HunterWeapon.SWITCH_AXE).campaignId(1),
             HunterDataModel(0, "Ingravitto", HunterWeapon.CHARGE_BLADE),
             HunterDataModel(0, "Guille", HunterWeapon.LONG_SWORD).campaignId(1),
             HunterDataModel(0, "SpiderWolf", HunterWeapon.BOW),
         )
-    }
+    }.toMutableList()
 
 //    hunterDataList.add(
 //        HunterData(
@@ -202,7 +233,7 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
 
     campaignViewModel.init(
         campaignList.toMutableList(),
-        hunterDataList
+        hunterList
     )
     val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
         initial = 0
@@ -239,11 +270,12 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                         content = {
                             CampaignView(
                                 campaignList.toMutableList(),
-                                hunterDataList,
+                                hunterList,
                                 campaignViewModel = campaignViewModel,
                                 selectedCampaign = selectedCampaignIndex,
                                 onCampaignChange = {},
-                                onMonsterChange = { campaignViewModel.onChangeMonster(it) }
+                                onMonsterChange = { campaignViewModel.onChangeMonster(it) },
+                                onHunterChange = { huntersViewModel.onUpdateHunter(it) }
                             )
                         })
                 }
@@ -257,15 +289,15 @@ fun InitDrawer(campaignViewModel: CampaignViewModel, campaigns: List<CampaignMod
                         onFloatingButtonContent = {
                             FABHunters(
                                 visible = newHunterVisibility,
-                                hunterDataList = hunterDataList,
+                                hunterDataList = hunterList,
                                 onHunterCreated = {
                                     //createdHunter = it
-                                    campaignViewModel.onAddHunter(it)
+                                    huntersViewModel.onAddHunter(it)
                                     newHunterVisibility = false
                                 }
                             )
                         },
-                        content = { HunterView(HuntersViewModel(hunterDataList)) })
+                        content = { HunterView(huntersViewModel, hunterList) })
                 }
 
                 2 -> {

@@ -11,7 +11,6 @@ import com.example.mhcampaign.data.hunters.HuntersRepository
 import com.example.mhcampaign.domain.campaign.AddCampaignUseCase
 import com.example.mhcampaign.domain.campaign.GetCampaignsUseCase
 import com.example.mhcampaign.domain.campaign.UpdateCampaignUseCase
-import com.example.mhcampaign.domain.hunters.AddHunterUseCase
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.MonsterDataModel
@@ -35,10 +34,7 @@ class CampaignViewModel @Inject constructor(
     var getCampaignsUseCase: GetCampaignsUseCase
     var updateCampaignUseCase: UpdateCampaignUseCase
 
-    var addHunterUseCase: AddHunterUseCase
-
-    var uiState: StateFlow<CampaignUIState> = MutableStateFlow(CampaignUIState.Loading)
-
+    var uiStateCampaign: StateFlow<CampaignUIState> = MutableStateFlow(CampaignUIState.Loading)
 
 //    private var uiState: StateFlow<CampaignUIState>  =  MutableStateFlow(CampaignUIState.Loading)
 
@@ -54,9 +50,6 @@ class CampaignViewModel @Inject constructor(
     private val _selectedCampaignIndex = MutableLiveData<Int>()
     val selectedCampaignIndex: LiveData<Int> = _selectedCampaignIndex
 
-    private val _campaignHunters = MutableLiveData<MutableList<HunterDataModel?>>()
-    val campaignHunters: LiveData<MutableList<HunterDataModel?>> = _campaignHunters
-
     private val _selectedHunter = MutableLiveData<HunterDataModel?>()
     val selectedHunter: LiveData<HunterDataModel?> = _selectedHunter
 
@@ -69,15 +62,13 @@ class CampaignViewModel @Inject constructor(
     init {
         val campaignDao =
             DatabaseModule().provideDatabase(context).campaignDao()
-        var huntersDao = DatabaseModule().provideDatabase(context).huntersDao()
         val campaignRepository = CampaignRepository(campaignDao)
-        val huntersRepository = HuntersRepository(huntersDao)
 
         getCampaignsUseCase = GetCampaignsUseCase(campaignRepository)
         addCampaignUseCase = AddCampaignUseCase(campaignRepository)
         updateCampaignUseCase = UpdateCampaignUseCase(campaignRepository)
-        addHunterUseCase = AddHunterUseCase(huntersRepository)
-        uiState = getCampaignsUseCase().map(::Success).catch { Error(it) }
+
+        uiStateCampaign = getCampaignsUseCase().map(::Success).catch { Error(it) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
     }
 
@@ -88,21 +79,15 @@ class CampaignViewModel @Inject constructor(
 
 //       var cosa = getCampaignsUseCase().map(::Success).catch { Error(it) }
 //            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), CampaignUIState.Loading)
-
 //        _campaignList.value = campaignListIn
         _hunterList.value = hunterListIn
         _selectedCampaignIndex.value = 0
-
         _selectedCampaign.value = campaignListIn[0]
-        _campaignHunters.value = _hunterList.value?.filter { it.campaignId == campaignListIn[0].id }
-            ?.toMutableList()
-        makeCampaignHunters()
     }
 
     fun onCampaignIndexChange(index: Int, campaignModel: CampaignModel) {
         _selectedCampaignIndex.value = index
         _selectedCampaign.value = campaignModel
-        makeCampaignHunters()
     }
 
     fun onSelectedHunterChange(hunterData: HunterDataModel?) {
@@ -149,45 +134,5 @@ class CampaignViewModel @Inject constructor(
             addCampaignUseCase(campaignModel)
         }
     }
-
-    fun onAddHunter(hunter: HunterDataModel) {
-        viewModelScope.launch {
-            addHunterUseCase(hunter)
-        }
-    }
-
-    fun removeCampaignHunter(hunter: HunterDataModel?) {
-        if (hunter != null && _hunterList.value?.any { it == hunter } == true) {
-            _hunterList.value?.filter { it == hunter }?.get(0)?.campaignId(-1)
-        }
-        makeCampaignHunters()
-    }
-
-    fun addCampaignHunter(hunterPrevious: HunterDataModel?, hunter: HunterDataModel?) {
-        if (hunter != null && hunter != hunterPrevious) {
-            if (_hunterList.value?.any { it == hunter } == true) {
-                _selectedCampaign.value?.id?.let { campaignId ->
-                    _hunterList.value?.filter { it == hunter }?.get(0)?.campaignId(
-                        campaignId
-                    )
-                }
-            }
-            removeCampaignHunter(hunterPrevious)
-        }
-    }
-
-    fun makeCampaignHunters(
-    ) {
-        val list = mutableListOf<HunterDataModel?>()
-        _hunterList.value?.filter { it.campaignId == _selectedCampaign.value?.id }?.forEach {
-            list.add(it)
-        }
-
-        while (list.size < 4) {
-            list.add(null)
-        }
-        _campaignHunters.value = list
-    }
-
 }
 

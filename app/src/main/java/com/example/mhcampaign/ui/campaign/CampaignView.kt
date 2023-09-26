@@ -52,12 +52,9 @@ fun CampaignView(
     campaignViewModel: CampaignViewModel,
     selectedCampaign: Int = 0,
     onCampaignChange: (index: Int) -> Unit,
-    onMonsterChange: (MutableList<MonsterDataModel>) ->Unit
+    onMonsterChange: (MutableList<MonsterDataModel>) -> Unit,
+    onHunterChange: (HunterDataModel) -> Unit
 ) {
-    val campaignHunters: MutableList<HunterDataModel?> by campaignViewModel.campaignHunters.observeAsState(
-        initial = hunterDataList.filter { it.campaignId == campaignList[0].id }
-            .toMutableList()
-    )
     val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
         initial = selectedCampaign
     )
@@ -94,7 +91,7 @@ fun CampaignView(
         ) { name, index ->
             Log.d("Dropdown", "$name  $index")
             onCampaignChange(index)
-            campaignViewModel.onCampaignIndexChange(index,campaignList[index])
+            campaignViewModel.onCampaignIndexChange(index, campaignList[index])
         }
 
         //Potions and days
@@ -127,11 +124,10 @@ fun CampaignView(
 
         //Campaign`s hunters
 
-//        campaignHunters =
-//            hunterDataList.filter { it.campaignId == campaignList[selectedCampaignIndex].id }
-//                .toMutableList()
-//        campaignHunters = makeCampaignHunters(campaignHunters = campaignHunters)
-
+        var campaignHunters = makeCampaignHunters(
+            hunterDataList = hunterDataList,
+            selectedCampaignId = selectedCampaign.id
+        )
 
         LazyVerticalGrid(
             horizontalArrangement = Arrangement.Center,
@@ -149,7 +145,7 @@ fun CampaignView(
                 }
             })
         HunterSelector(visibility = hunterDialogVisibility,
-            dataList = hunterDataList.filter { !campaignViewModel.campaignHunters.value?.contains(it)!! || selectedHunter == it },
+            dataList = hunterDataList.filter { !campaignHunters.contains(it) || selectedHunter == it },
             selectedHunter = selectedHunter,
             context = LocalContext.current,
             onDismissListener = { campaignViewModel.onHunterDialogVisibilityChange(false) },
@@ -159,14 +155,22 @@ fun CampaignView(
                     if (hData == null) "Removed hunter" else "${hData.hunterName} ${hData.hunterWeapon} indice $index"
                 )
                 campaignViewModel.onHunterDialogVisibilityChange(false)
-                campaignViewModel.addCampaignHunter(selectedHunter, hData)
+                if (hData != null) {
+                    onHunterChange(
+                        hData.campaignId(
+                            campaignViewModel.selectedCampaign.value?.id ?: -1
+                        )
+                    )
+                }
             },
             onInventoryListener = {
                 campaignViewModel.onInventoryDialogVisibilityChange(true)
                 selectedHunter = it
             },
             onDeleteListener = { item, _ ->
-                campaignViewModel.removeCampaignHunter(item)
+                if (item != null) {
+                    onHunterChange(item.campaignId(-1))
+                }
                 item?.campaignId(-1)
                 campaignViewModel.onHunterDialogVisibilityChange(false)
             })
@@ -213,6 +217,20 @@ fun CampaignView(
     }
 }
 
+fun makeCampaignHunters(
+    hunterDataList: MutableList<HunterDataModel>, selectedCampaignId: Int
+): MutableList<HunterDataModel?> {
+    val list = mutableListOf<HunterDataModel?>()
+    hunterDataList.filter { it.campaignId == selectedCampaignId }?.forEach {
+        list.add(it)
+    }
+
+    while (list.size < 4) {
+        list.add(null)
+    }
+    return list
+}
+
 @Preview(showSystemUi = true)
 @Composable
 fun MyCampaignPreview() {
@@ -221,19 +239,19 @@ fun MyCampaignPreview() {
         MonsterDataModel(Monster.PUKEI_PUKEI, 1, 1, 0),
         MonsterDataModel(Monster.ANJANATH, 1, 1, 0)
     )
-    val campaignList =mutableListOf(
+    val campaignList = mutableListOf(
         CampaignModel(id = 1, name = "Campaña 1", potions = 2, days = 4, list = monsterList),
         CampaignModel(id = 2, name = "Campaña 2"),
         CampaignModel(id = 3, name = "Campaña 3"),
 
         )
     val dataList = mutableListOf(
-        HunterDataModel(0,"hunter 1", HunterWeapon.BOW).campaignId(0),
-        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES).campaignId(0),
-        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD).campaignId(0),
-        HunterDataModel(0,"hunter 4", HunterWeapon.BOW),
-        HunterDataModel(0,"hunter 5", HunterWeapon.LANCE),
-        HunterDataModel(0,"hunter 6", HunterWeapon.INSECT_GLAIVE)
+        HunterDataModel(0, "hunter 1", HunterWeapon.BOW).campaignId(0),
+        HunterDataModel(0, "hunter 2", HunterWeapon.DUAL_BLADES).campaignId(0),
+        HunterDataModel(0, "hunter 3", HunterWeapon.GREAT_SWORD).campaignId(0),
+        HunterDataModel(0, "hunter 4", HunterWeapon.BOW),
+        HunterDataModel(0, "hunter 5", HunterWeapon.LANCE),
+        HunterDataModel(0, "hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
 //    var campaignViewModel = CampaignViewModel()
 //    campaignViewModel.init(campaignList,dataList)

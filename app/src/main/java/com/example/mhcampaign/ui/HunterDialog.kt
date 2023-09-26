@@ -1,6 +1,7 @@
 package com.example.mhcampaign.ui
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,7 +41,9 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HunterDialog(
-    visibility: Boolean, data: HunterDataModel? = null, label: String,
+    visibility: Boolean,
+    data: HunterDataModel? = null,
+    label: String,
     onDismissListener: () -> Unit,
     onConfirmListener: (HunterDataModel?, Int) -> Unit,
     onInventoryListener: (HunterDataModel) -> Unit,
@@ -124,17 +127,22 @@ fun HunterDialog(
                         Text(text = "Cancel")
                     }
                     Button(onClick = {
-                        if (data != null)
-                            onConfirmListener(data, selectedIndex)
-                        else
-                            onConfirmListener(
-                                HunterDataModel(id=-1,
-                                    hunterName = hunterName,
-                                    hunterWeapon = HunterWeapon.values()[selectedIndex]
-                                ), selectedIndex
-                            )
-                        data?.hunterName = hunterName
-                        data?.hunterWeapon = HunterWeapon.values()[selectedIndex]
+                        if (hunterName != "") {
+                            data?.hunterName = hunterName
+                            data?.hunterWeapon = HunterWeapon.values()[selectedIndex]
+                            if (data != null) {
+                                onConfirmListener(data, selectedIndex)
+                            }
+                            else
+                                onConfirmListener(
+                                    HunterDataModel(
+                                        hunterName = hunterName,
+                                        hunterWeapon = HunterWeapon.values()[selectedIndex]
+                                    ), selectedIndex
+                                )
+                        } else {
+                            Toast.makeText(context, "Empty hunter name", Toast.LENGTH_SHORT).show()
+                        }
                     }) {
                         Text(text = context.getString(R.string.save_string))
                     }

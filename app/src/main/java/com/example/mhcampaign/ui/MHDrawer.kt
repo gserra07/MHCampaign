@@ -42,6 +42,7 @@ import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
+import com.example.mhcampaign.ui.theme.mhFont
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -65,7 +66,7 @@ fun MHDrawer(
                             contentDescription = null
                         )
                     },
-                    label = { Text(item.name) },
+                    label = { Text(item.name , fontFamily = mhFont) },
                     selected = item == selectedItem.value,
                     onClick = {
                         scope.launch { drawerState.close() }

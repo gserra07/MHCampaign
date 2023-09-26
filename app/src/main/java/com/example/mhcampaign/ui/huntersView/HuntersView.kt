@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -22,7 +23,7 @@ import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 
 @Composable
-fun HunterView(huntersViewModel: HuntersViewModel) {
+fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<HunterDataModel>) {
 
     val selectedHunter: HunterDataModel? by huntersViewModel.selectedHunter.observeAsState(
         initial = null
@@ -52,7 +53,7 @@ fun HunterView(huntersViewModel: HuntersViewModel) {
                 verticalArrangement = Arrangement.spacedBy(0.dp),
                 modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 20.dp)
             ) {
-                itemsIndexed(huntersViewModel.hunterList.value ?: mutableListOf()) { index, item ->
+                itemsIndexed(hunterDataList) { index, item ->
                     HunterViewHolder(
                         data = item,
                         onEditListener = { data, index ->
@@ -83,8 +84,9 @@ fun HunterView(huntersViewModel: HuntersViewModel) {
         onConfirmListener = { item, index ->
             huntersViewModel.onHunterDialogVisibilityChange(false)
             if (selectedHunter == null && item != null) {
-                huntersViewModel.addHunter(item)
-            }
+                huntersViewModel.onAddHunter(item)
+            }else if (selectedHunter !=null)
+                item?.let { huntersViewModel.onUpdateHunter(it) }
         },
         onInventoryListener = { huntersViewModel.onInventoryDialogVisibilityChange(true) }
     )
@@ -98,6 +100,9 @@ fun HunterView(huntersViewModel: HuntersViewModel) {
 @Preview(showSystemUi = true)
 @Composable
 fun HunterViewPreview() {
+    var context = LocalContext.current
+    val hunterViewModel =
+        HuntersViewModel(context)
     val data = mutableListOf(
         HunterDataModel(0,"hunter 1", HunterWeapon.HAMMER),
         HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
@@ -106,5 +111,5 @@ fun HunterViewPreview() {
         HunterDataModel(0,"hunter 5", HunterWeapon.LANCE),
         HunterDataModel(0,"hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
-    HunterView(HuntersViewModel(data))
+    HunterView(hunterViewModel, data)
 }

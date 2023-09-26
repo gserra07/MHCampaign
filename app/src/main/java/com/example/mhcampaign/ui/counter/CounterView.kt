@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.R
+import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
 
 @Composable
@@ -118,18 +119,20 @@ fun MySelector(
 fun MyViewPreview() {
     val potionsModel = CounterViewModel(0)
     val daysModel = CounterViewModel(0)
-    Row(horizontalArrangement = Arrangement.SpaceAround) {
-        Box {
+    MHCampaignTheme(darkTheme = false) {
+        Row(horizontalArrangement = Arrangement.SpaceAround) {
+            Box {
 
-            MySelector(
-                potionsModel,
-                R.drawable.potion
-            ) { }
+                MySelector(
+                    potionsModel,
+                    R.drawable.potion
+                ) { }
+            }
+            Box() {
+
+                MySelector(daysModel, R.drawable.calendar_white) { }
+            }
+
         }
-        Box() {
-
-            MySelector(daysModel, R.drawable.calendar_white) { }
-        }
-
     }
 }
