@@ -1,4 +1,4 @@
-package com.example.mhcampaign.ui
+package com.example.mhcampaign.ui.inventory
 
 import android.content.Context
 import android.util.Log
@@ -34,6 +34,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,27 +53,28 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.mhcampaign.R
 import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
-import com.example.mhcampaign.model.enums.Group
 import com.example.mhcampaign.model.enums.PartItem
 import com.example.mhcampaign.model.enums.PartModel
+import com.example.mhcampaign.ui.MHDropdownItemModel
+import com.example.mhcampaign.ui.MHLargeDropDown
+import com.example.mhcampaign.ui.partView.PartView
+import com.example.mhcampaign.ui.partView.PartViewModel
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 
 @Composable
 fun Inventory(
-    hunterData: HunterDataModel,
-    visibility: Boolean,
-    context: Context = LocalContext.current,
+    inventoryViewModel: InventoryViewModel,
     onCloseListener: (HunterDataModel) -> Unit
 ) {
-    var childVisibility by remember {
-        mutableStateOf(false)
-    }
+    val hunterData: HunterDataModel? by inventoryViewModel.dataModel.observeAsState(initial = null)
+    val parentVisibility: Boolean by inventoryViewModel.parentVisibility.observeAsState(initial = false)
+    val childVisibility: Boolean by inventoryViewModel.childVisibility.observeAsState(initial = false)
 
-    if (visibility) {
+    if (parentVisibility) {
         Dialog(
-            onDismissRequest = { onCloseListener(hunterData) },
+            onDismissRequest = { hunterData?.let { onCloseListener(it) } },
             properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Column(
@@ -79,34 +82,40 @@ fun Inventory(
                     .background(
                         color = md_theme_light_primaryContainer, shape = RoundedCornerShape(20.dp)
                     )
-                    .border(BorderStroke(1.dp, md_theme_light_primary),shape = RoundedCornerShape(20.dp))
+                    .border(
+                        BorderStroke(1.dp, md_theme_light_primary),
+                        shape = RoundedCornerShape(20.dp)
+                    )
                     .padding(10.dp)
                     .fillMaxHeight(0.9f)
                     .fillMaxWidth()
             ) {
-                val inventoryGrouped = hunterData.inventory.groupBy { it.name.partGroup }
-                val sorted = inventoryGrouped.toSortedMap(compareBy<Group> { it.indexOrder })
+                val inventoryGrouped = hunterData?.inventory?.groupBy { it.name.partGroup }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier.weight(1f)
                 ) {
-                    sorted.forEach { (group, list) ->
-                        header {
-                            Text(
-                                text = group.groupName,
-                                fontWeight = FontWeight.Bold
-                            ) // or any composable for your single row
-                        }
-                        itemsIndexed(list) { _, item ->
-                            Box(
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                PartView(item, PaddingValues(horizontal = 0.dp)) {
-                                    Log.d("PartView", "${it.name}  ${it.quantity}")
+                    inventoryGrouped?.toSortedMap(compareBy { it.indexOrder })
+                        ?.forEach { (group, list) ->
+                            header {
+                                Text(
+                                    text = group.groupName,
+                                    fontWeight = FontWeight.Bold
+                                ) // or any composable for your single row
+                            }
+                            itemsIndexed(list) { _, item ->
+                                Box(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    val partViewModel = PartViewModel(item)
+
+                                    PartView(partViewModel, PaddingValues(horizontal = 0.dp)) {
+                                        ////////Agregar watcher de cambio
+                                        Log.d("PartView", "${it.name}  ${it.quantity}")
+                                    }
                                 }
                             }
                         }
-                    }
                 }
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -115,7 +124,7 @@ fun Inventory(
                 ) {
                     Button(
                         onClick = {
-                            childVisibility = true
+                            inventoryViewModel.onChildVisibilityChange(true)
                         }, modifier = Modifier.fillMaxWidth()
                     ) {
                         Image(imageVector = Icons.Filled.Add, contentDescription = "")
@@ -123,27 +132,27 @@ fun Inventory(
                     }
                 }
                 Button(
-                    onClick = { onCloseListener(hunterData) }, modifier = Modifier.fillMaxWidth()
+                    onClick = { hunterData?.let { onCloseListener(it) } },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "Cerrar", textAlign = TextAlign.Center)
                 }
-                NewItemDialog(visibility = childVisibility,
-                    hunterData = hunterData,
-                    onSaveListener = { item, quantity ->
-                        hunterData.inventory.add(
-                            PartModel(item, quantity)
-                        )
-                        childVisibility = false
-
-                    },
-                    onCloseListener = {
-                        childVisibility = false
-                    })
+                hunterData?.let {
+                    NewItemDialog(visibility = childVisibility,
+                        hunterData = it,
+                        onSaveListener = { item, quantity ->
+                            inventoryViewModel.add(
+                                PartModel(item, quantity)
+                            )
+                            inventoryViewModel.onChildVisibilityChange(false)
+                        },
+                        onCloseListener = {
+                            inventoryViewModel.onChildVisibilityChange(false)
+                        })
+                }
             }
-
         }
     }
-
 }
 
 
@@ -162,13 +171,10 @@ fun NewItemDialog(
     onSaveListener: (partItem: PartItem, quantity: Int) -> Unit,
     onCloseListener: () -> Unit
 ) {
-    val context = LocalContext.current
     val availableItems =
         PartItem.values().filter { it -> !hunterData.inventory.map { it.name }.contains(it) }
     var selectedIndex by remember {
-        mutableStateOf(
-            -1
-        )
+        mutableIntStateOf(-1)
     }
     if (visibility) {
         var quantity by remember {
@@ -185,7 +191,10 @@ fun NewItemDialog(
                     .background(
                         color = md_theme_light_primaryContainer, shape = RoundedCornerShape(20.dp)
                     )
-                    .border(BorderStroke(1.dp,md_theme_light_primary),shape = RoundedCornerShape(20.dp))
+                    .border(
+                        BorderStroke(1.dp, md_theme_light_primary),
+                        shape = RoundedCornerShape(20.dp)
+                    )
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
@@ -261,7 +270,7 @@ fun NewItemDialog(
 fun MyInventoryPreview() {
     val context = LocalContext.current
     var visible by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     Box() {
         Button(onClick = {
@@ -271,15 +280,17 @@ fun MyInventoryPreview() {
         }
 
     }
-    val data = HunterDataModel(0,
+    val data = HunterDataModel(
+        0,
         "Hunter 1", HunterWeapon.LANCE, mutableListOf(
             PartModel(PartItem.SMALL_BONE, 0), PartModel(PartItem.HARDBONE, 3),
             PartModel(PartItem.DRAGONITE, 1), PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
             PartModel(PartItem.GREAT_JAGRAS_CLAW),
         )
     )
-    Inventory(hunterData = data,
-        visibility = visible,
-        context = context,
-        onCloseListener = { visible = false })
+    var inventoryViewModel = InventoryViewModel(data, visible)
+
+    Inventory(
+        inventoryViewModel = inventoryViewModel,
+        onCloseListener = { inventoryViewModel.onParentVisibilityChange(false) })
 }

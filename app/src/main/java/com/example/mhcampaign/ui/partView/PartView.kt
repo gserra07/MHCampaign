@@ -1,4 +1,4 @@
-package com.example.mhcampaign.ui
+package com.example.mhcampaign.ui.partView
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -21,9 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -41,7 +39,7 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primary
 
 @Composable
 fun PartView(
-    data: PartModel,
+    partViewModel: PartViewModel,
     paddingValues: PaddingValues = PaddingValues(),
     onTextChange: (PartModel) -> Unit
 ) {
@@ -52,30 +50,37 @@ fun PartView(
             .defaultMinSize(minHeight = 30.dp)
     ) {
         val (partIcon, partName, quantity, addIcon, minusIcon) = createRefs()
-        var valueText by remember { mutableStateOf("${data.quantity}") }
+        val partDataModel: PartModel? by partViewModel.dataModel.observeAsState(initial = null)
+        val quantityData: Int by partViewModel.quantity.observeAsState(initial = 0)
+//        var valueText by remember { mutableStateOf("${data.quantity}") }
+        var valueText = quantityData.toString()
 
-        Image(
-            painter = painterResource(id = data.name.partIcon),
-            contentDescription = "",
-            modifier = Modifier
-                .size(25.dp)
-                .constrainAs(partIcon) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                }
-        )
-        Text(
-            text = data.name.partName,
-            fontSize = 12.sp,
-            lineHeight = 13.sp,
-            modifier = Modifier.constrainAs(partName) {
-                top.linkTo(partIcon.top)
-                start.linkTo(partIcon.end, 2.dp)
-                bottom.linkTo(partIcon.bottom)
-                end.linkTo(quantity.start)
-                width = Dimension.fillToConstraints
-            })
+        partDataModel?.name?.partIcon?.let { painterResource(id = it) }?.let {
+            Image(
+                painter = it,
+                contentDescription = "",
+                modifier = Modifier
+                    .size(25.dp)
+                    .constrainAs(partIcon) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                    }
+            )
+        }
+        partDataModel?.name?.partName?.let {
+            Text(
+                text = it,
+                fontSize = 12.sp,
+                lineHeight = 13.sp,
+                modifier = Modifier.constrainAs(partName) {
+                    top.linkTo(partIcon.top)
+                    start.linkTo(partIcon.end, 2.dp)
+                    bottom.linkTo(partIcon.bottom)
+                    end.linkTo(quantity.start)
+                    width = Dimension.fillToConstraints
+                })
+        }
         Icon(
             imageVector = Icons.Filled.KeyboardArrowUp,
             tint = md_theme_light_primary,
@@ -87,16 +92,19 @@ fun PartView(
                     end.linkTo(quantity.end)
                     bottom.linkTo(partIcon.top)
                 }
-                .clickable { valueText = (valueText.toInt() + 1).toString() }
+                .clickable {
+//                    valueText = (valueText.toInt() + 1).toString()
+                    partViewModel.add()
+                }
         )
         BasicTextField(
             value = valueText,
             onValueChange = {
-                if (it.length < 3) {
-                    valueText = it
-                    data.quantity = it.toIntOrNull() ?: 0
-                    onTextChange(data)
-                }
+//                if (it.length < 3) {
+//                    valueText = it
+//                    data.quantity = it.toIntOrNull() ?: 0
+//                    onTextChange(data)
+//                }
             },
             maxLines = 1,
             textStyle = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center),
@@ -125,7 +133,8 @@ fun PartView(
                 }
                 .clickable {
                     if (valueText.toInt() > 0)
-                        valueText = (valueText.toInt() - 1).toString()
+//                        valueText = (valueText.toInt() - 1).toString()
+                        partViewModel.subtract()
                 }
         )
     }
@@ -140,11 +149,12 @@ fun MyPartPreview() {
         PartModel(PartItem.MACHALITE).count(60),
         PartModel(PartItem.DRAGONITE).count(60),
         PartModel(PartItem.GREAT_JAGRAS_CLAW).count(60),
-        )
+    )
 
     LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(10.dp), content = {
         itemsIndexed(data) { index, item ->
-            PartView(item, PaddingValues(horizontal = 10.dp, vertical = 10.dp)) {
+            val partViewModel = PartViewModel(item)
+            PartView(partViewModel, PaddingValues(horizontal = 10.dp, vertical = 10.dp)) {
                 Log.d("PartView", "${it.name}  ${it.quantity}")
             }
         }

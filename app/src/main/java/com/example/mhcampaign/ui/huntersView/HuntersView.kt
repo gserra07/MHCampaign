@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.mhcampaign.ui.HunterDialog
 import com.example.mhcampaign.ui.HunterViewHolder
-import com.example.mhcampaign.ui.Inventory
+import com.example.mhcampaign.ui.inventory.Inventory
 import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
+import com.example.mhcampaign.ui.inventory.InventoryViewModel
 
 @Composable
 fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<HunterDataModel>) {
@@ -43,20 +44,17 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
             end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
         }) {
-//            HunterViewHolder(
-//                onEditListener = { data, index ->
-//                    Log.d(data?.hunterName, "")
-//                    huntersViewModel.onSelectedHunterChange(null)
-//                    huntersViewModel.onHunterDialogVisibilityChange(true)
-//                })
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(0.dp),
-                modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 20.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
             ) {
-                itemsIndexed(hunterDataList) { index, item ->
+                itemsIndexed(hunterDataList) { _, item ->
                     HunterViewHolder(
                         data = item,
-                        onEditListener = { data, index ->
+                        onEditListener = { data, _ ->
                             Log.d(data?.hunterName, "")
                             huntersViewModel.onSelectedHunterChange(data)
                             huntersViewModel.onHunterDialogVisibilityChange(true)
@@ -81,17 +79,19 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
         onDismissListener = {
             huntersViewModel.onHunterDialogVisibilityChange(false)
         },
-        onConfirmListener = { item, index ->
+        onConfirmListener = { item, _ ->
             huntersViewModel.onHunterDialogVisibilityChange(false)
             if (selectedHunter == null && item != null) {
                 huntersViewModel.onAddHunter(item)
-            }else if (selectedHunter !=null)
+            } else if (selectedHunter != null)
                 item?.let { huntersViewModel.onUpdateHunter(it) }
         },
         onInventoryListener = { huntersViewModel.onInventoryDialogVisibilityChange(true) }
     )
+
     selectedHunter?.let {
-        Inventory(hunterData = it, visibility = inventoryVisibility, onCloseListener = {
+        val inventoryViewModel = InventoryViewModel(it, inventoryVisibility)
+        Inventory(inventoryViewModel = inventoryViewModel, onCloseListener = {
             huntersViewModel.onInventoryDialogVisibilityChange(false)
         })
     }
@@ -100,16 +100,16 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
 @Preview(showSystemUi = true)
 @Composable
 fun HunterViewPreview() {
-    var context = LocalContext.current
+    val context = LocalContext.current
     val hunterViewModel =
         HuntersViewModel(context)
     val data = mutableListOf(
-        HunterDataModel(0,"hunter 1", HunterWeapon.HAMMER),
-        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterDataModel(0,"hunter 4", HunterWeapon.BOW),
-        HunterDataModel(0,"hunter 5", HunterWeapon.LANCE),
-        HunterDataModel(0,"hunter 6", HunterWeapon.INSECT_GLAIVE)
+        HunterDataModel(0, "hunter 1", HunterWeapon.HAMMER),
+        HunterDataModel(0, "hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0, "hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0, "hunter 4", HunterWeapon.BOW),
+        HunterDataModel(0, "hunter 5", HunterWeapon.LANCE),
+        HunterDataModel(0, "hunter 6", HunterWeapon.INSECT_GLAIVE)
     )
     HunterView(hunterViewModel, data)
 }

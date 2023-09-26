@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.ui.HunterSelector
 import com.example.mhcampaign.ui.HunterViewHolder
-import com.example.mhcampaign.ui.Inventory
+import com.example.mhcampaign.ui.inventory.Inventory
 import com.example.mhcampaign.ui.MHSimpleDropDown
 import com.example.mhcampaign.ui.monsters.MonsterListView
 import com.example.mhcampaign.ui.counter.MySelector
@@ -40,6 +40,7 @@ import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.MonsterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.enums.Monster
+import com.example.mhcampaign.ui.inventory.InventoryViewModel
 import com.example.mhcampaign.ui.monsters.MonsterListViewModel
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
@@ -210,7 +211,8 @@ fun CampaignView(
                 })
         }
         selectedHunter?.let {
-            Inventory(hunterData = it, visibility = inventoryVisibility, onCloseListener = {
+            var inventoryViewModel = InventoryViewModel(it, inventoryVisibility)
+            Inventory(inventoryViewModel = inventoryViewModel, onCloseListener = {
                 campaignViewModel.onInventoryDialogVisibilityChange(false)
             })
         }

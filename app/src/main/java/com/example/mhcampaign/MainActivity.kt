@@ -62,7 +62,7 @@ import com.example.mhcampaign.ui.MHDrawer
 import com.example.mhcampaign.ui.MHDropDownPreview
 import com.example.mhcampaign.ui.MHScaffold
 import com.example.mhcampaign.ui.MyFloatingPreview
-import com.example.mhcampaign.ui.MyInventoryPreview
+import com.example.mhcampaign.ui.inventory.MyInventoryPreview
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import dagger.hilt.android.AndroidEntryPoint
 
