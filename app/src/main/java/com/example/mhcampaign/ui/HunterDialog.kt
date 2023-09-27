@@ -37,6 +37,7 @@ import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.ui.theme.GetTextFieldColors
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
+import com.example.mhcampaign.ui.theme.mhFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,7 +88,7 @@ fun HunterDialog(
                     .padding(24.dp)
                     .fillMaxWidth()
             ) {
-                Text(text = label, fontSize = 25.sp)
+                Text(text = label, fontSize = 25.sp, fontFamily = mhFont)
                 Spacer(modifier = Modifier.height(20.dp))
                 MHLargeDropDown(
                     label = "Hunter Weapon",

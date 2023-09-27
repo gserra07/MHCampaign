@@ -34,6 +34,7 @@ import com.example.mhcampaign.model.enums.Monster
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
+import com.example.mhcampaign.ui.theme.mhFont
 
 @Composable
 fun MonsterDialog(
@@ -72,7 +73,7 @@ fun MonsterDialog(
                         .fillMaxWidth()
                 ) {
                     val dropdownMonsterList = mutableListOf<MHDropdownItemModel>()
-                    Text(text = "Select Monster", fontSize = 25.sp)
+                    Text(text = "Select Monster", fontSize = 25.sp, fontFamily = mhFont)
                     Spacer(modifier = Modifier.height(20.dp))
                     availableMonsters.forEachIndexed { index, it ->
                         dropdownMonsterList.add(

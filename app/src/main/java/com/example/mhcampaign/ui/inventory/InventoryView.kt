@@ -66,7 +66,8 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
 @Composable
 fun Inventory(
     inventoryViewModel: InventoryViewModel,
-    onCloseListener: (HunterDataModel) -> Unit
+    onCloseListener: (HunterDataModel) -> Unit,
+    onInventoryChanged: () -> Unit
 ) {
     val hunterData: HunterDataModel? by inventoryViewModel.dataModel.observeAsState(initial = null)
     val parentVisibility: Boolean by inventoryViewModel.parentVisibility.observeAsState(initial = false)
@@ -111,6 +112,7 @@ fun Inventory(
 
                                     PartView(partViewModel, PaddingValues(horizontal = 0.dp)) {
                                         ////////Agregar watcher de cambio
+                                        onInventoryChanged()
                                         Log.d("PartView", "${it.name}  ${it.quantity}")
                                     }
                                 }
@@ -145,6 +147,7 @@ fun Inventory(
                                 PartModel(item, quantity)
                             )
                             inventoryViewModel.onChildVisibilityChange(false)
+                            onInventoryChanged()
                         },
                         onCloseListener = {
                             inventoryViewModel.onChildVisibilityChange(false)
@@ -292,5 +295,6 @@ fun MyInventoryPreview() {
 
     Inventory(
         inventoryViewModel = inventoryViewModel,
-        onCloseListener = { inventoryViewModel.onParentVisibilityChange(false) })
+        onCloseListener = { inventoryViewModel.onParentVisibilityChange(false) },
+        onInventoryChanged = {})
 }

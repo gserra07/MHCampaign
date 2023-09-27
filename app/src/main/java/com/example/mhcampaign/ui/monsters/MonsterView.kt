@@ -45,10 +45,11 @@ fun MonsterView(
         Image(painter = painterResource(id = data.monster.icon),
             contentDescription = "Monster Icon",
             modifier = Modifier
-                .size(120.dp)
+                .size(110.dp)
                 .constrainAs(monsterIcon) {
-                    top.linkTo(parent.top)
+                    top.linkTo(parent.top, 5.dp)
                     start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom, 5.dp)
                 })
         Box(modifier = Modifier
             .constrainAs(counters) {
@@ -64,7 +65,8 @@ fun MonsterView(
                         minLimit = 0
                     ),
                     icon = R.drawable.blue_star_24,
-                    iconSize = 40.dp
+                    iconSize = 35.dp,
+                    iconEndSpacer = 25.dp
                 ) {
                     data.onValuesChanges(it, mediumCount, hardCount)
                     onChangeListener(data)
@@ -76,7 +78,8 @@ fun MonsterView(
                         minLimit = 0
                     ),
                     icon = R.drawable.two_stars,
-                    iconSize = 40.dp
+                    iconSize = 35.dp,
+                    iconEndSpacer = 25.dp
                 ) {
                     data.onValuesChanges(easyCount, it, hardCount)
                     onChangeListener(data)
@@ -90,7 +93,8 @@ fun MonsterView(
                         R.drawable.four_stars
                     else
                         R.drawable.three_stars,
-                    iconSize = 40.dp
+                    iconSize = 35.dp,
+                    iconEndSpacer = 25.dp
                 ) {
                     data.onValuesChanges(easyCount, mediumCount, it)
                     onChangeListener(data)
@@ -113,7 +117,10 @@ fun MonsterListView(
     viewModelList = viewModelList.sortedBy { it.monster.index }?.toMutableList()!!
     LazyColumn(modifier = Modifier.padding(paddingValues)) {
         itemsIndexed(viewModelList) { i, monster ->
-            MonsterView(data = monster) {
+            MonsterView(
+                data = monster,
+                paddingValues = PaddingValues(bottom = 5.dp)
+            ) {
                 //monsterList.updateMonster(i, monster)
                 onChangeListener(i, monster)
             }
@@ -130,7 +137,7 @@ fun MyMonsterPreview() {
 
     MonsterListView(
         monsterList = MonsterListViewModel(monsterList),
-        paddingValues = PaddingValues(start = 20.dp),
+        paddingValues = PaddingValues(start = 20.dp, top = 5.dp),
         onChangeListener = { i, m -> })
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 //        MonsterView(data = data)

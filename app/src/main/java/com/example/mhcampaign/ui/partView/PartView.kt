@@ -41,7 +41,7 @@ import com.example.mhcampaign.ui.theme.md_theme_light_primary
 fun PartView(
     partViewModel: PartViewModel,
     paddingValues: PaddingValues = PaddingValues(),
-    onTextChange: (PartModel) -> Unit
+    onValueChange: (PartModel) -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -56,8 +56,7 @@ fun PartView(
         var valueText = quantityData.toString()
 
         partDataModel?.name?.partIcon?.let { painterResource(id = it) }?.let {
-            Image(
-                painter = it,
+            Image(painter = it,
                 contentDescription = "",
                 modifier = Modifier
                     .size(25.dp)
@@ -65,12 +64,10 @@ fun PartView(
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)
-                    }
-            )
+                    })
         }
         partDataModel?.name?.partName?.let {
-            Text(
-                text = it,
+            Text(text = it,
                 fontSize = 12.sp,
                 lineHeight = 13.sp,
                 modifier = Modifier.constrainAs(partName) {
@@ -81,8 +78,7 @@ fun PartView(
                     width = Dimension.fillToConstraints
                 })
         }
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowUp,
+        Icon(imageVector = Icons.Filled.KeyboardArrowUp,
             tint = md_theme_light_primary,
             contentDescription = "Add icon",
             modifier = Modifier
@@ -94,9 +90,9 @@ fun PartView(
                 }
                 .clickable {
 //                    valueText = (valueText.toInt() + 1).toString()
+                    partDataModel?.let { onValueChange(it) }
                     partViewModel.add()
-                }
-        )
+                })
         BasicTextField(
             value = valueText,
             onValueChange = {
@@ -120,8 +116,7 @@ fun PartView(
             enabled = false,
             readOnly = true
         )
-        Icon(
-            imageVector = Icons.Filled.KeyboardArrowDown,
+        Icon(imageVector = Icons.Filled.KeyboardArrowDown,
             tint = md_theme_light_primary,
             contentDescription = "Substract icon",
             modifier = Modifier
@@ -132,11 +127,13 @@ fun PartView(
                     bottom.linkTo(partIcon.bottom)
                 }
                 .clickable {
-                    if (valueText.toInt() > 0)
+                    if (valueText.toInt() > 0) {
 //                        valueText = (valueText.toInt() - 1).toString()
                         partViewModel.subtract()
-                }
-        )
+                        partDataModel?.let { onValueChange(it) }
+                    }
+
+                })
     }
 }
 

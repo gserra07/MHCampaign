@@ -53,13 +53,13 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
             ) {
                 itemsIndexed(hunterDataList) { _, item ->
                     HunterViewHolder(
-                        data = item,
-                        onEditListener = { data, _ ->
-                            Log.d(data?.hunterName, "")
-                            huntersViewModel.onSelectedHunterChange(data)
-                            huntersViewModel.onHunterDialogVisibilityChange(true)
-                            huntersViewModel.onInventoryDialogVisibilityChange(false)
-                        })
+                        data = item
+                    ) { data, _ ->
+                        Log.d(data?.hunterName, "")
+                        huntersViewModel.onSelectedHunterChange(data)
+                        huntersViewModel.onHunterDialogVisibilityChange(true)
+                        huntersViewModel.onInventoryDialogVisibilityChange(false)
+                    }
 //                    if (index != ((huntersViewModel.hunterList.value?.size ?: 0) - 1))
 //                        Divider(
 //                            color = md_theme_light_primary,
@@ -93,7 +93,8 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
         val inventoryViewModel = InventoryViewModel(it, inventoryVisibility)
         Inventory(inventoryViewModel = inventoryViewModel, onCloseListener = {
             huntersViewModel.onInventoryDialogVisibilityChange(false)
-        })
+        },
+            onInventoryChanged = {huntersViewModel.onUpdateHunter(selectedHunter!!)})
     }
 }
 

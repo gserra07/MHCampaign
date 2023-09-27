@@ -14,7 +14,7 @@ class CampaignRepository @Inject constructor(
         campaignDao.getCampaigns().map { items -> items.map { it.toDomain() } }
 
     suspend fun addCampaign(campaignModel: CampaignModel) {
-        campaignDao.addCampaign(campaignModel.toDataBase())
+        campaignDao.addCampaign(campaignModel.toDataBase(true))
     }
 
     suspend fun updateCampaign(campaignModel: CampaignModel) {

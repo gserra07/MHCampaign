@@ -3,6 +3,7 @@ package com.example.mhcampaign.data.campaign
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.mhcampaign.data.hunters.HunterEntity
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.MonsterDataModel
 
@@ -17,5 +18,14 @@ data class CampaignEntity(
         mutableListOf<MonsterDataModel>()
 )
 
-fun CampaignModel.toDataBase() =
-    CampaignEntity(id = id , name = name, potions = potions, days = days, monsterList = list)
+fun CampaignModel.toDataBase(isNew: Boolean = false): CampaignEntity {
+    var campaignEntity = CampaignEntity(
+        name = name,
+        potions = potions,
+        days = days,
+        monsterList = list
+    )
+    if (!isNew)
+        campaignEntity.id = id
+    return campaignEntity
+}

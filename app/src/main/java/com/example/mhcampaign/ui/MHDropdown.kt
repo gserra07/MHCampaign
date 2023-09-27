@@ -266,6 +266,8 @@ fun MHSimpleDropDown(
     var dropDownWidth by remember { mutableStateOf(0) }
     if (selectedIndex >= 0)
         selectedText = itemList[selectedIndex]
+    if (!itemList.any())
+        selectedText = "No items to select"
     CompositionLocalProvider(
         LocalTextInputService provides null
     ) {
@@ -287,7 +289,7 @@ fun MHSimpleDropDown(
                 OutlinedTextField(
                     label = { Text(text = label) },
                     value = selectedText,
-                    enabled = true,
+                    enabled = itemList.any(),
                     modifier = Modifier
                         .menuAnchor()
                         .fillMaxWidth()
@@ -295,27 +297,32 @@ fun MHSimpleDropDown(
                         .onSizeChanged {
                             dropDownWidth = it.width
                         },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    trailingIcon = {
+                        if (itemList.any())
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                    },
                     onValueChange = { },
                     readOnly = true,
                     colors = GetTextFieldColors()
                 )
-
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier
-                        .width(with(LocalDensity.current) { dropDownWidth.toDp() })
-                ) {
-                    itemList.forEachIndexed { index, item ->
-                        DropdownMenuItem(text = { Text(text = item) }, onClick = {
-                            selectedText = item
-                            expanded = false
-                            onSelectoptionListener(selectedText, index)
-                            focusManager.clearFocus()
-                        })
+                if (itemList.any())
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .width(with(LocalDensity.current) { dropDownWidth.toDp() })
+                    ) {
+                        itemList.forEachIndexed { index, item ->
+                            DropdownMenuItem(text = { Text(text = item) }, onClick = {
+                                selectedText = item
+                                expanded = false
+                                onSelectoptionListener(selectedText, index)
+                                focusManager.clearFocus()
+                            })
+                        }
                     }
-                }
             }
         }
     }

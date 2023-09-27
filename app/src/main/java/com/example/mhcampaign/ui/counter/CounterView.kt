@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,7 +37,8 @@ import com.example.mhcampaign.ui.theme.md_theme_dark_primary
 fun MySelector(
     counterViewModel: CounterViewModel = CounterViewModel(),
     icon: Int? = null,
-    iconSize: Dp = 60.dp,
+    iconSize: Dp = 50.dp,
+    iconEndSpacer: Dp = 10.dp,
     onValueChange: (Int) -> Unit
 ) {
     val count: Int by counterViewModel.count.observeAsState(initial = 0)
@@ -49,10 +51,10 @@ fun MySelector(
                     painter = it2,
                     contentDescription = "",
                     modifier = Modifier
-                        .size(iconSize)
-                        .padding(end = 10.dp),
+                        .size(iconSize),
                 )
             }
+            Spacer(modifier = Modifier.width(iconEndSpacer))
             OutlinedButton(
                 onClick = { },
                 modifier = Modifier.size(25.dp),  //avoid the oval shape

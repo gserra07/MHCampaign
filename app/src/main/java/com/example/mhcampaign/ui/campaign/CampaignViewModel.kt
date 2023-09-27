@@ -82,7 +82,8 @@ class CampaignViewModel @Inject constructor(
 //        _campaignList.value = campaignListIn
         _hunterList.value = hunterListIn
         _selectedCampaignIndex.value = 0
-        _selectedCampaign.value = campaignListIn[0]
+        if (campaignListIn.any())
+            _selectedCampaign.value = campaignListIn[0]
     }
 
     fun onCampaignIndexChange(index: Int, campaignModel: CampaignModel) {

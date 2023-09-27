@@ -42,18 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.mhcampaign.ui.campaign.CampaignView
-import com.example.mhcampaign.ui.campaign.CampaignViewModel
-import com.example.mhcampaign.ui.huntersView.HunterView
-import com.example.mhcampaign.ui.huntersView.HuntersViewModel
 import com.example.mhcampaign.model.CampaignModel
 import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.MenuItem
 import com.example.mhcampaign.model.MonsterDataModel
-import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.enums.Monster
-import com.example.mhcampaign.model.enums.PartItem
-import com.example.mhcampaign.model.enums.PartModel
 import com.example.mhcampaign.ui.CampaignUIState
 import com.example.mhcampaign.ui.FABCampaign
 import com.example.mhcampaign.ui.FABHunters
@@ -62,6 +55,11 @@ import com.example.mhcampaign.ui.MHDrawer
 import com.example.mhcampaign.ui.MHDropDownPreview
 import com.example.mhcampaign.ui.MHScaffold
 import com.example.mhcampaign.ui.MyFloatingPreview
+import com.example.mhcampaign.ui.NewCampaignDialog
+import com.example.mhcampaign.ui.campaign.CampaignView
+import com.example.mhcampaign.ui.campaign.CampaignViewModel
+import com.example.mhcampaign.ui.huntersView.HunterView
+import com.example.mhcampaign.ui.huntersView.HuntersViewModel
 import com.example.mhcampaign.ui.inventory.MyInventoryPreview
 import com.example.mhcampaign.ui.theme.MHCampaignTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -126,7 +124,7 @@ private fun AddDrawer(campaignViewModel: CampaignViewModel, huntersViewModel: Hu
         is CampaignUIState.Error -> {}
         CampaignUIState.Loading -> {}
         is CampaignUIState.Success -> {
-            when (uistateHunters){
+            when (uistateHunters) {
                 is HuntersUIState.Error -> {}
                 HuntersUIState.Loading -> {}
                 is HuntersUIState.SuccessHunters -> InitDrawer(
@@ -167,6 +165,9 @@ fun InitDrawer(
     val newMonsterVisibility by remember {
         mutableStateOf(false)
     }
+    var newCampaignVisibility by remember {
+        mutableStateOf(false)
+    }
     var createdHunter: HunterDataModel? by remember {
         mutableStateOf(null)
     }
@@ -188,32 +189,40 @@ fun InitDrawer(
 //    monsterList.add(MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0))
 //    monsterList.add(MonsterData(Monster.ANJANATH, 1, 1, 0))
 
-    val campaignList = campaigns.ifEmpty {
-        mutableListOf(
-            CampaignModel(id = 1, name = "Campaña 1", potions = 2, days = 4, list = monsterList),
-            CampaignModel(id = 2, name = "Campaña 2"),
-            CampaignModel(id = 3, name = "Campaña 3"),
-
-            )
-    }
-    val hunterList = hunters.ifEmpty {
-        mutableStateListOf<HunterDataModel>(
-            HunterDataModel(
-                0,
-                "Ganexy", HunterWeapon.DUAL_BLADES, mutableListOf(
-                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
-                    PartModel(PartItem.CARBALITE),
-                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
-                    PartModel(PartItem.GREAT_JAGRAS_CLAW),
-                )
-            ).campaignId(1),
-            HunterDataModel(0, "Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(1),
-            HunterDataModel(0, "Garatoth", HunterWeapon.SWITCH_AXE).campaignId(1),
-            HunterDataModel(0, "Ingravitto", HunterWeapon.CHARGE_BLADE),
-            HunterDataModel(0, "Guille", HunterWeapon.LONG_SWORD).campaignId(1),
-            HunterDataModel(0, "SpiderWolf", HunterWeapon.BOW),
-        )
-    }.toMutableList()
+    val campaignList =campaigns.toMutableList()
+//        campaigns.ifEmpty {
+//            mutableListOf<CampaignModel>(
+//                CampaignModel(
+//                    id = 1,
+//                    name = "Campaña 1",
+//                    potions = 2,
+//                    days = 4,
+//                    list = monsterList
+//                ),
+//                CampaignModel(id = 2, name = "Campaña 2"),
+//                CampaignModel(id = 3, name = "Campaña 3"),
+//
+//                )
+//        }
+    val hunterList = hunters.toMutableList()
+//        hunters.ifEmpty {
+//        mutableStateListOf<HunterDataModel>(
+//            HunterDataModel(
+//                0,
+//                "Ganexy", HunterWeapon.DUAL_BLADES, mutableListOf(
+//                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+//                    PartModel(PartItem.CARBALITE),
+//                    PartModel(PartItem.NERGIGANTE_REGROWTH_PLATE),
+//                    PartModel(PartItem.GREAT_JAGRAS_CLAW),
+//                )
+//            ).campaignId(1),
+//            HunterDataModel(0, "Adriatus", HunterWeapon.HEAVY_BOWGUN).campaignId(1),
+//            HunterDataModel(0, "Garatoth", HunterWeapon.SWITCH_AXE).campaignId(1),
+//            HunterDataModel(0, "Ingravitto", HunterWeapon.CHARGE_BLADE),
+//            HunterDataModel(0, "Guille", HunterWeapon.LONG_SWORD).campaignId(1),
+//            HunterDataModel(0, "SpiderWolf", HunterWeapon.BOW),
+//        )
+//    }.toMutableList()
 
 //    hunterDataList.add(
 //        HunterData(
@@ -232,7 +241,7 @@ fun InitDrawer(
 //    hunterDataList.add(HunterData("SpiderWolf", HunterWeapon.BOW))
 
     campaignViewModel.init(
-        campaignList.toMutableList(),
+        campaignList,
         hunterList
     )
     val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
@@ -252,30 +261,71 @@ fun InitDrawer(
                         drawerState = drawerState,
                         onFloatingActionButtonClick = {},
                         onFloatingButtonContent = {
-                            FABCampaign(
-                                visible = newMonsterVisibility,
-                                campaignModel = campaignList[selectedCampaignIndex],
-                                onMonsterCreated = {
-                                    campaignViewModel.onAddMonster(it)
+                            campaignList.getOrNull( selectedCampaignIndex)?.let {
+                                FABCampaign(
+                                    visible = newMonsterVisibility,
+                                    campaignModel = it,
+                                    onMonsterCreated = {
+                                        campaignViewModel.onAddMonster(it)
 
-                                    //campaignViewModel.selectedCampaign.value?.addMonster(it)
-//                                                    campaignList[selectedCampaignIndex].addMonster(it)
-                                },
-                                addCampaignClick = {
-                                    ///////////////////////////////
-                                    campaignViewModel.onAddCampaign(campaignList[0])
-                                }
-                            )
+                                        //campaignViewModel.selectedCampaign.value?.addMonster(it)
+                        //                                                    campaignList[selectedCampaignIndex].addMonster(it)
+                                    },
+                                    addCampaignClick = {
+                                        ///////////////////////////////
+                                                            newCampaignVisibility = true
+//                                        campaignViewModel.onAddCampaign(
+//                                            CampaignModel(
+//                                                id = 0,
+//                                                name = "Campaña",
+//                                                potions = 0,
+//                                                days = 0,
+//                                                list = mutableListOf(
+//                                                    MonsterDataModel(
+//                                                        Monster.GREAT_JAGRAS,
+//                                                        1,
+//                                                        2,
+//                                                        0
+//                                                    )
+//                                                )
+//                                            )
+//                                        )
+                                    }
+                                )
+                            }
                         },
                         content = {
                             CampaignView(
-                                campaignList.toMutableList(),
+                                campaignList,
                                 hunterList,
                                 campaignViewModel = campaignViewModel,
                                 selectedCampaign = selectedCampaignIndex,
-                                onCampaignChange = {},
+                                onCampaignChange = {
+                                    campaignViewModel.onCampaignIndexChange(
+                                        index = it, campaignModel = campaignList[it]
+                                    )
+                                },
                                 onMonsterChange = { campaignViewModel.onChangeMonster(it) },
-                                onHunterChange = { huntersViewModel.onUpdateHunter(it) }
+                                onHunterChange = { huntersViewModel.onUpdateHunter(it) },
+                                onAddCampaign = {
+//                                    campaignViewModel.onAddCampaign(
+//                                        CampaignModel(
+//                                            id = 0,
+//                                            name = "Campaña",
+//                                            potions = 0,
+//                                            days = 0,
+//                                            list = mutableListOf(
+//                                                MonsterDataModel(
+//                                                    Monster.GREAT_JAGRAS,
+//                                                    1,
+//                                                    2,
+//                                                    0
+//                                                )
+//                                            )
+//                                        )
+//                                    )
+                                    newCampaignVisibility = true
+                                }
                             )
                         })
                 }
@@ -326,8 +376,26 @@ fun InitDrawer(
                 }
             }
         })
+    NewCampaignDialog(
+        visibility = newCampaignVisibility,
+//            selectedHunter = data[1],
+        context = LocalContext.current,
+        onDismissListener = {
+            newCampaignVisibility = false
+        },
+        onConfirmListener = {
+            campaignViewModel.onAddCampaign(
+                CampaignModel(
+                    name = it,
+                    potions = 0,
+                    days = 0,
+                    list = mutableListOf()
+                )
+            )
+            newCampaignVisibility = false
+        },
+    )
 }
-
 
 @Composable
 fun SuperText() {
