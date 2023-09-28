@@ -111,9 +111,16 @@ class CampaignViewModel @Inject constructor(
         updateBBDD()
     }
 
+    fun <T> MutableLiveData<T>.notifyObserver() {
+        this.value = this.value
+    }
+
     fun onChangeMonster(monsterList: MutableList<MonsterDataModel>) {
         _selectedCampaign.value?.updateMonsterList(monsterList)
+        //_selectedCampaign.notifyObserver()
         updateBBDD()
+        onHunterDialogVisibilityChange(true)
+        onHunterDialogVisibilityChange(false)
     }
 
     private fun updateBBDD() {

@@ -189,7 +189,7 @@ fun InitDrawer(
 //    monsterList.add(MonsterData(Monster.PUKEI_PUKEI, 1, 1, 0))
 //    monsterList.add(MonsterData(Monster.ANJANATH, 1, 1, 0))
 
-    val campaignList =campaigns.toMutableList()
+    val campaignList = campaigns.toMutableList()
 //        campaigns.ifEmpty {
 //            mutableListOf<CampaignModel>(
 //                CampaignModel(
@@ -261,19 +261,22 @@ fun InitDrawer(
                         drawerState = drawerState,
                         onFloatingActionButtonClick = {},
                         onFloatingButtonContent = {
-                            campaignList.getOrNull( selectedCampaignIndex)?.let {
+                            campaignList.getOrNull(selectedCampaignIndex)?.let {
                                 FABCampaign(
                                     visible = newMonsterVisibility,
                                     campaignModel = it,
                                     onMonsterCreated = {
-                                        campaignViewModel.onAddMonster(it)
-
-                                        //campaignViewModel.selectedCampaign.value?.addMonster(it)
-                        //                                                    campaignList[selectedCampaignIndex].addMonster(it)
+                                        //campaignViewModel.onAddMonster(it)
+                                        var list =
+                                            campaignList[selectedCampaignIndex].monsterList.value
+                                        if (list != null) {
+                                            list.add(MonsterDataModel(it))
+                                            campaignViewModel.onChangeMonster(list)
+                                        }
                                     },
                                     addCampaignClick = {
                                         ///////////////////////////////
-                                                            newCampaignVisibility = true
+                                        newCampaignVisibility = true
 //                                        campaignViewModel.onAddCampaign(
 //                                            CampaignModel(
 //                                                id = 0,

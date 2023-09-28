@@ -32,12 +32,8 @@ data class CampaignModel(
     }
 
     fun addMonster(monster: Monster) {
-        var list: MutableList<MonsterDataModel>? = (_monsterList.value?.map { it }?: mutableListOf()).toMutableList()
-        list?.add(MonsterDataModel(monster))
-        if (list != null) {
-            list = list.sortedBy { it.monster.index }?.toMutableList()
-        }
-        _monsterList.value = list
+        _monsterList.value?.add(MonsterDataModel(monster))
+        _monsterList.value = _monsterList.value?.sortedBy { it.monster.index }?.toMutableList()
     }
 
     fun updateMonsterList(list: MutableList<MonsterDataModel>) {
