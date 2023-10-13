@@ -46,7 +46,7 @@ fun HunterSelector(
     dataList: List<HunterDataModel>,
     selectedHunter: HunterDataModel? = null,
     onDismissListener: () -> Unit,
-    onConfirmListener: (hunterData: HunterDataModel?, index: Int) -> Unit,
+    onConfirmListener: (hunterData: HunterDataModel?, index: Int, selectedHunter: HunterDataModel?) -> Unit,
     onDeleteListener: (hunterData: HunterDataModel?, index: Int) -> Unit,
     onInventoryListener: (HunterDataModel) -> Unit,
     context: Context = LocalContext.current
@@ -68,7 +68,7 @@ fun HunterSelector(
                 )
             }
             Dialog(
-                onDismissRequest = { onDismissListener()},
+                onDismissRequest = { onDismissListener() },
                 properties = DialogProperties(
                     dismissOnBackPress = true,
                     dismissOnClickOutside = true
@@ -101,13 +101,18 @@ fun HunterSelector(
 
                     Spacer(modifier = Modifier.height(10.dp))
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        TextButton(onClick = {
-                            if (selectedHunter != null) {
-                                onInventoryListener(selectedHunter)
-                            }
-                        }
+                        TextButton(
+                            onClick = {
+                                if (selectedHunter != null) {
+                                    onInventoryListener(selectedHunter)
+                                }
+                            },
+                            modifier = Modifier.border(
+                                BorderStroke(1.dp, md_theme_light_primary),
+                                shape = RoundedCornerShape(50.dp)
+                            ).padding(horizontal = 20.dp)
                         ) {
-                            Text(text = "Go Inventory",modifier = Modifier)
+                            Text(text = "Go Inventory", modifier = Modifier)
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -130,7 +135,8 @@ fun HunterSelector(
                         Button(onClick = {
                             onConfirmListener(
                                 if (selectedIndex >= 0) hunterList[selectedIndex] else null,
-                                selectedIndex
+                                selectedIndex,
+                                selectedHunter
                             )
                         }, modifier = Modifier.width(100.dp)) {
                             Text(text = context.getString(R.string.save_string))
@@ -146,12 +152,12 @@ fun HunterSelector(
 @Composable
 fun MyHunterSelectorPreview() {
     val data = listOf<HunterDataModel>(
-        HunterDataModel(0,"hunter 1", HunterWeapon.BOW),
-        HunterDataModel(0,"hunter 2", HunterWeapon.DUAL_BLADES),
-        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterDataModel(0,"hunter 3", HunterWeapon.GREAT_SWORD),
-        HunterDataModel(0,"hunter 4", HunterWeapon.INSECT_GLAIVE),
+        HunterDataModel(0, "hunter 1", HunterWeapon.BOW),
+        HunterDataModel(0, "hunter 2", HunterWeapon.DUAL_BLADES),
+        HunterDataModel(0, "hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0, "hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0, "hunter 3", HunterWeapon.GREAT_SWORD),
+        HunterDataModel(0, "hunter 4", HunterWeapon.INSECT_GLAIVE),
     )
     var visible by remember {
         mutableStateOf(true)
@@ -168,7 +174,7 @@ fun MyHunterSelectorPreview() {
 //            selectedHunter = data[1],
         context = LocalContext.current,
         onDismissListener = { },
-        onConfirmListener = { hData, index -> },
+        onConfirmListener = { hData, index, selectedHunter -> },
         onInventoryListener = {},
         onDeleteListener = { data, index -> })
 }

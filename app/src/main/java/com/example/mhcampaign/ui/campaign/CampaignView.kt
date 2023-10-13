@@ -187,12 +187,15 @@ fun CampaignView(
                 selectedHunter = selectedHunter,
                 context = LocalContext.current,
                 onDismissListener = { campaignViewModel.onHunterDialogVisibilityChange(false) },
-                onConfirmListener = { hData, index ->
+                onConfirmListener = { hData, index, selectedHunter ->
                     Log.d(
                         "Hunter selector",
                         if (hData == null) "Removed hunter" else "${hData.hunterName} ${hData.hunterWeapon} indice $index"
                     )
                     campaignViewModel.onHunterDialogVisibilityChange(false)
+                    if (selectedHunter!= null){
+                        onHunterChange(selectedHunter.campaignId(-1))
+                    }
                     if (hData != null) {
                         onHunterChange(
                             hData.campaignId(
