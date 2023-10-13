@@ -29,6 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -149,6 +150,12 @@ fun Inventory(
                             inventoryViewModel.onChildVisibilityChange(false)
                             onInventoryChanged()
                         },
+                        onMultiAddListener = {item, quantity ->
+                            inventoryViewModel.add(
+                                PartModel(item, quantity)
+                            )
+                            onInventoryChanged()
+                        },
                         onCloseListener = {
                             inventoryViewModel.onChildVisibilityChange(false)
                         })
@@ -172,12 +179,16 @@ fun NewItemDialog(
     hunterData: HunterDataModel,
     context: Context = LocalContext.current,
     onSaveListener: (partItem: PartItem, quantity: Int) -> Unit,
+    onMultiAddListener: (partItem: PartItem, quantity: Int) -> Unit,
     onCloseListener: () -> Unit
 ) {
     val availableItems =
         PartItem.values().filter { it -> !hunterData.inventory.map { it.name }.contains(it) }
     var selectedIndex by remember {
         mutableIntStateOf(-1)
+    }
+    var multiAdd by remember {
+        mutableStateOf(false)
     }
     if (visibility) {
         var quantity by remember {
@@ -235,6 +246,20 @@ fun NewItemDialog(
                 Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                ) {
+                    Text(text = "Add multiple items")
+                    MyCheckBox(onCheckedChangeListener = {
+                        multiAdd = it
+                    })
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp)
@@ -248,9 +273,16 @@ fun NewItemDialog(
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = {
                         if (selectedIndex != -1)
-                            onSaveListener(
-                                availableItems[selectedIndex], quantity.toIntOrNull() ?: 0
-                            )
+                            if(!multiAdd) {
+                                onSaveListener(
+                                    availableItems[selectedIndex], quantity.toIntOrNull() ?: 0
+                                )
+                            }
+                            else{
+                                onMultiAddListener(
+                                    availableItems[selectedIndex], quantity.toIntOrNull() ?: 0
+                                )
+                            }
                         else
                             Toast.makeText(
                                 context,
@@ -265,6 +297,18 @@ fun NewItemDialog(
             }
         }
     }
+}
+
+@Composable
+fun MyCheckBox(onCheckedChangeListener: (Boolean) -> Unit) {
+    val checked = remember { mutableStateOf(false) }
+    Checkbox(
+        checked = checked.value,
+        onCheckedChange = {
+            checked.value = it
+            onCheckedChangeListener(checked.value)
+        }
+    )
 }
 
 //@Preview(showSystemUi = true, device ="spec:width=280dp,height=891dp" )

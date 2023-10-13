@@ -42,7 +42,7 @@ import com.example.mhcampaign.model.HunterDataModel
 import com.example.mhcampaign.model.MonsterDataModel
 import com.example.mhcampaign.model.enums.HunterWeapon
 import com.example.mhcampaign.model.enums.Monster
-import com.example.mhcampaign.ui.HunterSelector
+import com.example.mhcampaign.ui.HunterSelectorDialog
 import com.example.mhcampaign.ui.HunterViewHolder
 import com.example.mhcampaign.ui.MHSimpleDropDown
 import com.example.mhcampaign.ui.counter.CounterViewModel
@@ -65,7 +65,7 @@ fun CampaignView(
     onCampaignChange: (index: Int) -> Unit,
     onMonsterChange: (MutableList<MonsterDataModel>) -> Unit,
     onHunterChange: (HunterDataModel) -> Unit,
-    onAddCampaign:()->Unit
+    onAddCampaign: () -> Unit
 ) {
     val selectedCampaignIndex: Int by campaignViewModel.selectedCampaignIndex.observeAsState(
         initial = selectedCampaign
@@ -74,9 +74,9 @@ fun CampaignView(
     val hunterDialogVisibility: Boolean by campaignViewModel.hunterDialogVisibility.observeAsState(
         initial = false
     )
-    val inventoryVisibility: Boolean by campaignViewModel.inventoryDialogVisibility.observeAsState(
-        initial = false
-    )
+    var inventoryViewModel by remember {
+        mutableStateOf(InventoryViewModel(null, false))
+    }
     var selectedHunter by remember { mutableStateOf<HunterDataModel?>(null) }
     var selectedHunterPosition by remember {
         mutableStateOf(0)
@@ -167,9 +167,9 @@ fun CampaignView(
                             ) { data, position ->
 //                                if (hunterDataList.filter { !campaignHunters.contains(it) || selectedHunter == it }
 //                                        .any()) {
-                                    campaignViewModel.onHunterDialogVisibilityChange(true)
-                                    selectedHunterPosition = position
-                                    selectedHunter = data
+                                campaignViewModel.onHunterDialogVisibilityChange(true)
+                                selectedHunterPosition = position
+                                selectedHunter = data
 //                                } else {
 //                                    Toast.makeText(
 //                                        context,
@@ -182,17 +182,20 @@ fun CampaignView(
                         }
                     }
                 })
-            HunterSelector(visibility = hunterDialogVisibility,
+            HunterSelectorDialog(visibility = hunterDialogVisibility,
                 dataList = hunterDataList.filter { !campaignHunters.contains(it) || selectedHunter == it },
                 selectedHunter = selectedHunter,
                 context = LocalContext.current,
                 onDismissListener = { campaignViewModel.onHunterDialogVisibilityChange(false) },
-                onConfirmListener = { hData, index ->
+                onConfirmListener = { hData, index, selectedHunter ->
                     Log.d(
                         "Hunter selector",
                         if (hData == null) "Removed hunter" else "${hData.hunterName} ${hData.hunterWeapon} indice $index"
                     )
                     campaignViewModel.onHunterDialogVisibilityChange(false)
+                    if (selectedHunter != null) {
+                        onHunterChange(selectedHunter.campaignId(-1))
+                    }
                     if (hData != null) {
                         onHunterChange(
                             hData.campaignId(
@@ -202,7 +205,8 @@ fun CampaignView(
                     }
                 },
                 onInventoryListener = {
-                    campaignViewModel.onInventoryDialogVisibilityChange(true)
+                    inventoryViewModel.setHunter(it)
+                    inventoryViewModel.onParentVisibilityChange(true)
                     selectedHunter = it
                 },
                 onDeleteListener = { item, _ ->
@@ -212,6 +216,12 @@ fun CampaignView(
                     item?.campaignId(-1)
                     campaignViewModel.onHunterDialogVisibilityChange(false)
                 })
+            selectedHunter?.let {
+                Inventory(inventoryViewModel = inventoryViewModel, onCloseListener = {
+                    inventoryViewModel.onParentVisibilityChange(false)
+                },
+                    onInventoryChanged = { onHunterChange(selectedHunter!!) })
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
             Divider(
@@ -246,13 +256,6 @@ fun CampaignView(
                         onMonsterChange(monsterList)
                         // Log.d(logName, "Monster: ${m.monster.monsterName} easy ${m.easyCount.value} medium ${m.mediumCount.value}")
                     })
-            }
-            selectedHunter?.let {
-                var inventoryViewModel = InventoryViewModel(it, inventoryVisibility)
-                Inventory(inventoryViewModel = inventoryViewModel, onCloseListener = {
-                    campaignViewModel.onInventoryDialogVisibilityChange(false)
-                },
-                    onInventoryChanged = { onHunterChange(selectedHunter!!) })
             }
         }
     } else {

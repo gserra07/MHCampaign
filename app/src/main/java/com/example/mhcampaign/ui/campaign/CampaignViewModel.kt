@@ -56,10 +56,7 @@ class CampaignViewModel @Inject constructor(
     private val _hunterDialogVisibility = MutableLiveData<Boolean>(false)
     val hunterDialogVisibility: LiveData<Boolean> = _hunterDialogVisibility
 
-    private val _inventoryDialogVisibility = MutableLiveData<Boolean>(false)
-    val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
-
-    init {
+   init {
         val campaignDao =
             DatabaseModule().provideDatabase(context).campaignDao()
         val campaignRepository = CampaignRepository(campaignDao)
@@ -131,10 +128,6 @@ class CampaignViewModel @Inject constructor(
 
     fun onHunterDialogVisibilityChange(visibility: Boolean) {
         _hunterDialogVisibility.value = visibility
-    }
-
-    fun onInventoryDialogVisibilityChange(visibility: Boolean) {
-        _inventoryDialogVisibility.value = visibility
     }
 
     fun onAddCampaign(campaignModel: CampaignModel) {

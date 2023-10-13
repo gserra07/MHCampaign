@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -41,7 +42,7 @@ import com.example.mhcampaign.ui.theme.mhFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HunterDialog(
+fun EditHunterDialog(
     visibility: Boolean,
     data: HunterDataModel? = null,
     label: String,
@@ -111,11 +112,19 @@ fun HunterDialog(
                 if (data != null) {
 
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        TextButton(onClick = {
-                            onInventoryListener(data)
-                        }
+                        TextButton(
+                            onClick = {
+                                onInventoryListener(data)
+                            },
+                            modifier = Modifier.border(
+                                BorderStroke(1.dp, md_theme_light_primary),
+                                shape = RoundedCornerShape(50.dp)
+                            )
                         ) {
-                            Text(text = "Go Inventory")
+                            Text(
+                                text = "Go Inventory",
+                                modifier = Modifier.padding(horizontal = 20.dp)
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
@@ -133,8 +142,7 @@ fun HunterDialog(
                             data?.hunterWeapon = HunterWeapon.values()[selectedIndex]
                             if (data != null) {
                                 onConfirmListener(data, selectedIndex)
-                            }
-                            else
+                            } else
                                 onConfirmListener(
                                     HunterDataModel(
                                         hunterName = hunterName,
@@ -151,4 +159,24 @@ fun HunterDialog(
             }
         }
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun EditHunterDialogPreview() {
+
+    var hunterDataModel = HunterDataModel(
+        id = -1,
+        hunterName = "Jose",
+        hunterWeapon = HunterWeapon.DUAL_BLADES,
+        inventory = mutableListOf(),
+        campaignId = -1
+    )
+    EditHunterDialog(
+        visibility = true,
+        label = "Edit Hunter",
+        onDismissListener = { },
+        onConfirmListener = { hunterDataModel, i -> },
+        onInventoryListener = {}
+    )
 }

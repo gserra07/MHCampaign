@@ -339,7 +339,7 @@ fun FABHunters(
             iconTint = Color.White, showLabel = true
         )
     )
-    HunterDialog(visibility = newHunterVisibility,
+    EditHunterDialog(visibility = newHunterVisibility,
         label = "New Hunter",
         data = null,
         onDismissListener = { newHunterVisibility = false },

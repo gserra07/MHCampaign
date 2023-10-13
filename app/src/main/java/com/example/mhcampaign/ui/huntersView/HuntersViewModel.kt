@@ -11,7 +11,6 @@ import com.example.mhcampaign.domain.hunters.AddHunterUseCase
 import com.example.mhcampaign.domain.hunters.GetHuntersUseCase
 import com.example.mhcampaign.domain.hunters.UpdateHunterUseCase
 import com.example.mhcampaign.model.HunterDataModel
-import com.example.mhcampaign.ui.CampaignUIState
 import com.example.mhcampaign.ui.HuntersUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,20 +30,14 @@ class HuntersViewModel(
 
     var uiStateHunters: StateFlow<HuntersUIState> = MutableStateFlow(HuntersUIState.Loading)
 
-//    private val _hunterList = MutableLiveData(hunterListIn)
-//    val hunterList: LiveData<MutableList<HunterDataModel>> = _hunterList
-
     private val _selectedHunter = MutableLiveData<HunterDataModel?>()
     val selectedHunter: LiveData<HunterDataModel?> = _selectedHunter
 
     private val _hunterDialogVisibility = MutableLiveData(false)
     val hunterDialogVisibility: LiveData<Boolean> = _hunterDialogVisibility
 
-    private val _inventoryDialogVisibility = MutableLiveData(false)
-    val inventoryDialogVisibility: LiveData<Boolean> = _inventoryDialogVisibility
-
     init {
-        var huntersDao = DatabaseModule().provideDatabase(context).huntersDao()
+        val huntersDao = DatabaseModule().provideDatabase(context).huntersDao()
         val huntersRepository = HuntersRepository(huntersDao)
 
         addHunterUseCase = AddHunterUseCase(huntersRepository)
@@ -61,10 +54,6 @@ class HuntersViewModel(
 
     fun onHunterDialogVisibilityChange(visibility: Boolean) {
         _hunterDialogVisibility.value = visibility
-    }
-
-    fun onInventoryDialogVisibilityChange(visibility: Boolean) {
-        _inventoryDialogVisibility.value = visibility
     }
 
     fun onAddHunter(item: HunterDataModel) {

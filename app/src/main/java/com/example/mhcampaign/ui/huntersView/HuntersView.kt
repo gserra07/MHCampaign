@@ -11,12 +11,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.mhcampaign.ui.HunterDialog
+import com.example.mhcampaign.ui.EditHunterDialog
 import com.example.mhcampaign.ui.HunterViewHolder
 import com.example.mhcampaign.ui.inventory.Inventory
 import com.example.mhcampaign.model.HunterDataModel
@@ -32,9 +34,9 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
     val hunterDialogVisibility: Boolean by huntersViewModel.hunterDialogVisibility.observeAsState(
         initial = false
     )
-    val inventoryVisibility: Boolean by huntersViewModel.inventoryDialogVisibility.observeAsState(
-        initial = false
-    )
+    val inventoryViewModel by remember {
+        mutableStateOf(InventoryViewModel(selectedHunter, false))
+    }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (hunterList) = createRefs()
@@ -58,7 +60,7 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
                         Log.d(data?.hunterName, "")
                         huntersViewModel.onSelectedHunterChange(data)
                         huntersViewModel.onHunterDialogVisibilityChange(true)
-                        huntersViewModel.onInventoryDialogVisibilityChange(false)
+                        inventoryViewModel.onParentVisibilityChange(false)
                     }
 //                    if (index != ((huntersViewModel.hunterList.value?.size ?: 0) - 1))
 //                        Divider(
@@ -72,7 +74,7 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
             }
         }
     }
-    HunterDialog(
+    EditHunterDialog(
         visibility = hunterDialogVisibility,
         label = if (selectedHunter == null) "New Hunter" else "Edit Hunter",
         data = selectedHunter,
@@ -86,13 +88,15 @@ fun HunterView(huntersViewModel: HuntersViewModel, hunterDataList: MutableList<H
             } else if (selectedHunter != null)
                 item?.let { huntersViewModel.onUpdateHunter(it) }
         },
-        onInventoryListener = { huntersViewModel.onInventoryDialogVisibilityChange(true) }
+        onInventoryListener = {
+            inventoryViewModel.onParentVisibilityChange(true)
+        }
     )
 
     selectedHunter?.let {
-        val inventoryViewModel = InventoryViewModel(it, inventoryVisibility)
+        inventoryViewModel.setHunter(it)
         Inventory(inventoryViewModel = inventoryViewModel, onCloseListener = {
-            huntersViewModel.onInventoryDialogVisibilityChange(false)
+            inventoryViewModel.onParentVisibilityChange(false)
         },
             onInventoryChanged = {huntersViewModel.onUpdateHunter(selectedHunter!!)})
     }
