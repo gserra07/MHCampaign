@@ -15,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mhcampaign.ui.theme.md_theme_dark_primary
-import com.example.mhcampaign.ui.theme.md_theme_light_primary
 import com.example.mhcampaign.ui.theme.md_theme_light_primaryContainer
+import com.example.mhcampaign.ui.theme.mhFont
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MyTopAppBar(title: String, scope: CoroutineScope, drawerState: DrawerState, onClickListener: (String) -> Unit) {
     Surface(shadowElevation = 3.dp) {
-        TopAppBar(title = { Text(text = title) },
+        TopAppBar(title = { Text(text = title, fontFamily = mhFont) },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = md_theme_dark_primary),
                 modifier = Modifier.background(color = md_theme_light_primaryContainer),
                 navigationIcon = {
